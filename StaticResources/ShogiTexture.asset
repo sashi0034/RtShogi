@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b02745bbaa67384f96b839662346fba, type: 3}
+  m_Name: ShogiTexture
+  m_EditorClassIdentifier: 
+  data:
+    preset: 11
+    settingsFrom: {fileID: 2800000, guid: 9349ff1a2d6d7804486fef5d7c3a67de, type: 3}
+    wrapModeU: 0
+    wrapModeV: 0
+    mipmapEnabled: 0
+    create:
+      rid: -2
+    filters: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
