@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace RtShogi.Scripts
@@ -28,7 +29,7 @@ namespace RtShogi.Scripts
             {
                 for (int z = 0; z < size.H; ++z)
                 {
-                    var piece = GameObject.Instantiate(boardPiecePrefab, transform);
+                    var piece = PrefabUtility.InstantiatePrefab(boardPiecePrefab, transform) as BoardPiece;
                     piece.transform.position = new Vector3(x-size.W / 2, 0, z-size.H / 2);
                     piece.gameObject.name = $"Piece({x}, {z})";
                     created.Add(piece);
