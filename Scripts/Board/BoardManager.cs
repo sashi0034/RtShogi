@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 
-
-namespace RtShogi.Scripts
+namespace RtShogi.Scripts.Board
 {
     public record IntSize(int W, int H){}
     
@@ -12,7 +9,7 @@ namespace RtShogi.Scripts
         public static IntSize BoardSize = new IntSize(9, 9);
         
         [SerializeField] private BoardMap boardMap;
-
+        public BoardMap BoardMap => boardMap;
 
 
 

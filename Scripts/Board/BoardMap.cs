@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
-namespace RtShogi.Scripts
+namespace RtShogi.Scripts.Board
 {
     public class BoardMap : MonoBehaviour
     {
@@ -18,6 +18,16 @@ namespace RtShogi.Scripts
                 Util.DestroyGameObjectInEditor(piece.gameObject);
             }
         }
+
+        public BoardPiece TakePiece(BoardPoint point)
+        {
+            return boardPieces[point.Z + point.X * BoardManager.BoardSize.W];
+        }
+        public BoardPiece TakePiece(int x, int z)
+        {
+            return TakePiece(new BoardPoint(x, z));
+        }
+        
 
         [Button]
         public void ResetBoard()

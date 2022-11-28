@@ -1,5 +1,7 @@
 ﻿
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace System.Runtime.CompilerServices
 {
@@ -44,4 +46,7 @@ namespace RtShogi.Scripts
             Object.Destroy(component);
         }
     }
+    
+    [AttributeUsage(AttributeTargets.Method)]
+    public class EventFunctionAttribute : System.Attribute { }
 }
