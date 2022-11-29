@@ -1,8 +1,8 @@
 ﻿using JetBrains.Annotations;
-using RtShogi.Scripts.Board;
+using RtShogi.Scripts.Battle;
 using UnityEngine;
 
-namespace RtShogi.Scripts.Koma
+namespace RtShogi.Scripts.Battle
 {
     public class KomaUnit : MonoBehaviour
     {

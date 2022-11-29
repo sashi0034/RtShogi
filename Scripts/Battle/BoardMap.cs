@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
-namespace RtShogi.Scripts.Board
+namespace RtShogi.Scripts.Battle
 {
     public class BoardMap : MonoBehaviour
     {

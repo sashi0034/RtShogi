@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace RtShogi.Scripts.Koma
+namespace RtShogi.Scripts.Battle
 {
     
     [Serializable]

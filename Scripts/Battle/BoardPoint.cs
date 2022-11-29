@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace RtShogi.Scripts.Board
+namespace RtShogi.Scripts.Battle
 {
     public struct BoardPoint
     {

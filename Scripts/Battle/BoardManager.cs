@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace RtShogi.Scripts.Board
+namespace RtShogi.Scripts.Battle
 {
     public record IntSize(int W, int H){}
     

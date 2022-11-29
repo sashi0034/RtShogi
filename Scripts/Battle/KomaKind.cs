@@ -1,4 +1,4 @@
-﻿namespace RtShogi.Scripts.Koma
+﻿namespace RtShogi.Scripts.Battle
 {
     public enum EKomaKind
     {

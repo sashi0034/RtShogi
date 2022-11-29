@@ -1,8 +1,8 @@
 ﻿using JetBrains.Annotations;
-using RtShogi.Scripts.Koma;
+using RtShogi.Scripts.Battle;
 using UnityEngine;
 
-namespace RtShogi.Scripts.Board
+namespace RtShogi.Scripts.Battle
 {
     public class BoardPiece : MonoBehaviour
     {

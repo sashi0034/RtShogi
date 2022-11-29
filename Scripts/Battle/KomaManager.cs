@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RtShogi.Scripts.Board;
+using RtShogi.Scripts.Battle;
 using Sirenix.Utilities;
 using UnityEngine;
 
-namespace RtShogi.Scripts.Koma
+namespace RtShogi.Scripts.Battle
 {
     public class KomaManager : MonoBehaviour
     {
