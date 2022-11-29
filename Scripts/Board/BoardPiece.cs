@@ -6,6 +6,8 @@ namespace RtShogi.Scripts.Board
 {
     public class BoardPiece : MonoBehaviour
     {
+        [SerializeField] private GameObject highlightObject;
+        
         [CanBeNull] private KomaUnit holdingKoma = null;
         [CanBeNull] public KomaUnit Holding => holdingKoma;
         
@@ -15,7 +17,13 @@ namespace RtShogi.Scripts.Board
         {
             var pos = transform.position;
             koma.transform.position = new Vector3(pos.x, KomaPosY, pos.z);
+            koma.ResetMountedPiece(this);
             holdingKoma = koma;
+        }
+
+        public void EnableHighlight(bool isActive)
+        {
+            highlightObject.SetActive(isActive);
         }
     }
 }

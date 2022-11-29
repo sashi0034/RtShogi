@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using RtShogi.Scripts.Board;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Koma
@@ -8,6 +9,12 @@ namespace RtShogi.Scripts.Koma
         [SerializeField] private MeshFilter viewMeshFilter;
         [SerializeField] private MeshRenderer viewMeshRenderer;
         private EKomaTeam teamKind;
+        private BoardPiece mountedPiece;
+
+        public void ResetMountedPiece(BoardPiece piece)
+        {
+            mountedPiece = piece;
+        }
 
         public void InitProps(KomaViewProps props, EKomaTeam team)
         {
