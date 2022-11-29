@@ -18,10 +18,20 @@ namespace RtShogi.Scripts.Battle
         
         public void PutKoma(KomaUnit koma)
         {
-            var pos = transform.position;
-            koma.transform.position = new Vector3(pos.x, KomaPosY, pos.z);
             koma.ResetMountedPiece(this);
             holdingKoma = koma;
+        }
+
+        public Vector3 GetKomaPos()
+        {
+            var pos = transform.position;
+            return new Vector3(pos.x, KomaPosY, pos.z);
+        }
+
+        public void RemoveKoma()
+        {
+            Debug.Assert((holdingKoma != null ? holdingKoma.MountedPiece : null)==this);
+            holdingKoma = null;
         }
 
         public void Initialize(Vector2Int point)
@@ -32,6 +42,11 @@ namespace RtShogi.Scripts.Battle
         public void EnableHighlight(bool isActive)
         {
             highlightObject.SetActive(isActive);
+        }
+
+        public bool IsActiveHighlight()
+        {
+            return highlightObject.activeSelf;
         }
     }
 }

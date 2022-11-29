@@ -14,6 +14,7 @@ namespace RtShogi.Scripts.Battle
         
         private ETeam _team;
         private BoardPiece _mountedPiece;
+        public BoardPiece MountedPiece => _mountedPiece;
 
         public void ResetMountedPiece(BoardPiece piece)
         {

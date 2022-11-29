@@ -52,7 +52,9 @@ namespace RtShogi.Scripts.Battle
         void putKoma(BoardPoint point, EKomaKind kind, ETeam team)
         {
             var koma = Instantiate(komaUnitPrefab, transform);
-            boardMapRef.TakePiece(point).PutKoma(koma);
+            var boardPiece = boardMapRef.TakePiece(point);
+            boardPiece.PutKoma(koma);
+            koma.transform.position = boardPiece.GetKomaPos();
             koma.InitProps(komaViewPropsList[(int)kind], team);
         }
         

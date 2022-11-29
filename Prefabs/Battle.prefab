@@ -157,6 +157,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardManagerRef: {fileID: 4574128778553497581}
+  matTransparentBlue: {fileID: 2100000, guid: fbe6695ef1c01db4cb61c054e5513878, type: 2}
+  matTransparentBlack: {fileID: 2100000, guid: 092986a7ec19c8c4f95cbf04b6627102, type: 2}
 --- !u!1 &5692008916695536819
 GameObject:
   m_ObjectHideFlags: 0
