@@ -32,24 +32,24 @@ namespace RtShogi.Scripts.Battle
             const int startZ = 6;
 
             foreach(int x in Enumerable.Range(0, 9))
-                putKoma(new BoardPoint(x, 2), EKomaKind.Hu, EKomaTeam.Ally);
+                putKoma(new BoardPoint(x, 2), EKomaKind.Hu, ETeam.Ally);
             
-            putKoma(new BoardPoint(1, 1), EKomaKind.Kaku, EKomaTeam.Ally);
-            putKoma(new BoardPoint(7, 1), EKomaKind.Hisha, EKomaTeam.Ally);
+            putKoma(new BoardPoint(1, 1), EKomaKind.Kaku, ETeam.Ally);
+            putKoma(new BoardPoint(7, 1), EKomaKind.Hisha, ETeam.Ally);
             
-            putKoma(new BoardPoint(0, 0), EKomaKind.Kyosha, EKomaTeam.Ally);
-            putKoma(new BoardPoint(1, 0), EKomaKind.Keima, EKomaTeam.Ally);
-            putKoma(new BoardPoint(2, 0), EKomaKind.Gin, EKomaTeam.Ally);
-            putKoma(new BoardPoint(3, 0), EKomaKind.Kin, EKomaTeam.Ally);
-            putKoma(new BoardPoint(4, 0), EKomaKind.Oh, EKomaTeam.Ally);
-            putKoma(new BoardPoint(5, 0), EKomaKind.Kin, EKomaTeam.Ally);
-            putKoma(new BoardPoint(6, 0), EKomaKind.Gin, EKomaTeam.Ally);
-            putKoma(new BoardPoint(7, 0), EKomaKind.Keima, EKomaTeam.Ally);
-            putKoma(new BoardPoint(8, 0), EKomaKind.Kyosha, EKomaTeam.Ally);
+            putKoma(new BoardPoint(0, 0), EKomaKind.Kyosha, ETeam.Ally);
+            putKoma(new BoardPoint(1, 0), EKomaKind.Keima, ETeam.Ally);
+            putKoma(new BoardPoint(2, 0), EKomaKind.Gin, ETeam.Ally);
+            putKoma(new BoardPoint(3, 0), EKomaKind.Kin, ETeam.Ally);
+            putKoma(new BoardPoint(4, 0), EKomaKind.Oh, ETeam.Ally);
+            putKoma(new BoardPoint(5, 0), EKomaKind.Kin, ETeam.Ally);
+            putKoma(new BoardPoint(6, 0), EKomaKind.Gin, ETeam.Ally);
+            putKoma(new BoardPoint(7, 0), EKomaKind.Keima, ETeam.Ally);
+            putKoma(new BoardPoint(8, 0), EKomaKind.Kyosha, ETeam.Ally);
         }
         
 
-        void putKoma(BoardPoint point, EKomaKind kind, EKomaTeam team)
+        void putKoma(BoardPoint point, EKomaKind kind, ETeam team)
         {
             var koma = Instantiate(komaUnitPrefab, transform);
             boardMapRef.TakePiece(point).PutKoma(koma);

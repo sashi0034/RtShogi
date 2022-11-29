@@ -8,20 +8,25 @@ namespace RtShogi.Scripts.Battle
     {
         [SerializeField] private MeshFilter viewMeshFilter;
         [SerializeField] private MeshRenderer viewMeshRenderer;
-        private EKomaTeam teamKind;
-        private BoardPiece mountedPiece;
+        
+        private EKomaKind _kind;
+        public EKomaKind Kind => _kind;
+        
+        private ETeam _team;
+        private BoardPiece _mountedPiece;
 
         public void ResetMountedPiece(BoardPiece piece)
         {
-            mountedPiece = piece;
+            _mountedPiece = piece;
         }
 
-        public void InitProps(KomaViewProps props, EKomaTeam team)
+        public void InitProps(KomaViewProps props, ETeam team)
         {
             viewMeshFilter.sharedMesh = props.Mesh;
             if (props.Materials is { Length: > 0 }) viewMeshRenderer.materials = props.Materials;
-            teamKind = team;
-            if (team==EKomaTeam.Ally) transform.Rotate(new Vector3(0, 180, 0));
+            _team = team;
+            if (team==ETeam.Ally) transform.Rotate(new Vector3(0, 180, 0));
+            _kind = props.Kind;
         }
     }
 }

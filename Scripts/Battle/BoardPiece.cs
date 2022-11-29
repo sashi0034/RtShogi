@@ -1,5 +1,5 @@
-﻿using JetBrains.Annotations;
-using RtShogi.Scripts.Battle;
+﻿#nullable enable
+using Unity.Collections;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
@@ -8,8 +8,11 @@ namespace RtShogi.Scripts.Battle
     {
         [SerializeField] private GameObject highlightObject;
         
-        [CanBeNull] private KomaUnit holdingKoma = null;
-        [CanBeNull] public KomaUnit Holding => holdingKoma;
+        [SerializeField, ReadOnly] private Vector2Int installedPoint;
+        public BoardPoint Point => new BoardPoint(installedPoint.x, installedPoint.y);
+        
+        private KomaUnit? holdingKoma = null;
+        public KomaUnit? Holding => holdingKoma;
         
         public const float KomaPosY = 0.7f;
         
@@ -19,6 +22,11 @@ namespace RtShogi.Scripts.Battle
             koma.transform.position = new Vector3(pos.x, KomaPosY, pos.z);
             koma.ResetMountedPiece(this);
             holdingKoma = koma;
+        }
+
+        public void Initialize(Vector2Int point)
+        {
+            installedPoint = point;
         }
 
         public void EnableHighlight(bool isActive)

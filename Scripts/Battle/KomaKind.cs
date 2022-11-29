@@ -29,7 +29,7 @@
         public const int CountKinds = (int)EKomaKind.GinFormed + 1;
     }
     
-    public enum EKomaTeam
+    public enum ETeam
     {
         Ally,
         Enemy,

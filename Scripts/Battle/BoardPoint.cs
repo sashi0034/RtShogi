@@ -12,8 +12,26 @@ namespace RtShogi.Scripts.Battle
             X = x;
             Z = z;
             
-            Debug.Assert(new IntRange(0, BoardManager.BoardSize.W-1).IsInRange(x), $"({(x, z)}");
-            Debug.Assert(new IntRange(0, BoardManager.BoardSize.H-1).IsInRange(z), $"({(x, z)}");
+        }
+        public BoardPoint DebugAssert()
+        {
+            Debug.Assert(new IntRange(0, BoardManager.BoardSize.W-1).IsInRange(X), $"out of map: ({(X, Z)}");
+            Debug.Assert(new IntRange(0, BoardManager.BoardSize.H-1).IsInRange(X), $"out of map: ({(X, Z)}");
+            return this;
+        }
+
+        public BoardPoint Move(BoardPoint point)
+        {
+            return Move(point.X, point.Z);
+        }
+        public BoardPoint Move(int x, int z)
+        {
+            return new BoardPoint(X + x, Z + z);
+        }
+
+        public BoardPoint ToFlipped()
+        {
+            return new BoardPoint(BoardManager.BoardSize.W - 1 - X, BoardManager.BoardSize.H - 1 - Z);
         }
     }
 
