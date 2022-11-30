@@ -1,5 +1,5 @@
 ﻿#nullable enable
-using System.Collections.Generic;
+
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerCommander : MonoBehaviour
     {
         [SerializeField] private BoardManager boardManagerRef;
         [SerializeField] private Material matTransparentBlue;
@@ -26,7 +26,7 @@ namespace RtShogi.Scripts.Battle
         private void Update()
         {
             if (!isClicking())
-                // 左クリックを押すまで
+                // 左クリックを押して選択するまで
                 checkDownLeftMouse();
             else if (!Input.GetMouseButtonUp(leftButtonId))
                 // 左クリックを押してるとき
@@ -40,7 +40,7 @@ namespace RtShogi.Scripts.Battle
         {
             if (!Input.GetMouseButtonDown(leftButtonId)) return;
 
-            var piece = findPieceRayedByMouse();
+            var piece = findPieceRayedByMousePos();
 
             if (piece == null) return;
 
@@ -63,7 +63,7 @@ namespace RtShogi.Scripts.Battle
             await holding.gameObject.transform.DOScale(1.0f, 0.3f).SetEase(Ease.OutBack);
         }
 
-        private BoardPiece? findPieceRayedByMouse()
+        private BoardPiece? findPieceRayedByMousePos()
         {
             var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -107,7 +107,7 @@ namespace RtShogi.Scripts.Battle
 
         private void updateWhileDownLeftMouse()
         {
-            var piece = findPieceRayedByMouse();
+            var piece = findPieceRayedByMousePos();
             _destPiece = piece;
             
             bool canPut = piece != null && piece.IsActiveHighlight(); 
