@@ -14,7 +14,7 @@ namespace RtShogi.Scripts.Battle
         private KomaUnit? holdingKoma = null;
         public KomaUnit? Holding => holdingKoma;
         
-        public const float KomaPosY = 0.7f;
+        public const float KomaPosY = 0.55f;
         
         public void PutKoma(KomaUnit koma)
         {

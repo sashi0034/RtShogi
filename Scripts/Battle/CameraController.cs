@@ -5,15 +5,17 @@ namespace RtShogi.Scripts.Battle
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private float rotationSpeed = 0.1f;
-        
         private Vector3 _destPos;
         private Camera mainCamera => Camera.main;
-        private float _moveSpeed = 1;
-        private float _moveUpdateSpeed = 2f;
-        private FloatRange _movableRangeY = new FloatRange(-8f, 8f);
+        private readonly float movingSpeed = 1;
+        private readonly float movingUpdateSpeed = 2f;
+        private readonly float rotationSpeed = 0.1f;
+        private readonly float elevationSpeed = 0.5f;
+        private FloatRange _movableRangeElevation = new FloatRange(2.5f, 12.5f);
+        private FloatRange _movableRangeZ = new FloatRange(-8f, 8f);
         private Vector3? _mousePosOnRightClicked = null;
-        private Vector3 _rotationOnRightClicked = Vector3.zero;
+        private Vector3 _cameraRotOnRightClicked = Vector3.zero;
+        private Vector3 _cameraPosOnRightClicked = Vector3.zero;
         private const int mouseRightId = 1;
 
         [EventFunction]
@@ -26,11 +28,11 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Update()
         {
-            updateRot(Time.deltaTime);
+            updateRotAndElevation(Time.deltaTime);
             updatePos(Time.deltaTime);
         }
 
-        private void updateRot(float deltaTime)
+        private void updateRotAndElevation(float deltaTime)
         {
             // 右クリックを押したときの座標を覚える
             checkUpdateMousePosOnRightClicked();
@@ -41,8 +43,9 @@ namespace RtShogi.Scripts.Battle
             var currPos = Input.mousePosition;
             var deltaY = currPos.y - _mousePosOnRightClicked.Value.y;
 
+            // カメラ向きを変更
             mainCamera.transform.rotation = Quaternion.Euler(
-                _rotationOnRightClicked - rotationSpeed * new Vector3(deltaY, 0, 0));
+                _cameraRotOnRightClicked - rotationSpeed * new Vector3(deltaY, 0, 0));
 
             // 離したら再びnullを代入
             if (Input.GetMouseButtonUp(mouseRightId)) _mousePosOnRightClicked = null;
@@ -53,17 +56,30 @@ namespace RtShogi.Scripts.Battle
             bool isJustClickRight = Input.GetMouseButtonDown(mouseRightId);
             if (!isJustClickRight) return;
             _mousePosOnRightClicked = Input.mousePosition;
-            _rotationOnRightClicked = mainCamera.transform.rotation.eulerAngles;
+            _cameraRotOnRightClicked = mainCamera.transform.rotation.eulerAngles;
+            _cameraPosOnRightClicked = mainCamera.transform.position;
         }
 
         private void updatePos(float deltaTime)
         {
             var scroll = Input.mouseScrollDelta;
-            _destPos += new Vector3(0, 0, scroll.y * _moveSpeed);
-            _destPos.z = _movableRangeY.FixInRange(_destPos.z);
+
+            // 右クリック中かどうかで分岐
+            if (Input.GetMouseButton(mouseRightId))
+            {
+                // カメラ高さを変更
+                _destPos.y = _movableRangeElevation.FixInRange(
+                    _destPos.y - scroll.y * elevationSpeed);
+            }
+            else
+            {
+                // z方向の位置を変更
+                _destPos += new Vector3(0, 0, scroll.y * movingSpeed);
+                _destPos.z = _movableRangeZ.FixInRange(_destPos.z);
+            }
 
             var delta = (_destPos - mainCamera.transform.position);
-            mainCamera.transform.position += delta * (deltaTime * _moveUpdateSpeed);
+            mainCamera.transform.position += delta * (deltaTime * movingUpdateSpeed);
         }
     }
 }
