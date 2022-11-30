@@ -3,15 +3,19 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using RtShogi.Scripts.Battle.UI;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
+    record PlayerCooldownTime(float Seconds);
+    
     public class PlayerCommander : MonoBehaviour
     {
         [SerializeField] private BoardManager boardManagerRef;
         [SerializeField] private Material matTransparentBlue;
         [SerializeField] private Material matTransparentBlack;
+        [SerializeField] private CooldownBar cooldownBar;
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
         
@@ -21,19 +25,57 @@ namespace RtShogi.Scripts.Battle
         private KomaUnit? _destKomaGhost = null;
         
         private Camera mainCamera => Camera.main;
-        
+
+        [EventFunction]
+        private void Start()
+        {
+            controlProcessAsync().Forget();
+        }
+
         [EventFunction]
         private void Update()
         {
-            if (!isClicking())
+
+        }
+
+        private async UniTask controlProcessAsync()
+        {
+            while (true)
+            {
+                var cooldown = await processUpAndDownLeftClick();
+                if (await checkStopProcess()) return;
+                
+                if (cooldown.Seconds > 0) await PlayerCooldown.StartCooldown(cooldownBar, cooldown.Seconds);
+                if (await checkStopProcess()) return;
+            }
+            
+
+        }
+
+        private async UniTask<PlayerCooldownTime> processUpAndDownLeftClick()
+        {
+            while (!isClicking())
+            {
                 // 左クリックを押して選択するまで
                 checkDownLeftMouse();
-            else if (!Input.GetMouseButtonUp(leftButtonId))
+                if (await checkStopProcess()) return new PlayerCooldownTime(0);
+            }
+
+            while (!Input.GetMouseButtonUp(leftButtonId))
+            {
                 // 左クリックを押してるとき
                 updateWhileDownLeftMouse();
-            else
-                // 左クリックを離した
-                onUpLeftMouse();
+                if (await checkStopProcess()) return new PlayerCooldownTime(0);
+            }
+
+            // 左クリックを離した
+            return onUpLeftMouse();
+        }
+
+        private async UniTask<bool> checkStopProcess()
+        {
+            await UniTask.DelayFrame(1);
+            return false;
         }
 
         private void checkDownLeftMouse()
@@ -119,10 +161,10 @@ namespace RtShogi.Scripts.Battle
             _destKomaGhost.transform.position = destPos;
         }
 
-        private void onUpLeftMouse()
+        private PlayerCooldownTime onUpLeftMouse()
         {
             // 駒を盤上で目的地に移動させる
-            moveClickingKomaToDest(_clickingKoma, _destPiece);
+            var cooldown = moveClickingKomaToDest(_clickingKoma, _destPiece);
 
             // 進める場所のハイライト解除
             boardMapRef.ForEach(piece => piece.EnableHighlight(false));
@@ -133,12 +175,14 @@ namespace RtShogi.Scripts.Battle
             // ゴースト削除
             Util.DestroyGameObject(_destKomaGhost.gameObject);
             _destKomaGhost = null;
+            
+            return cooldown;
         }
 
-        private static void moveClickingKomaToDest(KomaUnit? clickingKoma, BoardPiece? destPiece)
+        private static PlayerCooldownTime moveClickingKomaToDest(KomaUnit? clickingKoma, BoardPiece? destPiece)
         {
-            if (clickingKoma==null || destPiece==null) return;
-            if (!destPiece.IsActiveHighlight()) return;
+            if (clickingKoma==null || destPiece==null) return new PlayerCooldownTime(0);
+            if (!destPiece.IsActiveHighlight()) return new PlayerCooldownTime(0);
 
             var canForm = KomaFormingChecker.CheckFormAble(
                     clickingKoma.Kind,
@@ -151,6 +195,9 @@ namespace RtShogi.Scripts.Battle
             destPiece.PutKoma(clickingKoma);
             //clickingKoma.transform.position = destPiece.GetKomaPos();
             clickingKoma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);
+
+            const float delay = 1.5f;
+            return new PlayerCooldownTime(delay);
         }
 
         private bool isClicking()
