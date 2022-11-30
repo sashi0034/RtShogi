@@ -139,6 +139,13 @@ namespace RtShogi.Scripts.Battle
         {
             if (clickingKoma==null || destPiece==null) return;
             if (!destPiece.IsActiveHighlight()) return;
+
+            var canForm = KomaFormingChecker.CheckFormAble(
+                    clickingKoma.Kind,
+                    new ImBoardPoint(clickingKoma.MountedPiece.Point), 
+                    new ImBoardPoint(destPiece.Point));
+            
+            if (canForm==EKomaFormAble.FormForced) clickingKoma.FormSelf();
             
             clickingKoma.MountedPiece.RemoveKoma();
             destPiece.PutKoma(clickingKoma);
