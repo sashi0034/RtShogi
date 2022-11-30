@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
@@ -33,6 +34,38 @@ namespace RtShogi.Scripts.Battle
         {
             return new BoardPoint(BoardManager.BoardSize.W - 1 - X, BoardManager.BoardSize.H - 1 - Z);
         }
+        
+        public static BoardPoint operator+ (double z, BoardPoint w)
+        {
+            return new BoardPoint();
+        }
+    }
+
+    /// <summary>
+    /// 仮想上にした点 (駒の動ける範囲などを求める際に仕様)
+    /// </summary>
+    public struct ImBoardPoint
+    {
+        public readonly BoardPoint Raw;
+        public ImBoardPoint(BoardPoint raw)
+        {
+            Raw = raw;
+        }
+
+        public BoardPoint ToReal(bool isLocal)
+        {
+            return isLocal
+                ? Raw
+                : new BoardPoint(BoardMap.BoardSize.W - 1 - Raw.X, BoardMap.BoardSize.H - 1 - Raw.Z);
+        }
+
+        public static ImBoardPoint FromReal(BoardPoint point, bool isLocal)
+        {
+            return isLocal 
+                ? new ImBoardPoint(point)
+                : new ImBoardPoint(new BoardPoint(BoardMap.BoardSize.W - 1 - point.X, BoardMap.BoardSize.H - 1 - point.Z));
+        }
+
     }
 
 }

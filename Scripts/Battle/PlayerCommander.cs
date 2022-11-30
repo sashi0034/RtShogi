@@ -80,10 +80,10 @@ namespace RtShogi.Scripts.Battle
         {
             var movableList = new KomaMovableRoute(
                     _clickingKoma.Kind,
-                    piece.Point,
+                    ImBoardPoint.FromReal(piece.Point, true),
                     (point) =>
-                        boardMapRef.IsInMapRange(point) &&
-                        boardMapRef.TakePiece(point).Holding == null
+                        boardMapRef.IsInMapRange(point.ToReal(true)) &&
+                        boardMapRef.TakePiece(point.ToReal(true)).Holding == null
                 )
                 .GetMovablePoints()
                 .Select(p => boardMapRef.TakePiece(p)).ToList();

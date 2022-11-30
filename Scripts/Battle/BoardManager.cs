@@ -6,8 +6,8 @@ namespace RtShogi.Scripts.Battle
     
     public class BoardManager : MonoBehaviour
     {
-        public const int SideLength = 9;
-        public static IntSize BoardSize = new IntSize(SideLength, SideLength);
+        public static int SideLength => BoardMap.SideLength;
+        public static IntSize BoardSize => BoardMap.BoardSize;
         
         [SerializeField] private BoardMap boardMap;
         public BoardMap BoardMap => boardMap;

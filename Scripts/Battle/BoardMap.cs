@@ -8,6 +8,8 @@ namespace RtShogi.Scripts.Battle
 {
     public class BoardMap : MonoBehaviour
     {
+        public const int SideLength = 9;
+        public static IntSize BoardSize = new IntSize(SideLength, SideLength);
         [SerializeField] private BoardPiece boardPiecePrefab;
         [ReadOnly] [SerializeField] private BoardPiece[] boardPieces; 
 
