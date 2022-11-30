@@ -1,3 +1,3 @@
 # RtShogi
 
-rt-shogi/Assets/RtShogi以下
+`rt-shogi/Assets/RtShogi` 以下
