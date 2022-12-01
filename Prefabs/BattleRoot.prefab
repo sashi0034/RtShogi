@@ -159,6 +159,7 @@ MonoBehaviour:
   boardManagerRef: {fileID: 4574128778553497581}
   matTransparentBlue: {fileID: 2100000, guid: fbe6695ef1c01db4cb61c054e5513878, type: 2}
   matTransparentBlack: {fileID: 2100000, guid: 092986a7ec19c8c4f95cbf04b6627102, type: 2}
+  cooldownBar: {fileID: 0}
 --- !u!1 &5692008916695536819
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,6 +204,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f628618c88dd4ec8adeeb9f7b13defd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraPropsAbove:
+    pos: {x: 0, y: 9, z: 0}
+    rot: {x: 90, y: 0, z: 0}
+  cameraPropsDiagonal:
+    pos: {x: 0, y: 8, z: -2.5}
+    rot: {x: 75, y: 0, z: 0}
 --- !u!1001 &8788964625456260749
 PrefabInstance:
   m_ObjectHideFlags: 0

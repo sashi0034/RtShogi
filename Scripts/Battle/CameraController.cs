@@ -1,8 +1,20 @@
 ﻿#nullable enable
+using System;
+using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
+    [Serializable]
+    public struct PositionAndRotation
+    {
+        [SerializeField] private Vector3 pos;
+        [SerializeField] private Vector3 rot;
+        public Vector3 Pos => pos;
+        public Vector3 Rot=> rot;
+    }
+    
     public class CameraController : MonoBehaviour
     {
         private Vector3 _destPos;
@@ -15,8 +27,11 @@ namespace RtShogi.Scripts.Battle
         private FloatRange _movableRangeZ = new FloatRange(-8f, 8f);
         private Vector3? _mousePosOnRightClicked = null;
         private Vector3 _cameraRotOnRightClicked = Vector3.zero;
-        private Vector3 _cameraPosOnRightClicked = Vector3.zero;
         private const int mouseRightId = 1;
+        private const float animDurationQuick = 0.3f;
+
+        [SerializeField] private PositionAndRotation cameraPropsAbove;
+        [SerializeField] private PositionAndRotation cameraPropsDiagonal;
 
         [EventFunction]
         private void Start()
@@ -57,7 +72,6 @@ namespace RtShogi.Scripts.Battle
             if (!isJustClickRight) return;
             _mousePosOnRightClicked = Input.mousePosition;
             _cameraRotOnRightClicked = mainCamera.transform.rotation.eulerAngles;
-            _cameraPosOnRightClicked = mainCamera.transform.position;
         }
 
         private void updatePos(float deltaTime)
@@ -81,5 +95,20 @@ namespace RtShogi.Scripts.Battle
             var delta = (_destPos - mainCamera.transform.position);
             mainCamera.transform.position += delta * (deltaTime * movingUpdateSpeed);
         }
+
+        [Button]
+        public void OnPushAbove()
+        {
+            _destPos = cameraPropsAbove.Pos;
+            mainCamera.transform.DORotate(cameraPropsAbove.Rot, animDurationQuick);
+        }
+        
+        [Button]
+        public void OnPushDiagonal()
+        {
+            _destPos = cameraPropsDiagonal.Pos;
+            mainCamera.transform.DORotate(cameraPropsDiagonal.Rot, animDurationQuick);
+        }
+
     }
 }
