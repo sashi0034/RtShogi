@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -24,12 +25,32 @@ namespace RtShogi.Scripts.Battle.Player
                         boardMapRef.TakePiece(point.ToReal(true)).Holding == null
                 )
                 .GetMovablePoints()
-                .Select(p => boardMapRef.TakePiece(p)).ToList();
+                .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();
 
-            foreach (var movable in movableList)
+            hilightPieceList(movableList);
+        }
+
+        private static void hilightPieceList(List<BoardPiece> list)
+        {
+            foreach (var movable in list)
             {
                 movable.EnableHighlight(true);
             }
+        }
+
+        public void HighlightInstallableList(EKomaKind kind)
+        {
+            var movableList = new KomaInstallablePoints(
+                    kind,
+                    (point) =>
+                    {
+                        var holding = boardMapRef.TakePiece(point.Raw).Holding;
+                        return holding != null ? holding.Kind : null;
+                    })
+                .GetInstallablePoints()
+                .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();
+
+            hilightPieceList(movableList);
         }
         
         /// <summary>

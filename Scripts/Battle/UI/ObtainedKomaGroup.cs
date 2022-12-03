@@ -65,5 +65,10 @@ namespace RtShogi.Scripts.Battle.UI
             }
             return null;
         }
+
+        public ObtainedKomaElement? FindDraggingElem()
+        {
+            return _showingList.FirstOrDefault(elem => elem.HasBeginDrag.TakeFlag());
+        }
     }
 }

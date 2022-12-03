@@ -1,5 +1,6 @@
 ﻿
 using System;
+using DG.Tweening;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -46,6 +47,11 @@ namespace RtShogi.Scripts
         public static void DestroyComponent(MonoBehaviour component)
         {
             Object.Destroy(component);
+        }
+        
+        public static Tween GetCompletedTween()
+        {
+            return DOVirtual.DelayedCall(0, () => { }, false);
         }
     }
     

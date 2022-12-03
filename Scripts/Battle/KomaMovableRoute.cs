@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 
 namespace RtShogi.Scripts.Battle
 {
@@ -18,9 +19,9 @@ namespace RtShogi.Scripts.Battle
             return list.Where(point => canMoveTo(point)).ToList();
         }
         
-        public List<BoardPoint> GetMovablePoints()
+        public List<ImBoardPoint> GetMovablePoints()
         {
-            return Kind switch
+            return (Kind switch
             {
                 EKomaKind.Hu => validate(new List<BoardPoint>() { currPoint.Move(0, 1) }),
                 EKomaKind.Keima => validate(new List<BoardPoint>() { currPoint.Move(-1, 2), currPoint.Move(1, 2) }),
@@ -38,7 +39,7 @@ namespace RtShogi.Scripts.Battle
                 EKomaKind.HishaFormed => getMovableOfHisha(true),
                 EKomaKind.GinFormed => getMovableOfKin(),
                 _ => throw new NotImplementedException()
-            };
+            }).Select(point => new ImBoardPoint(point)).ToList();
         }
 
         private List<BoardPoint> getMovableOfKyosha()
