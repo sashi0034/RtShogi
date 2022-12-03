@@ -1,14 +1,16 @@
 ﻿#nullable enable
 
+using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using RtShogi.Scripts.Battle.Player;
 using RtShogi.Scripts.Battle.UI;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
-    record PlayerCooldownTime(float Seconds);
+    public record PlayerCooldownTime(float Seconds);
     
     public class PlayerCommander : MonoBehaviour
     {
@@ -23,19 +25,20 @@ namespace RtShogi.Scripts.Battle
         private KomaUnit? _clickingKoma = null;
         private BoardPiece? _destPiece = null;
         private KomaUnit? _destKomaGhost = null;
+        private CommanderAction _myAction;
         
         private Camera mainCamera => Camera.main;
+
+        [EventFunction]
+        private void Awake()
+        {
+            _myAction = new CommanderAction(boardManagerRef);
+        }
 
         [EventFunction]
         private void Start()
         {
             controlProcessAsync().Forget();
-        }
-
-        [EventFunction]
-        private void Update()
-        {
-
         }
 
         private async UniTask controlProcessAsync()
@@ -45,7 +48,7 @@ namespace RtShogi.Scripts.Battle
                 var cooldown = await processUpAndDownLeftClick();
                 if (await checkStopProcess()) return;
                 
-                if (cooldown.Seconds > 0) await PlayerCooldown.StartCooldown(cooldownBar, cooldown.Seconds);
+                if (cooldown.Seconds > 0) await CooldownAnimation.ChargeThenHideCooldown(cooldownBar, cooldown.Seconds);
                 if (await checkStopProcess()) return;
             }
             
@@ -69,7 +72,7 @@ namespace RtShogi.Scripts.Battle
             }
 
             // 左クリックを離した
-            return onUpLeftMouse();
+            return await performOnUpLeftMouse();
         }
 
         private async UniTask<bool> checkStopProcess()
@@ -90,7 +93,7 @@ namespace RtShogi.Scripts.Battle
 
             if (_clickingKoma == null) return;
 
-            hilightMovableList(piece);
+            _myAction.HighlightMovableList(piece, _clickingKoma);
 
             createDestKomaGohst();
 
@@ -118,24 +121,6 @@ namespace RtShogi.Scripts.Battle
             return !clickedGameObject.TryGetComponent<BoardPiece>(out var piece) ? null : piece;
         }
 
-        private void hilightMovableList(BoardPiece piece)
-        {
-            var movableList = new KomaMovableRoute(
-                    _clickingKoma.Kind,
-                    ImBoardPoint.FromReal(piece.Point, true),
-                    (point) =>
-                        boardMapRef.IsInMapRange(point.ToReal(true)) &&
-                        boardMapRef.TakePiece(point.ToReal(true)).Holding == null
-                )
-                .GetMovablePoints()
-                .Select(p => boardMapRef.TakePiece(p)).ToList();
-
-            foreach (var movable in movableList)
-            {
-                movable.EnableHighlight(true);
-            }
-        }
-
         private void createDestKomaGohst()
         {
             _destKomaGhost = Instantiate(_clickingKoma, transform);
@@ -161,10 +146,10 @@ namespace RtShogi.Scripts.Battle
             _destKomaGhost.transform.position = destPos;
         }
 
-        private PlayerCooldownTime onUpLeftMouse()
+        private async UniTask<PlayerCooldownTime> performOnUpLeftMouse()
         {
             // 駒を盤上で目的地に移動させる
-            var cooldown = moveClickingKomaToDest(_clickingKoma, _destPiece);
+            var cooldown = await _myAction.PerformMoveClickingKomaToDestination(_clickingKoma, _destPiece, cooldownBar);
 
             // 進める場所のハイライト解除
             boardMapRef.ForEach(piece => piece.EnableHighlight(false));
@@ -176,28 +161,10 @@ namespace RtShogi.Scripts.Battle
             Util.DestroyGameObject(_destKomaGhost.gameObject);
             _destKomaGhost = null;
             
+            // クールダウンバーの値を0まで減らす演出
+            if (cooldown.Seconds > 0) await CooldownAnimation.GoDownToZeroCooldown(cooldownBar, cooldown.Seconds);
+            
             return cooldown;
-        }
-
-        private static PlayerCooldownTime moveClickingKomaToDest(KomaUnit? clickingKoma, BoardPiece? destPiece)
-        {
-            if (clickingKoma==null || destPiece==null) return new PlayerCooldownTime(0);
-            if (!destPiece.IsActiveHighlight()) return new PlayerCooldownTime(0);
-
-            var canForm = KomaFormingChecker.CheckFormAble(
-                    clickingKoma.Kind,
-                    new ImBoardPoint(clickingKoma.MountedPiece.Point), 
-                    new ImBoardPoint(destPiece.Point));
-            
-            if (canForm==EKomaFormAble.FormForced) clickingKoma.FormSelf();
-            
-            clickingKoma.MountedPiece.RemoveKoma();
-            destPiece.PutKoma(clickingKoma);
-            //clickingKoma.transform.position = destPiece.GetKomaPos();
-            clickingKoma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);
-
-            const float delay = 1.5f;
-            return new PlayerCooldownTime(delay);
         }
 
         private bool isClicking()

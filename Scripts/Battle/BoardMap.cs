@@ -18,7 +18,7 @@ namespace RtShogi.Scripts.Battle
         {
             foreach (var piece in gameObject.transform.GetChildren())
             {
-                Util.DestroyGameObjectInEditor(piece.gameObject);
+                Util.DestroyGameObjectPossibleInEditor(piece.gameObject);
             }
         }
 
@@ -57,7 +57,13 @@ namespace RtShogi.Scripts.Battle
             {
                 for (int z = 0; z < size.H; ++z)
                 {
-                    var piece = PrefabUtility.InstantiatePrefab(boardPiecePrefab, transform) as BoardPiece;
+                    var piece = 
+#if UNITY_EDITOR
+                        PrefabUtility.InstantiatePrefab(boardPiecePrefab, transform) as BoardPiece;
+#else
+                        Instantiate(boardPiecePrefab, transform);                        
+#endif
+                    
                     piece.transform.position = new Vector3(x-size.W / 2, 0, z-size.H / 2);
                     piece.gameObject.name = $"Piece({x}, {z})";
                     piece.Initialize(new Vector2Int(x, z));

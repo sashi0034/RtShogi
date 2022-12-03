@@ -35,12 +35,14 @@ namespace RtShogi.Scripts
             // 子オブジェクトが格納された配列
             return children;
         }
-#if UNITY_EDITOR
-        public static void DestroyGameObjectInEditor(GameObject gameObject)
+        public static void DestroyGameObjectPossibleInEditor(GameObject gameObject)
         {
+#if UNITY_EDITOR
             Object.DestroyImmediate(gameObject);
-        }
+#else
+            Util.DestroyGameObject(gameObject);
 #endif
+        }
         public static void DestroyComponent(MonoBehaviour component)
         {
             Object.Destroy(component);

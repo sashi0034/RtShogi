@@ -22,13 +22,14 @@ namespace RtShogi.Scripts.Battle.UI
         private void Awake()
         {
             startPos = gameObject.transform.position;
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
+            transform.position = getHidePos();
         }
         
         [Button]
         public async UniTask StartAppear()
         {
-            gameObject.SetActive(true);
+            //gameObject.SetActive(true);
             gameObject.transform.position = getHidePos();
 
             await transform.DOMove(startPos, animDuration).SetEase(Ease.OutSine);
@@ -39,7 +40,7 @@ namespace RtShogi.Scripts.Battle.UI
         {
             await transform.DOMove(getHidePos(), animDuration).SetEase(Ease.OutSine);
             
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
         }
 
         public void SetValues(float current, float max)
@@ -51,7 +52,7 @@ namespace RtShogi.Scripts.Battle.UI
 
         public Vector3 getHidePos()
         {
-            float paddingY = 50;
+            float paddingY = 0;
             return new Vector3(startPos.x, rightTop.transform.position.y, startPos.z) + Vector3.up * paddingY;
         }
         
