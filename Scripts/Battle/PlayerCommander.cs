@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RtShogi.Scripts.Battle.Player;
 using RtShogi.Scripts.Battle.UI;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
@@ -27,6 +28,7 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private Material matTransparentBlue;
         [SerializeField] private Material matTransparentBlack;
         [SerializeField] private BattleCanvas battleCanvas;
+        [SerializeField] private KomaManager komaManager;
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
         
@@ -197,5 +199,16 @@ namespace RtShogi.Scripts.Battle
         {
             return _clickingKoma != null;
         }
+
+#if UNITY_EDITOR
+        [Button]
+        public void DebugForceObtainKoma(EKomaKind kind)
+        {
+            var view = komaManager.GetViewProps(kind);
+            battleCanvas.ObtainedKomaGroup.IncElement(new ObtainedKomaElementProps(
+                kind,
+                view.SprIcon));
+        }
+#endif
     }
 }

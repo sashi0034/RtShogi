@@ -341,30 +341,39 @@ MonoBehaviour:
     - {fileID: 2100000, guid: e1b810c01a1c6e7429d5d675b6cac81d, type: 2}
     - {fileID: 2100000, guid: d66bc665513a382418c64e74c5f7eb25, type: 2}
     - {fileID: 2100000, guid: 718d2c065c7bab349953462d07f92737, type: 2}
+    sprIcon: {fileID: 21300000, guid: e37668f45a5cbc344a6031a9aef32558, type: 3}
   - kind: 1
     mesh: {fileID: -5904469712372167855, guid: 1f65736357580d04a8effd9cf5762f3d, type: 3}
     materials: []
+    sprIcon: {fileID: 21300000, guid: 6b0f3f0ad4f016947bb1d92d1d39ef45, type: 3}
   - kind: 2
     mesh: {fileID: -3870257845623543280, guid: 301c153b468e1384eabae8ff977faf58, type: 3}
     materials: []
+    sprIcon: {fileID: 21300000, guid: 463c1ec1adddb024584003df89e8378a, type: 3}
   - kind: 3
     mesh: {fileID: -2667384456735817488, guid: 49616ff9ba105084da5c1526132c4314, type: 3}
     materials: []
+    sprIcon: {fileID: 21300000, guid: 6b82b0f8d55d86340b49623bd9a572f2, type: 3}
   - kind: 4
     mesh: {fileID: 1024497075807512107, guid: 76f65efe5dc06f1499cb628c2c5f6b67, type: 3}
     materials: []
+    sprIcon: {fileID: 21300000, guid: e206a5ac0e3b5784e965e773373ebf92, type: 3}
   - kind: 5
     mesh: {fileID: 6991556169247875198, guid: 5905596585263414e892ad0b77a7f34a, type: 3}
     materials: []
+    sprIcon: {fileID: 21300000, guid: cb82ec9f7baad55498e7c106d837d5ee, type: 3}
   - kind: 6
     mesh: {fileID: -6221861591842170795, guid: 7492a892809b2b643a3b8a335b0d34eb, type: 3}
     materials: []
+    sprIcon: {fileID: 21300000, guid: 5879e02bef983ad4cb7d7c134bdcfa7d, type: 3}
   - kind: 7
     mesh: {fileID: -6396760216928863473, guid: f2bdb11751bac95499aebe732b51fcf2, type: 3}
     materials: []
+    sprIcon: {fileID: 0}
   - kind: 8
     mesh: {fileID: -3189834749401520736, guid: 5e44607c4f73d9f4eab9b5de9e4a3959, type: 3}
     materials: []
+    sprIcon: {fileID: 0}
   boardManagerRef: {fileID: 4574128778553497581}
 --- !u!1 &5590009322083145539
 GameObject:
@@ -414,6 +423,7 @@ MonoBehaviour:
   matTransparentBlue: {fileID: 2100000, guid: fbe6695ef1c01db4cb61c054e5513878, type: 2}
   matTransparentBlack: {fileID: 2100000, guid: 092986a7ec19c8c4f95cbf04b6627102, type: 2}
   battleCanvas: {fileID: 0}
+  komaManager: {fileID: 878369053750863485}
 --- !u!1 &5692008916695536819
 GameObject:
   m_ObjectHideFlags: 0

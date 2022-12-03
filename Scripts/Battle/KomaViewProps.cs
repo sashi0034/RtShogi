@@ -16,5 +16,8 @@ namespace RtShogi.Scripts.Battle
         
         [SerializeField] [CanBeNull] private Material[] materials;
         [CanBeNull] public Material[] Materials => materials;
+
+        [CanBeNull] [SerializeField] private Sprite sprIcon;
+        [CanBeNull] public Sprite SprIcon => sprIcon;
     }
 }
