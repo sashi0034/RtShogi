@@ -12,17 +12,26 @@ namespace RtShogi.Scripts.Battle
 {
     public record PlayerCooldownTime(float Seconds);
     
+    public interface IPlayerClickable{}
+
+    public record PlayerClickingObtainedKoma(
+        EKomaKind Kind,
+        GameObject HoverCursor) : IPlayerClickable
+    {
+        private EKomaKind kind;
+    }
+    
     public class PlayerCommander : MonoBehaviour
     {
         [SerializeField] private BoardManager boardManagerRef;
         [SerializeField] private Material matTransparentBlue;
         [SerializeField] private Material matTransparentBlack;
-        [SerializeField] private CooldownBar cooldownBar;
+        [SerializeField] private BattleCanvas battleCanvas;
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
         
         private const int leftButtonId = 0;
-        private KomaUnit? _clickingKoma = null;
+        private IPlayerClickable? _clickingKoma = null;
         private BoardPiece? _destPiece = null;
         private KomaUnit? _destKomaGhost = null;
         private CommanderAction _myAction;
@@ -48,7 +57,7 @@ namespace RtShogi.Scripts.Battle
                 var cooldown = await processUpAndDownLeftClick();
                 if (await checkStopProcess()) return;
                 
-                if (cooldown.Seconds > 0) await CooldownAnimation.ChargeThenHideCooldown(cooldownBar, cooldown.Seconds);
+                if (cooldown.Seconds > 0) await CooldownAnimation.ChargeThenHideCooldown(battleCanvas.CooldownBar, cooldown.Seconds);
                 if (await checkStopProcess()) return;
             }
             
@@ -85,27 +94,35 @@ namespace RtShogi.Scripts.Battle
         {
             if (!Input.GetMouseButtonDown(leftButtonId)) return;
 
-            var piece = findPieceRayedByMousePos();
-
-            if (piece == null) return;
-
-            _clickingKoma = piece.Holding;
+            // 盤上のクリックした駒を取得
+            _clickingKoma = findKomaOnPieceRayedByMousePos();
 
             if (_clickingKoma == null) return;
-
-            _myAction.HighlightMovableList(piece, _clickingKoma);
+            
+            switch (_clickingKoma)
+            {
+                case KomaUnit fieldKoma:
+                    _myAction.HighlightMovableList(fieldKoma);
+                    animPieceSelected(fieldKoma).Forget();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
 
             createDestKomaGohst();
-
-            animPieceSelected(piece).Forget();
         }
 
-        private static async UniTask animPieceSelected(BoardPiece piece)
+        private static async UniTask animPieceSelected(KomaUnit? holding)
         {
-            var holding = piece.Holding;
             if (holding==null) return;
             await holding.gameObject.transform.DOScale(1.3f, 0.3f).SetEase(Ease.InOutBack);
             await holding.gameObject.transform.DOScale(1.0f, 0.3f).SetEase(Ease.OutBack);
+        }
+
+        private KomaUnit? findKomaOnPieceRayedByMousePos()
+        {
+            var piece = findPieceRayedByMousePos();
+            return piece == null ? null : piece.Holding;
         }
 
         private BoardPiece? findPieceRayedByMousePos()
@@ -123,7 +140,11 @@ namespace RtShogi.Scripts.Battle
 
         private void createDestKomaGohst()
         {
-            _destKomaGhost = Instantiate(_clickingKoma, transform);
+            _destKomaGhost = _clickingKoma switch
+            {
+                KomaUnit fieldKoma => Instantiate(fieldKoma, transform),
+                _ => throw new NotImplementedException()
+            };
 
             var mesh = _destKomaGhost.GetComponentInChildren<MeshRenderer>();
             mesh.materials = mesh.sharedMaterials
@@ -149,9 +170,14 @@ namespace RtShogi.Scripts.Battle
         private async UniTask<PlayerCooldownTime> performOnUpLeftMouse()
         {
             // 駒を盤上で目的地に移動させる
-            var cooldown = await _myAction.PerformMoveClickingKomaToDestination(_clickingKoma, _destPiece, cooldownBar);
+            var cooldown = _clickingKoma switch
+            {
+                KomaUnit fieldKoma => 
+                    await _myAction.PerformMoveClickingKomaToDestination(fieldKoma, _destPiece, battleCanvas.CooldownBar),
+                _ => throw new NotImplementedException()
+            };
 
-            // 進める場所のハイライト解除
+            // 進める場所や置ける場所ハイライト解除
             boardMapRef.ForEach(piece => piece.EnableHighlight(false));
             
             // クリック中の駒を解除
@@ -162,7 +188,7 @@ namespace RtShogi.Scripts.Battle
             _destKomaGhost = null;
             
             // クールダウンバーの値を0まで減らす演出
-            if (cooldown.Seconds > 0) await CooldownAnimation.GoDownToZeroCooldown(cooldownBar, cooldown.Seconds);
+            if (cooldown.Seconds > 0) await CooldownAnimation.GoDownToZeroCooldown(battleCanvas.CooldownBar, cooldown.Seconds);
             
             return cooldown;
         }

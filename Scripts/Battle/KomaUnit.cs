@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
-    public class KomaUnit : MonoBehaviour
+    public class KomaUnit : MonoBehaviour, IPlayerClickable
     {
         [SerializeField] private MeshFilter viewMeshFilter;
         [SerializeField] private MeshRenderer viewMeshRenderer;

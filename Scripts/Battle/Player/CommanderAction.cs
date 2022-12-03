@@ -14,11 +14,11 @@ namespace RtShogi.Scripts.Battle.Player
         /// <summary>
         /// 選択中の駒をhighlight表示
         /// </summary>
-        public void HighlightMovableList(BoardPiece piece, KomaUnit clickingKoma)
+        public void HighlightMovableList(KomaUnit clickingKoma)
         {
             var movableList = new KomaMovableRoute(
                     clickingKoma.Kind,
-                    ImBoardPoint.FromReal(piece.Point, true),
+                    ImBoardPoint.FromReal(clickingKoma.MountedPiece.Point, true),
                     (point) =>
                         boardMapRef.IsInMapRange(point.ToReal(true)) &&
                         boardMapRef.TakePiece(point.ToReal(true)).Holding == null
