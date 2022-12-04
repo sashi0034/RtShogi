@@ -15,10 +15,9 @@ namespace RtShogi.Scripts.Battle.UI
     public class ObtainedKomaElement : MonoBehaviour
     {
         [SerializeField] private Image iconImage;
-        public Image IconImage => iconImage;
-        
         [SerializeField] private TextMeshProUGUI textQty;
         [SerializeField] private Image foregroundShadow;
+        [SerializeField] private Image cursorIconPrefab;
 
         private EKomaKind _kind;
         public EKomaKind Kind => _kind;
@@ -45,6 +44,13 @@ namespace RtShogi.Scripts.Battle.UI
             _kind = props.Kind;
             iconImage.sprite = props.Icon;
             setQuantity(1);
+        }
+
+        public Image CreateIconCursorIcon(Transform parent)
+        {
+            var icon = Instantiate(cursorIconPrefab, parent);
+            icon.sprite = iconImage.sprite;
+            return icon;
         }
         private void setQuantity(int qty)
         {
@@ -75,6 +81,7 @@ namespace RtShogi.Scripts.Battle.UI
         [EventFunction]
         public void OnEndDrag()
         {
+            if (gameObject == null) return;
             _tweenAnim.Kill();
             _tweenAnim = transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.InOutBack);
             _hasEndDrag.UpFlag();

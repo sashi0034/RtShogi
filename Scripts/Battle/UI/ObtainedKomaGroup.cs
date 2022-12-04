@@ -47,6 +47,7 @@ namespace RtShogi.Scripts.Battle.UI
             element.DecQuantity();
             if (element.NumQuantity>0) return;
             _showingList.Remove(element);
+            Util.DestroyGameObject(element.gameObject);
         }
 
         private bool pushElementIfSameExistInCurrentList(ObtainedKomaElementProps props)

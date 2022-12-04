@@ -133,6 +133,7 @@ MonoBehaviour:
   iconImage: {fileID: 1321940201359817822}
   textQty: {fileID: 6072209176575979390}
   foregroundShadow: {fileID: 1637594180865867477}
+  cursorIconPrefab: {fileID: 4098621913846886638, guid: fd34c4abcca40c947bb1e3436ecb1985, type: 3}
 --- !u!114 &8346851154111871297
 MonoBehaviour:
   m_ObjectHideFlags: 0

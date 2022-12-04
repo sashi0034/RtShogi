@@ -15,9 +15,11 @@ namespace RtShogi.Scripts.Battle
     
     public interface IPlayerClickable{}
 
-    public record PlayerClickingObtainedKoma(
+    public record PlayerDraggingObtainedKoma(
+        ObtainedKomaElement DraggingElement, 
         EKomaKind Kind,
-        GameObject HoverCursor) : IPlayerClickable
+        RectTransform HoverCursor) : 
+        IPlayerClickable
     {
         private EKomaKind kind;
     }
@@ -43,7 +45,7 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Awake()
         {
-            _myAction = new CommanderAction(boardManagerRef);
+            _myAction = new CommanderAction(boardManagerRef, battleCanvas);
         }
 
         [EventFunction]
@@ -75,7 +77,7 @@ namespace RtShogi.Scripts.Battle
                 if (await checkStopProcess()) return new PlayerCooldownTime(0);
             }
 
-            while (!Input.GetMouseButtonUp(leftButtonId))
+            while (!isEndDragging(_selectingKoma))
             {
                 // 左クリックでドラッグ中
                 updateWhileDragging();
@@ -110,7 +112,7 @@ namespace RtShogi.Scripts.Battle
                     _myAction.HighlightMovableList(fieldKoma);
                     animPieceSelected(fieldKoma).Forget();
                     break;
-                case PlayerClickingObtainedKoma obtainedKoma:
+                case PlayerDraggingObtainedKoma obtainedKoma:
                     _myAction.HighlightInstallableList(obtainedKoma.Kind);
                     break;
                 default:
@@ -133,7 +135,7 @@ namespace RtShogi.Scripts.Battle
             return piece == null ? null : piece.Holding;
         }
 
-        private PlayerClickingObtainedKoma? checkDragObtainedKoma()
+        private PlayerDraggingObtainedKoma? checkDragObtainedKoma()
         {
             var dragging = battleCanvas.ObtainedKomaGroup.FindDraggingElem();
             if (dragging == null) return null;
@@ -141,8 +143,8 @@ namespace RtShogi.Scripts.Battle
             Debug.Log("start drag obtained koma");
 
             EKomaKind kind = dragging.Kind;
-            var cursor = Instantiate(dragging.IconImage.gameObject, dragging.transform);
-            return new PlayerClickingObtainedKoma(kind, cursor.gameObject);
+            var cursor = dragging.CreateIconCursorIcon(battleCanvas.ParentCanvas.transform);
+            return new PlayerDraggingObtainedKoma(dragging, kind, cursor.rectTransform);
         }
 
         private BoardPiece? findPieceRayedByMousePos()
@@ -163,7 +165,7 @@ namespace RtShogi.Scripts.Battle
             _destKomaGhost = _selectingKoma switch
             {
                 KomaUnit fieldKoma => Instantiate(fieldKoma, transform),
-                PlayerClickingObtainedKoma obtainedKoma => komaManager.CreateVirtualKoma(obtainedKoma.Kind, ETeam.Ally),
+                PlayerDraggingObtainedKoma obtainedKoma => komaManager.CreateVirtualKoma(obtainedKoma.Kind, ETeam.Ally),
                 _ => throw new NotImplementedException()
             };
 
@@ -181,16 +183,16 @@ namespace RtShogi.Scripts.Battle
             
             bool canPut = piece != null && piece.IsActiveHighlight(); 
             _destKomaGhost.gameObject.SetActive(canPut);
+            
+            // 獲得したドラッグ中の駒はカーソルの移動
+            if (_selectingKoma is PlayerDraggingObtainedKoma draggingObtained) 
+                _myAction.MoveObtainedKomaHoverCursor(draggingObtained, canPut);
+            
             if (!canPut) return;
 
             var destPos = piece.transform.position;
             destPos.y = BoardPiece.KomaPosY;
             _destKomaGhost.transform.position = destPos;
-            
-            if (_selectingKoma is PlayerClickingObtainedKoma obtainedKoma)
-            {
-                // TODO: obtainedKoma.HoverCursorの移動
-            }
         }
 
         private async UniTask<PlayerCooldownTime> performOnUpLeftMouse()
@@ -199,18 +201,23 @@ namespace RtShogi.Scripts.Battle
             var cooldown = _selectingKoma switch
             {
                 KomaUnit fieldKoma => 
-                    await _myAction.PerformMoveClickingKomaToDestination(fieldKoma, _destPiece, battleCanvas.CooldownBar),
-                _ => throw new NotImplementedException()
+                    await _myAction.PerformMoveClickingKomaToDestination(
+                        fieldKoma, _destPiece, battleCanvas.CooldownBar),
+                PlayerDraggingObtainedKoma obtainedKoma => 
+                    await _myAction.PerformInstallObtainedKomaToDestination(
+                        obtainedKoma, _destPiece, battleCanvas.CooldownBar, komaManager),
+                _ => throw new ArgumentOutOfRangeException(nameof(_selectingKoma)),
             };
 
             // 進める場所や置ける場所ハイライト解除
             boardMapRef.ForEach(piece => piece.EnableHighlight(false));
             
             // クリック中の駒を解除
+            onUnselectSelectedKoma(cooldown);
             _selectingKoma = null;
             
             // ゴースト削除
-            Util.DestroyGameObject(_destKomaGhost.gameObject);
+            if (_destKomaGhost != null) Util.DestroyGameObject(_destKomaGhost.gameObject);
             _destKomaGhost = null;
             
             // クールダウンバーの値を0まで減らす演出
@@ -219,9 +226,34 @@ namespace RtShogi.Scripts.Battle
             return cooldown;
         }
 
+        private void onUnselectSelectedKoma(PlayerCooldownTime cooldownTime)
+        {
+            switch (_selectingKoma)
+            {
+                case KomaUnit:
+                    break;
+                case PlayerDraggingObtainedKoma obtainedKoma:
+                    if (obtainedKoma.HoverCursor != null) Util.DestroyGameObject(obtainedKoma.HoverCursor.gameObject);
+                    if (cooldownTime.Seconds<=0) break;
+                    battleCanvas.ObtainedKomaGroup.DecElement(obtainedKoma.DraggingElement);
+                    break;
+            }
+        }
+
         private bool isSelecting()
         {
             return _selectingKoma != null;
+        }
+        
+        
+        private static bool isEndDragging(IPlayerClickable clicking)
+        {
+            return clicking switch
+            {
+                KomaUnit komaUnit => Input.GetMouseButtonUp(leftButtonId),
+                PlayerDraggingObtainedKoma obtainedKoma => obtainedKoma.DraggingElement.HasEndDrag.TakeFlag(),
+                _ => throw new ArgumentOutOfRangeException(nameof(clicking))
+            };
         }
 
 #if UNITY_EDITOR

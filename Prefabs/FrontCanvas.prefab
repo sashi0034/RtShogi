@@ -1374,6 +1374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldownBar: {fileID: 1606212089816337976}
   obtainedKomaGroup: {fileID: 8351239212710088547}
+  _parentCanvas: {fileID: 7491167908546660375}
 --- !u!1 &2403059270090221102
 GameObject:
   m_ObjectHideFlags: 0

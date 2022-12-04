@@ -4,13 +4,34 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.Player
 {
     public record CommanderAction(
-        BoardManager BoardManagerRef)
+        BoardManager BoardManagerRef,
+        BattleCanvas BattleCanvas)
     {
         private BoardMap boardMapRef => BoardManagerRef.BoardMap;
+
+
+        /// <summary>
+        /// 獲得した駒を移動させているときにカーソルを移動
+        /// </summary>
+        /// <param name="dragging"></param>
+        public void MoveObtainedKomaHoverCursor(PlayerDraggingObtainedKoma dragging, bool canPutMousePosNow)
+        {
+            var canvasRect = BattleCanvas.RectTransform;
+            
+            dragging.HoverCursor.gameObject.SetActive(!canPutMousePosNow);
+                
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect, 
+                Input.mousePosition, 
+                BattleCanvas.ParentCanvas.worldCamera, 
+                out var localPoint);
+            dragging.HoverCursor.anchoredPosition = localPoint;
+        }
         
         /// <summary>
         /// 選択中の駒をhighlight表示
@@ -76,10 +97,34 @@ namespace RtShogi.Scripts.Battle.Player
                 new ImBoardPoint(destPiece.Point));
             if (canForm==EKomaFormAble.FormForced) clickingKoma.FormSelf();
             
+            // 盤上処理
             clickingKoma.MountedPiece.RemoveKoma();
             destPiece.PutKoma(clickingKoma);
             //clickingKoma.transform.position = destPiece.GetKomaPos();
             clickingKoma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);
+
+            return new PlayerCooldownTime(delay);
+        }
+        
+        /// <summary>
+        /// クールダウンバーを出して駒を設置する
+        /// </summary>
+        public async UniTask<PlayerCooldownTime> PerformInstallObtainedKomaToDestination(
+            PlayerDraggingObtainedKoma? dragging, 
+            BoardPiece? destPiece,
+            UI.CooldownBar cooldownBar,
+            KomaManager komaManager)
+        {
+            if (dragging==null || destPiece==null) return new PlayerCooldownTime(0);
+            if (!destPiece.IsActiveHighlight()) return new PlayerCooldownTime(0);
+            
+            const float delay = 2.0f;
+            
+            // クールダウンバーを画面に出す
+            await CooldownAnimation.ShowCooldown(cooldownBar, delay);
+            
+            // 盤上処理
+            komaManager.PutNewKoma(destPiece.Point, dragging.Kind, ETeam.Ally);
 
             return new PlayerCooldownTime(delay);
         }
