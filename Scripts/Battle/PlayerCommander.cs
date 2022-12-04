@@ -76,6 +76,8 @@ namespace RtShogi.Scripts.Battle
                 checkDownLeftMouse();
                 if (await checkStopProcess()) return new PlayerCooldownTime(0);
             }
+            
+            Logger.Print("start drag");
 
             while (!isEndDragging(_selectingKoma))
             {
@@ -83,6 +85,8 @@ namespace RtShogi.Scripts.Battle
                 updateWhileDragging();
                 if (await checkStopProcess()) return new PlayerCooldownTime(0);
             }
+            
+            Logger.Print("end drag");
 
             // 左クリックを離した
             return await performOnUpLeftMouse();
@@ -105,6 +109,8 @@ namespace RtShogi.Scripts.Battle
                 (IPlayerClickable?)checkDragObtainedKoma();
 
             if (_selectingKoma == null) return;
+            
+            Logger.Print("select koma and start highlighting pieces");
             
             switch (_selectingKoma)
             {

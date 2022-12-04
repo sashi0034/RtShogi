@@ -13,6 +13,7 @@ namespace RtShogi.Scripts.Battle
         public List<ImBoardPoint> GetInstallablePoints()
         {
             // TODO: 正しいものを作る
+            // TODO: 次回
             return 
                 (from x in Enumerable.Range(0, BoardMap.SideLength)
                 from z in Enumerable.Range(0, BoardMap.SideLength) 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 namespace RtShogi.Scripts
 {
@@ -15,6 +16,11 @@ namespace RtShogi.Scripts
         public void UpFlag()
         {
             _flag = true;
+        }
+
+        public void Clear()
+        {
+            _flag = false;
         }
 
         public bool TakeFlag()

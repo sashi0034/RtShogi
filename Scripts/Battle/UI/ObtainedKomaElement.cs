@@ -76,6 +76,7 @@ namespace RtShogi.Scripts.Battle.UI
             _tweenAnim.Kill();
             _tweenAnim = transform.DOScale(Vector3.one * 0.9f, 0.3f).SetEase(Ease.InOutBack);
             _hasBeginDrag.UpFlag();
+            _hasEndDrag.Clear();
         }
         
         [EventFunction]
