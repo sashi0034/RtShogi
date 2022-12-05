@@ -47,6 +47,10 @@ namespace RtShogi.Scripts.Battle
     public struct ImBoardPoint
     {
         public readonly BoardPoint Raw;
+
+        public ImBoardPoint(int x, int z) : this(new BoardPoint(x, z))
+        { }
+
         public ImBoardPoint(BoardPoint raw)
         {
             Raw = raw;

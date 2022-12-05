@@ -18,6 +18,7 @@ namespace RtShogi.Scripts.Battle
         public EKomaKind OriginalKind => _originalKind;
         
         private ETeam _team;
+        public ETeam Team => _team;
         private BoardPiece _mountedPiece;
         public BoardPiece MountedPiece => _mountedPiece;
 

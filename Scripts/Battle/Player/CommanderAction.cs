@@ -63,11 +63,8 @@ namespace RtShogi.Scripts.Battle.Player
         {
             var movableList = new KomaInstallablePoints(
                     kind,
-                    (point) =>
-                    {
-                        var holding = boardMapRef.TakePiece(point.Raw).Holding;
-                        return holding != null ? holding.Kind : null;
-                    })
+                    ETeam.Ally,
+                    (point) => boardMapRef.TakePiece(point.Raw).Holding)
                 .GetInstallablePoints()
                 .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();
 
