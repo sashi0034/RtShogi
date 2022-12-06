@@ -12,7 +12,10 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private KomaUnit komaUnitPrefab;
         [SerializeField] private KomaViewProps[] komaViewPropsList;
         [SerializeField] private BoardManager boardManagerRef;
+        [SerializeField] private BattleRpcaller battleRpcaller;
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
+
+        private IntCounter _createdLocalCounter = new IntCounter();
 
         [EventFunction]
         private void Awake()
@@ -29,6 +32,8 @@ namespace RtShogi.Scripts.Battle
 
         private void initAllKomaOnBoard()
         {
+            _createdLocalCounter.Reset();
+            
             const int startZ = 6;
 
             foreach(int x in Enumerable.Range(0, 9))
@@ -51,7 +56,9 @@ namespace RtShogi.Scripts.Battle
 
         public void PutNewKoma(BoardPoint point, EKomaKind kind, ETeam team)
         {
-            var koma = CreateVirtualKoma(kind, team);
+            _createdLocalCounter.CountNext();
+            var id = KomaId.PublishId(_createdLocalCounter.Value, battleRpcaller.IsRoomHost());
+            var koma = createKomaInternal(kind, team, id);
             var boardPiece = boardMapRef.TakePiece(point);
             boardPiece.PutKoma(koma);
             koma.transform.position = boardPiece.GetKomaPos();
@@ -59,8 +66,13 @@ namespace RtShogi.Scripts.Battle
 
         public KomaUnit CreateVirtualKoma(EKomaKind kind, ETeam team)
         {
+            return createKomaInternal(kind, team, KomaId.InvalidId);
+        }
+
+        private KomaUnit createKomaInternal(EKomaKind kind, ETeam team, KomaId id)
+        {
             var koma = Instantiate(komaUnitPrefab, transform);
-            koma.InitProps(komaViewPropsList[(int)kind], team);
+            koma.InitProps(komaViewPropsList[(int)kind], team, id);
             return koma;
         }
 

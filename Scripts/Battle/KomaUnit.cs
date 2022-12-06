@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
-    public class KomaUnit : MonoBehaviour, IPlayerClickable
+    public class KomaUnit : MonoBehaviour
     {
         [SerializeField] private MeshFilter viewMeshFilter;
         [SerializeField] private MeshRenderer viewMeshRenderer;
@@ -22,12 +22,15 @@ namespace RtShogi.Scripts.Battle
         private BoardPiece _mountedPiece;
         public BoardPiece MountedPiece => _mountedPiece;
 
+        private KomaId _id;
+        public KomaId Id => _id;
+
         public void ResetMountedPiece(BoardPiece piece)
         {
             _mountedPiece = piece;
         }
 
-        public void InitProps(KomaViewProps props, ETeam team)
+        public void InitProps(KomaViewProps props, ETeam team, KomaId id)
         {
             viewMeshFilter.sharedMesh = props.Mesh;
             if (props.Materials is { Length: > 0 }) viewMeshRenderer.materials = props.Materials;
@@ -35,6 +38,7 @@ namespace RtShogi.Scripts.Battle
             if (team==ETeam.Ally) transform.Rotate(new Vector3(0, 180, 0));
             _originalKind = props.Kind;
             _kind = props.Kind;
+            _id = id;
         }
 
         public void FormSelf()

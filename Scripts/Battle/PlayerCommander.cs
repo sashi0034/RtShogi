@@ -15,15 +15,14 @@ namespace RtShogi.Scripts.Battle
     
     public interface IPlayerClickable{}
 
+    public record PlayerClickedBoardKoma(KomaUnit Koma) : IPlayerClickable;
+
     public record PlayerDraggingObtainedKoma(
-        ObtainedKomaElement DraggingElement, 
+        ObtainedKomaElement DraggingElement,
         EKomaKind Kind,
-        RectTransform HoverCursor) : 
-        IPlayerClickable
-    {
-        private EKomaKind kind;
-    }
-    
+        RectTransform HoverCursor) :
+        IPlayerClickable;
+
     public class PlayerCommander : MonoBehaviour
     {
         [SerializeField] private BoardManager boardManagerRef;
@@ -114,9 +113,9 @@ namespace RtShogi.Scripts.Battle
             
             switch (_selectingKoma)
             {
-                case KomaUnit fieldKoma:
-                    _myAction.HighlightMovableList(fieldKoma);
-                    animPieceSelected(fieldKoma).Forget();
+                case PlayerClickedBoardKoma fieldKoma:
+                    _myAction.HighlightMovableList(fieldKoma.Koma);
+                    animPieceSelected(fieldKoma.Koma).Forget();
                     break;
                 case PlayerDraggingObtainedKoma obtainedKoma:
                     _myAction.HighlightInstallableList(obtainedKoma.Kind);
@@ -135,10 +134,10 @@ namespace RtShogi.Scripts.Battle
             await holding.gameObject.transform.DOScale(1.0f, 0.3f).SetEase(Ease.OutBack);
         }
 
-        private KomaUnit? findKomaOnPieceRayedByMousePos()
+        private PlayerClickedBoardKoma? findKomaOnPieceRayedByMousePos()
         {
             var piece = findPieceRayedByMousePos();
-            return piece == null ? null : piece.Holding;
+            return piece == null ? null : new PlayerClickedBoardKoma(piece.Holding);
         }
 
         private PlayerDraggingObtainedKoma? checkDragObtainedKoma()
@@ -170,7 +169,7 @@ namespace RtShogi.Scripts.Battle
         {
             _destKomaGhost = _selectingKoma switch
             {
-                KomaUnit fieldKoma => Instantiate(fieldKoma, transform),
+                PlayerClickedBoardKoma fieldKoma => Instantiate(fieldKoma.Koma, transform),
                 PlayerDraggingObtainedKoma obtainedKoma => komaManager.CreateVirtualKoma(obtainedKoma.Kind, ETeam.Ally),
                 _ => throw new NotImplementedException()
             };
@@ -206,9 +205,9 @@ namespace RtShogi.Scripts.Battle
             // 駒を盤上で目的地に移動させる
             var cooldown = _selectingKoma switch
             {
-                KomaUnit fieldKoma => 
+                PlayerClickedBoardKoma fieldKoma => 
                     await _myAction.PerformMoveClickingKomaToDestination(
-                        fieldKoma, _destPiece, battleCanvas.CooldownBar),
+                        fieldKoma.Koma, _destPiece, battleCanvas.CooldownBar),
                 PlayerDraggingObtainedKoma obtainedKoma => 
                     await _myAction.PerformInstallObtainedKomaToDestination(
                         obtainedKoma, _destPiece, battleCanvas.CooldownBar, komaManager),
@@ -236,7 +235,7 @@ namespace RtShogi.Scripts.Battle
         {
             switch (_selectingKoma)
             {
-                case KomaUnit:
+                case PlayerClickedBoardKoma:
                     break;
                 case PlayerDraggingObtainedKoma obtainedKoma:
                     if (obtainedKoma.HoverCursor != null) Util.DestroyGameObject(obtainedKoma.HoverCursor.gameObject);
@@ -256,7 +255,7 @@ namespace RtShogi.Scripts.Battle
         {
             return clicking switch
             {
-                KomaUnit komaUnit => Input.GetMouseButtonUp(leftButtonId),
+                PlayerClickedBoardKoma komaUnit => Input.GetMouseButtonUp(leftButtonId),
                 PlayerDraggingObtainedKoma obtainedKoma => obtainedKoma.DraggingElement.HasEndDrag.TakeFlag(),
                 _ => throw new ArgumentOutOfRangeException(nameof(clicking))
             };
