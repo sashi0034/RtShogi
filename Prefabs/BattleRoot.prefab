@@ -444,6 +444,7 @@ MonoBehaviour:
     materials: []
     sprIcon: {fileID: 0}
   boardManagerRef: {fileID: 4574128778553497581}
+  battleRpcaller: {fileID: 2353827558821020601}
 --- !u!1 &5590009322083145539
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,7 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private KomaViewProps[] komaViewPropsList;
         [SerializeField] private BoardManager boardManagerRef;
         [SerializeField] private BattleRpcaller battleRpcaller;
+        
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
 
         private IntCounter _createdLocalCounter = new IntCounter();

@@ -137,7 +137,12 @@ namespace RtShogi.Scripts.Battle
         private PlayerClickedBoardKoma? findKomaOnPieceRayedByMousePos()
         {
             var piece = findPieceRayedByMousePos();
-            return piece == null ? null : new PlayerClickedBoardKoma(piece.Holding);
+            if (piece == null) return null;
+
+            var holding = piece.Holding;
+            if (holding == null) return null;
+            
+            return new PlayerClickedBoardKoma(holding);
         }
 
         private PlayerDraggingObtainedKoma? checkDragObtainedKoma()
