@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Resolvers;
 using RtShogi.Scripts.Battle;
 using Sirenix.Utilities;
 using UnityEngine;
@@ -28,39 +29,45 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Start()
         {
-            initAllKomaOnBoard();
+            // InitAllKomaOnBoard();
         }
 
-        private void initAllKomaOnBoard()
+        public void InitAllKomaOnBoard()
         {
             _createdLocalCounter.Reset();
-            
-            const int startZ = 6;
 
             foreach(int x in Enumerable.Range(0, 9))
-                PutNewKoma(new BoardPoint(x, 2), EKomaKind.Hu, ETeam.Ally);
+                CreateAndInstallKoma(new BoardPoint(x, 2), EKomaKind.Hu, ETeam.Ally);
             
-            PutNewKoma(new BoardPoint(1, 1), EKomaKind.Kaku, ETeam.Ally);
-            PutNewKoma(new BoardPoint(7, 1), EKomaKind.Hisha, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(1, 1), EKomaKind.Kaku, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(7, 1), EKomaKind.Hisha, ETeam.Ally);
             
-            PutNewKoma(new BoardPoint(0, 0), EKomaKind.Kyosha, ETeam.Ally);
-            PutNewKoma(new BoardPoint(1, 0), EKomaKind.Keima, ETeam.Ally);
-            PutNewKoma(new BoardPoint(2, 0), EKomaKind.Gin, ETeam.Ally);
-            PutNewKoma(new BoardPoint(3, 0), EKomaKind.Kin, ETeam.Ally);
-            PutNewKoma(new BoardPoint(4, 0), EKomaKind.Oh, ETeam.Ally);
-            PutNewKoma(new BoardPoint(5, 0), EKomaKind.Kin, ETeam.Ally);
-            PutNewKoma(new BoardPoint(6, 0), EKomaKind.Gin, ETeam.Ally);
-            PutNewKoma(new BoardPoint(7, 0), EKomaKind.Keima, ETeam.Ally);
-            PutNewKoma(new BoardPoint(8, 0), EKomaKind.Kyosha, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(0, 0), EKomaKind.Kyosha, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(1, 0), EKomaKind.Keima, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(2, 0), EKomaKind.Gin, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(3, 0), EKomaKind.Kin, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(4, 0), EKomaKind.Oh, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(5, 0), EKomaKind.Kin, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(6, 0), EKomaKind.Gin, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(7, 0), EKomaKind.Keima, ETeam.Ally);
+            CreateAndInstallKoma(new BoardPoint(8, 0), EKomaKind.Kyosha, ETeam.Ally);
         }
         
+        
 
-        public void PutNewKoma(BoardPoint point, EKomaKind kind, ETeam team)
+        [UsingBattleRpcaller]
+        public void CreateAndInstallKoma(BoardPoint point, EKomaKind kind, ETeam team)
         {
             _createdLocalCounter.CountNext();
             var id = KomaId.PublishId(_createdLocalCounter.Value, battleRpcaller.IsRoomHost());
-            var koma = createKomaInternal(kind, team, id);
-            var boardPiece = boardMapRef.TakePiece(point);
+            battleRpcaller.RpcallPutNewKoma(new KomaPutInfo(point, kind, team, id));
+        }
+
+        [FromBattleRpcaller]
+        public void PutNewKoma(KomaPutInfo putInfo)
+        {
+            var koma = createKomaInternal(putInfo.Kind, putInfo.Team, putInfo.Id);
+            var boardPiece = boardMapRef.TakePiece(putInfo.Point);
             boardPiece.PutKoma(koma);
             koma.transform.position = boardPiece.GetKomaPos();
         }

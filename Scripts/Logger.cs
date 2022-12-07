@@ -6,7 +6,9 @@ namespace RtShogi.Scripts
     {
         public static void Print(string text)
         {
-            UnityEngine.Debug.Log(fixText(text));
+            var showingText = fixText(text);
+            UnityEngine.Debug.Log(showingText);
+            LogCanvas.Instance.Print(showingText);
         }
         
         private static string fixText(string text)

@@ -30,7 +30,7 @@ namespace RtShogi.Scripts.Battle
             return new BoardPoint(X + x, Z + z);
         }
 
-        public BoardPoint ToFlipped()
+        public BoardPoint ToReversed()
         {
             return new BoardPoint(BoardManager.BoardSize.W - 1 - X, BoardManager.BoardSize.H - 1 - Z);
         }
@@ -38,6 +38,17 @@ namespace RtShogi.Scripts.Battle
         public static BoardPoint operator+ (double z, BoardPoint w)
         {
             return new BoardPoint();
+        }
+
+        public byte[] SerializeToBytes()
+        {
+            Debug.Assert(new IntRange(0, 255).IsInRange(X));
+            Debug.Assert(new IntRange(0, 255).IsInRange(Z));
+            return new byte[] {(byte)X, (byte)Z };
+        }
+        public static BoardPoint DeserializeFromBytes(byte[] bytes)
+        {
+            return new BoardPoint(bytes[0], bytes[1]);
         }
     }
 
@@ -67,7 +78,7 @@ namespace RtShogi.Scripts.Battle
         {
             return isLocal 
                 ? new ImBoardPoint(point)
-                : new ImBoardPoint(new BoardPoint(BoardMap.BoardSize.W - 1 - point.X, BoardMap.BoardSize.H - 1 - point.Z));
+                : new ImBoardPoint(new BoardPoint(point.X, point.Z).ToReversed());
         }
 
     }

@@ -300,6 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b487b1c36ec941588ca1b7853619293b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  komaManager: {fileID: 878369053750863485}
 --- !u!114 &4655959018278669946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,6 +332,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3652667405635496189}
+  - component: {fileID: 3455996133615162230}
   m_Layer: 0
   m_Name: BattleRoot
   m_TagString: Untagged
@@ -358,6 +360,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3455996133615162230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3652667405635496188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af8aca1639044f8b94a83edb096a037f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  komaManager: {fileID: 878369053750863485}
 --- !u!1 &3836209163274351066
 GameObject:
   m_ObjectHideFlags: 0
