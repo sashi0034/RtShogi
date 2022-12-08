@@ -42,9 +42,8 @@ namespace RtShogi.Scripts.Battle.Player
             var movableList = new KomaMovableRoute(
                     clickingKoma.Kind,
                     ImBoardPoint.FromReal(clickingKoma.MountedPiece.Point, true),
-                    (point) =>
-                        boardMapRef.IsInMapRange(point.ToReal(true)) &&
-                        canMoveAllyUnit(point)
+                    ETeam.Enemy,
+                    (point) => boardMapRef.TakePieceNullable(point.ToReal(true))?.Holding
                 )
                 .GetMovablePoints()
                 .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();

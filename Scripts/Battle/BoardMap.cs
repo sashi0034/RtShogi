@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -40,6 +42,12 @@ namespace RtShogi.Scripts.Battle
         public BoardPiece TakePiece(BoardPoint point)
         {
             return boardPieces[point.Z + point.X * BoardManager.BoardSize.W];
+        }
+        public BoardPiece? TakePieceNullable(BoardPoint point)
+        {
+            return IsInMapRange(point)
+                ? boardPieces[point.Z + point.X * BoardManager.BoardSize.W]
+                : null;
         }
         public BoardPiece TakePiece(int x, int z)
         {

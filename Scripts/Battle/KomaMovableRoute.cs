@@ -1,30 +1,39 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
 
 namespace RtShogi.Scripts.Battle
 {
     public record KomaMovableRoute(
         EKomaKind Kind,
         ImBoardPoint CurrPoint,
-        Func<ImBoardPoint, bool> CanMoveTo)
+        ETeam OpponentTeam,
+        Func<ImBoardPoint, KomaUnit?> KomaGetter)
     {
         BoardPoint currPoint => CurrPoint.Raw;
-        private Func<BoardPoint, bool> canMoveTo => (point) => CanMoveTo(new ImBoardPoint(point));
+        private Func<BoardPoint, KomaUnit?> komaGetter => (point) => KomaGetter(new ImBoardPoint(point));
         private int sideLength => BoardManager.SideLength;
 
-        private List<BoardPoint> validate(List<BoardPoint> list)
+        private bool isNullOrEnemyPoint(BoardPoint point)
         {
-            return list.Where(point => canMoveTo(point)).ToList();
+            var koma = komaGetter(point);
+            if (koma == null) return true;
+            return koma.Team == OpponentTeam;
+        }
+
+        private List<BoardPoint> includeOnlyNullOrEnemy(List<BoardPoint> list)
+        {
+            return list.Where(isNullOrEnemyPoint).ToList();
         }
         
         public List<ImBoardPoint> GetMovablePoints()
         {
             return (Kind switch
             {
-                EKomaKind.Hu => validate(new List<BoardPoint>() { currPoint.Move(0, 1) }),
-                EKomaKind.Keima => validate(new List<BoardPoint>() { currPoint.Move(-1, 2), currPoint.Move(1, 2) }),
+                EKomaKind.Hu => includeOnlyNullOrEnemy(new List<BoardPoint>() { currPoint.Move(0, 1) }),
+                EKomaKind.Keima => includeOnlyNullOrEnemy(new List<BoardPoint>() { currPoint.Move(-1, 2), currPoint.Move(1, 2) }),
                 EKomaKind.Kyosha => getMovableOfKyosha(),
                 EKomaKind.Kaku => getMovableOfKaku(false),
                 EKomaKind.Hisha => getMovableOfHisha(false),
@@ -44,59 +53,61 @@ namespace RtShogi.Scripts.Battle
 
         private List<BoardPoint> getMovableOfKyosha()
         {
-            var result = new List<BoardPoint>() { };
-            foreach (var z in Enumerable.Range(1, sideLength))
-            {
-                var next = currPoint.Move(0, z);
-                if (!canMoveTo(next)) break;
-                result.Add(next);
-            }
+            var result = new List<BoardPoint>();
+            pushUntilEnemyFound(result, 0, 1);
             return result;
+        }
+        
+        private void pushUntilEnemyFound(List<BoardPoint> currList, int vecX, int vecZ)
+        {
+            foreach (var index in Enumerable.Range(1, sideLength))
+            {
+                var next = currPoint.Move(index * vecX, index * vecZ);
+                if (!next.IsValidPoint()) break;
+                
+                var koma = komaGetter(next);
+                if (koma != null && koma.Team != OpponentTeam) break;
+                
+                currList.Add(next);
+                if (koma != null && koma.Team == OpponentTeam) break;
+            }
         }
 
         private List<BoardPoint> getMovableOfKaku(bool isFormed)
         {
-            var result = validate(isFormed
+            var result = includeOnlyNullOrEnemy(isFormed
                 ? new List<BoardPoint>
                 {
                     currPoint.Move(0, 1), currPoint.Move(0, -1),
                     currPoint.Move(-1, 0), currPoint.Move(1, 0)
                 }
                 : new List<BoardPoint> {});
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(i, i)).TakeWhile(next => canMoveTo(next)));
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(i, -i)).TakeWhile(next => canMoveTo(next)));
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(-i, i)).TakeWhile(next => canMoveTo(next)));
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(-i, -i)).TakeWhile(next => canMoveTo(next)));
+            pushUntilEnemyFound(result, 1, 1);
+            pushUntilEnemyFound(result, 1, -1);
+            pushUntilEnemyFound(result, -1, 1);
+            pushUntilEnemyFound(result, -1, -1);
             return result;
         }
         
         private List<BoardPoint> getMovableOfHisha(bool isFormed)
         {
-            var result = validate(isFormed
+            var result = includeOnlyNullOrEnemy(isFormed
                 ? new List<BoardPoint>
                 {
                     currPoint.Move(1, 1), currPoint.Move(1, -1),
                     currPoint.Move(-1, 1), currPoint.Move(-1, -1)
                 }
                 : new List<BoardPoint> {});
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(i, 0)).TakeWhile(next => canMoveTo(next)));
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(-i, 0)).TakeWhile(next => canMoveTo(next)));
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(0, i)).TakeWhile(next => canMoveTo(next)));
-            result.AddRange(Enumerable.Range(1, sideLength)
-                .Select(i => currPoint.Move(0, -i)).TakeWhile(next => canMoveTo(next)));
+            pushUntilEnemyFound(result, 1, 0);
+            pushUntilEnemyFound(result, -1, 0);
+            pushUntilEnemyFound(result, 0, 1);
+            pushUntilEnemyFound(result, 0, -1);
             return result;
         }
         
         private List<BoardPoint> getMovableOfGin()
         {
-            return validate(new List<BoardPoint>
+            return includeOnlyNullOrEnemy(new List<BoardPoint>
             {
                 currPoint.Move(-1, 1), currPoint.Move(0, 1), currPoint.Move(1, 1),
                 currPoint.Move(-1, -1), currPoint.Move(1, -1),
@@ -105,7 +116,7 @@ namespace RtShogi.Scripts.Battle
         
         private List<BoardPoint> getMovableOfKin()
         {
-            return validate(new List<BoardPoint>
+            return includeOnlyNullOrEnemy(new List<BoardPoint>
             {
                 currPoint.Move(-1, 1), currPoint.Move(+0, 1), currPoint.Move(+1, 1), 
                 currPoint.Move(-1, 0), currPoint.Move(+1, 0),
@@ -115,7 +126,7 @@ namespace RtShogi.Scripts.Battle
         
         private List<BoardPoint> getMovableOfOh()
         {
-            return validate(new List<BoardPoint>
+            return includeOnlyNullOrEnemy(new List<BoardPoint>
             {
                 currPoint.Move(-1, +1), currPoint.Move(0, +1), currPoint.Move(1, +1),
                 currPoint.Move(-1, +0), currPoint.Move(1, +0),

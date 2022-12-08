@@ -16,9 +16,15 @@ namespace RtShogi.Scripts.Battle
         }
         public BoardPoint DebugAssert()
         {
-            Debug.Assert(new IntRange(0, BoardManager.BoardSize.W-1).IsInRange(X), $"out of map: ({(X, Z)}");
-            Debug.Assert(new IntRange(0, BoardManager.BoardSize.H-1).IsInRange(X), $"out of map: ({(X, Z)}");
+            Debug.Assert(IsValidPoint());
             return this;
+        }
+
+        public bool IsValidPoint()
+        {
+            return
+                new IntRange(0, BoardManager.BoardSize.W - 1).IsInRange(X) &&
+                new IntRange(0, BoardManager.BoardSize.H - 1).IsInRange(Z);
         }
 
         public BoardPoint Move(BoardPoint point)
