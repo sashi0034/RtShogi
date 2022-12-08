@@ -19,7 +19,7 @@ namespace RtShogi.Scripts.Online
 
         private async UniTask startProcess(string playerName)
         {
-            await matchMakingManager.ProcessConnectToJoinRoom(new MatchPlayerRank(1), playerName);
+            await matchMakingManager.ProcessConnectToJoinRoom(new MatchPlayerRank(1), playerName, 3600);
             Logger.Print("finished connect");
             
             BattleRoot.Instance.KomaManager.InitAllKomaOnBoard();

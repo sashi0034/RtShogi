@@ -10,7 +10,8 @@ namespace RtShogi.Scripts.Battle.Player
 {
     public record CommanderAction(
         BoardManager BoardManagerRef,
-        BattleCanvas BattleCanvas)
+        BattleCanvas BattleCanvas,
+        BattleRpcaller Rpcaller)
     {
         private BoardMap boardMapRef => BoardManagerRef.BoardMap;
 
@@ -43,12 +44,18 @@ namespace RtShogi.Scripts.Battle.Player
                     ImBoardPoint.FromReal(clickingKoma.MountedPiece.Point, true),
                     (point) =>
                         boardMapRef.IsInMapRange(point.ToReal(true)) &&
-                        boardMapRef.TakePiece(point.ToReal(true)).Holding == null
+                        canMoveAllyUnit(point)
                 )
                 .GetMovablePoints()
                 .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();
 
             hilightPieceList(movableList);
+        }
+
+        private bool canMoveAllyUnit(ImBoardPoint point)
+        {
+            var koma = boardMapRef.TakePiece(point.ToReal(true)).Holding;
+            return koma==null || koma.Team==ETeam.Enemy;
         }
 
         private static void hilightPieceList(List<BoardPiece> list)
@@ -74,6 +81,7 @@ namespace RtShogi.Scripts.Battle.Player
         /// <summary>
         /// クールダウンバーを出して駒を目的地までアニメーション 
         /// </summary>
+        [UsingBattleRpcaller]
         public async UniTask<PlayerCooldownTime> PerformMoveClickingKomaToDestination(
             KomaUnit? clickingKoma, 
             BoardPiece? destPiece,
@@ -88,21 +96,26 @@ namespace RtShogi.Scripts.Battle.Player
             await CooldownAnimation.ShowCooldown(cooldownBar, delay);
             
             // 裏返す
-            var canForm = KomaFormingChecker.CheckFormAble(
+            var formAble = KomaFormingChecker.CheckFormAble(
                 clickingKoma.Kind,
                 new ImBoardPoint(clickingKoma.MountedPiece.Point), 
                 new ImBoardPoint(destPiece.Point));
-            if (canForm==EKomaFormAble.FormForced) clickingKoma.FormSelf();
+            if (formAble==EKomaFormAble.FormForced) clickingKoma.FormSelf();
             
             // 盤上処理
-            clickingKoma.MountedPiece.RemoveKoma();
-            destPiece.PutKoma(clickingKoma);
-            //clickingKoma.transform.position = destPiece.GetKomaPos();
-            clickingKoma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);
+            Rpcaller.RpcallMoveKomaOnBoard(clickingKoma, destPiece);
 
             return new PlayerCooldownTime(delay);
         }
-        
+
+        [FromBattleRpcaller]
+        public static void MoveKomaOnBoard(KomaUnit koma, BoardPiece destPiece)
+        {
+            koma.MountedPiece.RemoveKoma();
+            destPiece.PutKoma(koma);
+            koma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);
+        }
+
         /// <summary>
         /// クールダウンバーを出して駒を設置する
         /// </summary>

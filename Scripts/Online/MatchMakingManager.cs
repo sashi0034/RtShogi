@@ -25,7 +25,10 @@ namespace RtShogi.Scripts.Online
         /// <summary>
         /// 対戦までの接続の流れ
         /// </summary>
-        public async UniTask<MatchMakingResult> ProcessConnectToJoinRoom(MatchPlayerRank playerRank, string playerName)
+        public async UniTask<MatchMakingResult> ProcessConnectToJoinRoom(
+            MatchPlayerRank playerRank, 
+            string playerName,
+            int sessionTimeSec)
         {
             Logger.Print("init connect settings");
 
@@ -41,7 +44,7 @@ namespace RtShogi.Scripts.Online
             await _onConnectedToMaster.Take(1).GetAwaiter();
         
             // 最適なルームへランダムに参加する
-            var joinedResult = await joinSuitableRoomAsync(playerRank);
+            var joinedResult = await joinSuitableRoomAsync(playerRank, sessionTimeSec);
             if (joinedResult == MatchMakingResult.Succeeded) return MatchMakingResult.Succeeded;
 
             // 他のプレイヤーが見つからなかった
@@ -50,7 +53,7 @@ namespace RtShogi.Scripts.Online
         }
 
 
-        private async UniTask<MatchMakingResult> joinSuitableRoomAsync(MatchPlayerRank playerRank)
+        private async UniTask<MatchMakingResult> joinSuitableRoomAsync(MatchPlayerRank playerRank, int sessionTimeSec)
         {
             // プレイヤーと同じランクの部屋があれば入る
             MatchMakingResult joinResult = await tryJoinRoomAsync(playerRank);
@@ -62,7 +65,7 @@ namespace RtShogi.Scripts.Online
             // ほかのプレイヤーが来るまで待つ
             var taskWaitInRoomCancellation = new CancellationTokenSource();
             var taskWaitInRoom = waitUntilOtherPlayerJoinRoom(taskWaitInRoomCancellation.Token);
-            int maxTimeWaitInRoom = 60 * 1000;
+            int maxTimeWaitInRoom = sessionTimeSec * 1000;
 
             int taskWaitedIndex = await UniTask.WhenAny(taskWaitInRoom, UniTask.Delay(maxTimeWaitInRoom));
             if (taskWaitedIndex == 0) return MatchMakingResult.Succeeded;

@@ -17,7 +17,11 @@ namespace RtShogi.Scripts.Battle
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
 
-        private IntCounter _createdLocalCounter = new IntCounter();
+        private readonly IntCounter _createdLocalCounter = new IntCounter();
+
+        private readonly BoardKomaList _boardKomaList = new BoardKomaList();
+        public IBoardKomaListGetter List => _boardKomaList;
+        
 
         [EventFunction]
         private void Awake()
@@ -29,13 +33,17 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Start()
         {
-            // InitAllKomaOnBoard();
+            ResetBeforeBattle();
+        }
+
+        public void ResetBeforeBattle()
+        {
+            _createdLocalCounter.Reset();
+            _boardKomaList.Clear();
         }
 
         public void InitAllKomaOnBoard()
         {
-            _createdLocalCounter.Reset();
-
             foreach(int x in Enumerable.Range(0, 9))
                 CreateAndInstallKoma(new BoardPoint(x, 2), EKomaKind.Hu, ETeam.Ally);
             
@@ -67,6 +75,8 @@ namespace RtShogi.Scripts.Battle
         public void PutNewKoma(KomaPutInfo putInfo)
         {
             var koma = createKomaInternal(putInfo.Kind, putInfo.Team, putInfo.Id);
+            _boardKomaList.AddUnit(koma);
+
             var boardPiece = boardMapRef.TakePiece(putInfo.Point);
             boardPiece.PutKoma(koma);
             koma.transform.position = boardPiece.GetKomaPos();

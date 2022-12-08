@@ -33,7 +33,7 @@ namespace RtShogi.Scripts.Battle
             
             komaManager.PutNewKoma(new KomaPutInfo(actualPoint, kind, actualTeam, new KomaId(id)));
             
-            Logger.Print("called put new koma");
+            // Logger.Print("called put new koma");
         }
 
     }

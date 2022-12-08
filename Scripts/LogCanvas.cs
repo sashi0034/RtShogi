@@ -20,6 +20,7 @@ namespace RtShogi.Scripts
         private void Awake()
         {
             _text = GetComponent<TextMeshProUGUI>();
+            gameObject.SetActive(false);
         }
 
         public void Print(String logText)

@@ -14,5 +14,11 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private KomaManager komaManager;
         public KomaManager KomaManager => komaManager;
 
+        [SerializeField] private PlayerCommander playerCommander;
+        public PlayerCommander PlayerCommander => playerCommander;
+
+        [SerializeField] private BoardManager boardManager;
+        public BoardManager BoardManager => boardManager;
+
     }
 }

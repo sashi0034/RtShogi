@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b487b1c36ec941588ca1b7853619293b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  komaManager: {fileID: 878369053750863485}
+  root: {fileID: 3455996133615162230}
 --- !u!114 &4655959018278669946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,6 +373,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   komaManager: {fileID: 878369053750863485}
+  playerCommander: {fileID: 6631865174615065520}
+  boardManager: {fileID: 4574128778553497581}
 --- !u!1 &3836209163274351066
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,6 +511,7 @@ MonoBehaviour:
   matTransparentBlack: {fileID: 2100000, guid: 092986a7ec19c8c4f95cbf04b6627102, type: 2}
   battleCanvas: {fileID: 0}
   komaManager: {fileID: 878369053750863485}
+  rpcaller: {fileID: 2353827558821020601}
 --- !u!1 &5692008916695536819
 GameObject:
   m_ObjectHideFlags: 0

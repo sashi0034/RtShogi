@@ -1,12 +1,18 @@
 ﻿using System;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RtShogi.Scripts.Battle
 {
     public partial class BattleRpcaller : MonoBehaviourPunCallbacks
     {
-        [SerializeField] private KomaManager komaManager;
+        [SerializeField] private BattleRoot root;
+
+        private KomaManager komaManager => root.KomaManager;
+        private BoardManager boardManager => root.BoardManager;
+        private PlayerCommander player => root.PlayerCommander;
+        
         public bool IsRoomHost()
         {
             return PhotonNetwork.IsMasterClient;
@@ -29,6 +35,10 @@ namespace RtShogi.Scripts.Battle
             };
         }
 
+        private BoardPoint correctReceivesPointFromBytes(int photonActorNumber, byte[] bytes)
+        {
+            return correctReceivesPoint(photonActorNumber, BoardPoint.DeserializeFromBytes(bytes));
+        }
         private BoardPoint correctReceivesPoint(int photonActorNumber, BoardPoint point)
         {
             return IsLocalPhotonActor(photonActorNumber) ? point : point.ToReversed();
@@ -38,6 +48,14 @@ namespace RtShogi.Scripts.Battle
         {
             return PhotonNetwork.LocalPlayer.ActorNumber == photonActorNumber;
         }
+        
+        private static bool checkNull<T>(T obj)
+        {
+#if UNITY_EDITOR
+            Debug.Assert(obj != null);
+#endif
+            return obj == null;
+        } 
     }
     
     [AttributeUsage(AttributeTargets.Method)]

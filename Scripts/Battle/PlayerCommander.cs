@@ -30,6 +30,7 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private Material matTransparentBlack;
         [SerializeField] private BattleCanvas battleCanvas;
         [SerializeField] private KomaManager komaManager;
+        [SerializeField] private BattleRpcaller rpcaller;
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
         
@@ -37,14 +38,16 @@ namespace RtShogi.Scripts.Battle
         private IPlayerClickable? _selectingKoma = null;
         private BoardPiece? _destPiece = null;
         private KomaUnit? _destKomaGhost = null;
+        
         private CommanderAction _myAction;
+        public CommanderAction Act => _myAction; 
         
         private Camera mainCamera => Camera.main;
 
         [EventFunction]
         private void Awake()
         {
-            _myAction = new CommanderAction(boardManagerRef, battleCanvas);
+            _myAction = new CommanderAction(boardManagerRef, battleCanvas, rpcaller);
         }
 
         [EventFunction]
@@ -103,7 +106,7 @@ namespace RtShogi.Scripts.Battle
             
             _selectingKoma = 
                 // 盤上のクリックした駒があったら取得
-                (justLeftClickDown ? findKomaOnPieceRayedByMousePos() : null) ?? 
+                (justLeftClickDown ? findKomaOnPieceRayedByMousePos(ETeam.Ally) : null) ?? 
                 // 獲得駒をドラッグしてたら取得
                 (IPlayerClickable?)checkDragObtainedKoma();
 
@@ -134,13 +137,14 @@ namespace RtShogi.Scripts.Battle
             await holding.gameObject.transform.DOScale(1.0f, 0.3f).SetEase(Ease.OutBack);
         }
 
-        private PlayerClickedBoardKoma? findKomaOnPieceRayedByMousePos()
+        private PlayerClickedBoardKoma? findKomaOnPieceRayedByMousePos(ETeam targetTeam)
         {
             var piece = findPieceRayedByMousePos();
             if (piece == null) return null;
 
             var holding = piece.Holding;
             if (holding == null) return null;
+            if (holding.Team != targetTeam) return null;
             
             return new PlayerClickedBoardKoma(holding);
         }
