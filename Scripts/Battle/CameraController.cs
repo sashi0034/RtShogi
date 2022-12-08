@@ -20,7 +20,7 @@ namespace RtShogi.Scripts.Battle
         private Vector3 _destPos;
         private Camera mainCamera => Camera.main;
         private readonly float movingSpeed = 1;
-        private readonly float movingUpdateSpeed = 2f;
+        private readonly float movingUpdateSpeed = 3f;
         private readonly float rotationSpeed = 0.1f;
         private readonly float elevationSpeed = 0.5f;
         private FloatRange _movableRangeElevation = new FloatRange(2.5f, 12.5f);
@@ -43,7 +43,7 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Update()
         {
-            updateRotAndElevation(Time.deltaTime);
+            // updateRotAndElevation(Time.deltaTime);
             updatePos(Time.deltaTime);
         }
 
@@ -76,6 +76,14 @@ namespace RtShogi.Scripts.Battle
 
         private void updatePos(float deltaTime)
         {
+            // changeDestPosByInput();
+
+            var delta = (_destPos - mainCamera.transform.position);
+            mainCamera.transform.position += delta * (deltaTime * movingUpdateSpeed);
+        }
+
+        private void changeDestPosByInput()
+        {
             var scroll = Input.mouseScrollDelta;
 
             // 右クリック中かどうかで分岐
@@ -91,9 +99,6 @@ namespace RtShogi.Scripts.Battle
                 _destPos += new Vector3(0, 0, scroll.y * movingSpeed);
                 _destPos.z = _movableRangeZ.FixInRange(_destPos.z);
             }
-
-            var delta = (_destPos - mainCamera.transform.position);
-            mainCamera.transform.position += delta * (deltaTime * movingUpdateSpeed);
         }
 
         [Button]

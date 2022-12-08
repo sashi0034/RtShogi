@@ -50,15 +50,30 @@ namespace RtShogi.Scripts.Battle.UI
             Util.DestroyGameObject(element.gameObject);
         }
 
+        public void FindAndDecElement(EKomaKind kind)
+        {
+            var element = FindElement(kind);
+            if (element==null) return;
+            DecElement(element);
+        }
+
         private bool pushElementIfSameExistInCurrentList(ObtainedKomaElementProps props)
         {
-            var indexAlreadyExist = findElement(props.Kind);
+            var indexAlreadyExist = findIndexOfElement(props.Kind);
             if (indexAlreadyExist == null) return false;
             _showingList[indexAlreadyExist.Value].IncQuantity();
             return true;
         }
 
-        private int? findElement(EKomaKind kind)
+        public ObtainedKomaElement? FindElement(EKomaKind kind)
+        {
+            int? index = findIndexOfElement(kind);
+            return index != null
+                ? _showingList[index.Value]
+                : null;
+        }
+
+        private int? findIndexOfElement(EKomaKind kind)
         {
             for (int i = 0; i < _showingList.Count; i++)
             {

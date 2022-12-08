@@ -20,5 +20,8 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private BoardManager boardManager;
         public BoardManager BoardManager => boardManager;
 
+        [SerializeField] private BattleCanvas battleCanvasRef;
+        public BattleCanvas BattleCanvasRef => battleCanvasRef;
+
     }
 }

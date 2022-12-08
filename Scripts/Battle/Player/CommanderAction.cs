@@ -137,7 +137,7 @@ namespace RtShogi.Scripts.Battle.Player
             await CooldownAnimation.ShowCooldown(cooldownBar, delay);
             
             // 盤上処理
-            komaManager.CreateAndInstallKoma(destPiece.Point, dragging.Kind, ETeam.Ally);
+            komaManager.ConsumeObtainedAndInstallKoma(destPiece.Point, dragging.Kind, ETeam.Ally);
 
             return new PlayerCooldownTime(delay);
         }

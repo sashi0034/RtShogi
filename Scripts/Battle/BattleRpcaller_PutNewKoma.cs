@@ -4,7 +4,12 @@ using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
-    public record KomaPutInfo(BoardPoint Point, EKomaKind Kind, ETeam Team, KomaId Id);
+    public record KomaPutInfo(
+        BoardPoint Point, 
+        EKomaKind Kind, 
+        ETeam Team, 
+        KomaId Id,
+        bool IsFromObtainedKoma);
 
     public partial class BattleRpcaller
     {
@@ -15,7 +20,8 @@ namespace RtShogi.Scripts.Battle
                 putInfo.Point.SerializeToBytes(), // byte[] point,
                 putInfo.Kind, // EKomaKind kind,
                 putInfo.Team, // ETeam team,
-                putInfo.Id.Value // int id
+                putInfo.Id.Value, // int id
+                putInfo.IsFromObtainedKoma // bool isFromObtained
                 );
         }
 
@@ -25,13 +31,14 @@ namespace RtShogi.Scripts.Battle
             byte[] point,
             EKomaKind kind,
             ETeam team,
-            int id
+            int id,
+            bool isFromObtained
             )
         {
             var actualPoint = correctReceivesPoint(photonActorNumber, BoardPoint.DeserializeFromBytes(point));
             var actualTeam = correctReceivedTeam(photonActorNumber, team);
             
-            komaManager.PutNewKoma(new KomaPutInfo(actualPoint, kind, actualTeam, new KomaId(id)));
+            komaManager.PutNewKoma(new KomaPutInfo(actualPoint, kind, actualTeam, new KomaId(id), isFromObtained));
             
             // Logger.Print("called put new koma");
         }

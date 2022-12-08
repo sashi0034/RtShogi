@@ -248,8 +248,8 @@ namespace RtShogi.Scripts.Battle
                     break;
                 case PlayerDraggingObtainedKoma obtainedKoma:
                     if (obtainedKoma.HoverCursor != null) Util.DestroyGameObject(obtainedKoma.HoverCursor.gameObject);
-                    if (cooldownTime.Seconds<=0) break;
-                    battleCanvas.ObtainedKomaAlly.DecElement(obtainedKoma.DraggingElement);
+                    // if (cooldownTime.Seconds<=0) break;
+                    // battleCanvas.ObtainedKomaAlly.DecElement(obtainedKoma.DraggingElement);
                     break;
             }
         }
