@@ -19,6 +19,9 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private Canvas parentCanvas;
         public Canvas ParentCanvas => parentCanvas;
 
+        [SerializeField] private ButtonBecomeFormed buttonBecomeFormed;
+        public ButtonBecomeFormed ButtonBecomeFormed => buttonBecomeFormed;
+
         private RectTransform _rectTransform;
         public RectTransform RectTransform => _rectTransform;
 
