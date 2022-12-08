@@ -25,7 +25,7 @@ namespace RtShogi.Scripts
 
         public void Print(String logText)
         {
-            Debug.Log(logText);
+            // Debug.Log(logText);
             
             _currLog.Add(logText);
             

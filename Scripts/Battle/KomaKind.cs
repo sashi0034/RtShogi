@@ -58,4 +58,17 @@ namespace RtShogi.Scripts.Battle
         Ally,
         Enemy,
     }
+
+    public static class TeamUtil
+    {
+        public static ETeam FlipTeam(ETeam team)
+        {
+            return team switch
+            {
+                ETeam.Ally => ETeam.Enemy,
+                ETeam.Enemy => ETeam.Ally,
+                _ => throw new ArgumentOutOfRangeException(nameof(team), team, null)
+            };
+        }
+    } 
 }

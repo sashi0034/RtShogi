@@ -18,6 +18,7 @@ namespace RtShogi.Scripts.Battle
 
         private bool isNullOrEnemyPoint(BoardPoint point)
         {
+            if (!point.IsValidPoint()) return false;
             var koma = komaGetter(point);
             if (koma == null) return true;
             return koma.Team == OpponentTeam;

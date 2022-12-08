@@ -151,7 +151,7 @@ namespace RtShogi.Scripts.Battle
 
         private PlayerDraggingObtainedKoma? checkDragObtainedKoma()
         {
-            var dragging = battleCanvas.ObtainedKomaGroup.FindDraggingElem();
+            var dragging = battleCanvas.ObtainedKomaAlly.FindDraggingElem();
             if (dragging == null) return null;
             
             Debug.Log("start drag obtained koma");
@@ -249,7 +249,7 @@ namespace RtShogi.Scripts.Battle
                 case PlayerDraggingObtainedKoma obtainedKoma:
                     if (obtainedKoma.HoverCursor != null) Util.DestroyGameObject(obtainedKoma.HoverCursor.gameObject);
                     if (cooldownTime.Seconds<=0) break;
-                    battleCanvas.ObtainedKomaGroup.DecElement(obtainedKoma.DraggingElement);
+                    battleCanvas.ObtainedKomaAlly.DecElement(obtainedKoma.DraggingElement);
                     break;
             }
         }
@@ -275,9 +275,10 @@ namespace RtShogi.Scripts.Battle
         public void DebugForceObtainKoma(EKomaKind kind)
         {
             var view = komaManager.GetViewProps(kind);
-            battleCanvas.ObtainedKomaGroup.IncElement(new ObtainedKomaElementProps(
+            battleCanvas.ObtainedKomaAlly.IncElement(new ObtainedKomaElementProps(
                 kind,
-                view.SprIcon));
+                view.SprIcon,
+                ETeam.Ally));
         }
 #endif
     }

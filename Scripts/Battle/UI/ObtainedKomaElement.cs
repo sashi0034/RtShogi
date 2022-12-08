@@ -5,13 +5,15 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace RtShogi.Scripts.Battle.UI
 {
     public record ObtainedKomaElementProps(
         EKomaKind Kind, 
-        Sprite Icon);
+        Sprite Icon,
+        ETeam OwnerTeam);
     public class ObtainedKomaElement : MonoBehaviour
     {
         [SerializeField] private Image iconImage;
@@ -44,6 +46,13 @@ namespace RtShogi.Scripts.Battle.UI
             _kind = props.Kind;
             iconImage.sprite = props.Icon;
             setQuantity(1);
+            if (props.OwnerTeam==ETeam.Enemy) initAsEnemy();
+        }
+
+        private void initAsEnemy()
+        {
+            iconImage.transform.Rotate(new Vector3(0, 0, 180));
+            Util.DestroyComponent(GetComponent<EventTrigger>());
         }
 
         public Image CreateIconCursorIcon(Transform parent)

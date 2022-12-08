@@ -4,6 +4,7 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Battle.UI;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
@@ -55,6 +56,33 @@ namespace RtShogi.Scripts.Battle
             transform.DORotate(new Vector3(0, 0, 180), 0.3f)
                 .SetEase(Ease.OutQuad)
                 .SetRelative(true);
+        }
+
+        [Button]
+        public void StartAnimKilled()
+        {
+            AnimKilled().Forget();
+        }
+
+        public async UniTask AnimKilled()
+        {
+            const float animDuration = 0.5f;
+            const float moveY = 5.0f;
+            // const float animScaleDuration = 0.2f;
+
+            this.transform.DOMoveY(moveY, animDuration)
+                .SetRelative(true).SetEase(Ease.OutCubic);
+            
+            const int numRotate = 5;
+            this.transform.DORotate(new Vector3(360, 0, 0), animDuration / numRotate)
+                .SetRelative(true).SetEase(Ease.Linear).SetLoops(numRotate);
+
+            // await this.transform.DOScale(0, animScaleDuration).SetEase(Ease.InOutBack);
+            // await UniTask.Delay((animDuration-animScaleDuration).ToIntMilli());
+            
+            await UniTask.Delay((animDuration).ToIntMilli());
+
+            Util.DestroyGameObject(this.gameObject);
         }
     }
 }

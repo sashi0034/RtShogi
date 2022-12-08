@@ -53,6 +53,11 @@ namespace RtShogi.Scripts
         {
             return DOVirtual.DelayedCall(0, () => { }, false);
         }
+
+        public static int ToIntMilli(this float second)
+        {
+            return (int)((1000) * second);
+        }
     }
     
     [AttributeUsage(AttributeTargets.Method)]
