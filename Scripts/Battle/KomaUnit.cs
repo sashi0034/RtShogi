@@ -1,6 +1,9 @@
-﻿using DG.Tweening;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using JetBrains.Annotations;
 using RtShogi.Scripts.Battle;
+using RtShogi.Scripts.Battle.UI;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
@@ -25,12 +28,14 @@ namespace RtShogi.Scripts.Battle
         private KomaId _id;
         public KomaId Id => _id;
 
+        private KomaManager _komaManager;
+
         public void ResetMountedPiece(BoardPiece piece)
         {
             _mountedPiece = piece;
         }
 
-        public void InitProps(KomaViewProps props, ETeam team, KomaId id)
+        public void InitProps(KomaManager komaManager, KomaViewProps props, ETeam team, KomaId id)
         {
             viewMeshFilter.sharedMesh = props.Mesh;
             if (props.Materials is { Length: > 0 }) viewMeshRenderer.materials = props.Materials;
@@ -39,6 +44,7 @@ namespace RtShogi.Scripts.Battle
             _originalKind = props.Kind;
             _kind = props.Kind;
             _id = id;
+            _komaManager = komaManager;
         }
 
         public void FormSelf()

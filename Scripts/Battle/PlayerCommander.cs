@@ -47,7 +47,7 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Awake()
         {
-            _myAction = new CommanderAction(boardManagerRef, battleCanvas, rpcaller);
+            _myAction = new CommanderAction(komaManager, boardManagerRef, battleCanvas, rpcaller);
         }
 
         [EventFunction]

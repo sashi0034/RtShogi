@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using RtShogi.Scripts.Battle.UI;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.Player
 {
     public record CommanderAction(
+        KomaManager KomaManagerRef,
         BoardManager BoardManagerRef,
         BattleCanvas BattleCanvas,
         BattleRpcaller Rpcaller)
@@ -102,17 +104,19 @@ namespace RtShogi.Scripts.Battle.Player
             if (formAble==EKomaFormAble.FormForced) clickingKoma.FormSelf();
             
             // 盤上処理
+            bool isKill = destPiece.Holding != null;
+            if (isKill) Rpcaller.RpcallSendToObtainedKoma(destPiece.Holding);
             Rpcaller.RpcallMoveKomaOnBoard(clickingKoma, destPiece);
 
             return new PlayerCooldownTime(delay);
         }
 
         [FromBattleRpcaller]
-        public static void MoveKomaOnBoard(KomaUnit koma, BoardPiece destPiece)
+        public static void MoveKomaOnBoard(KomaUnit movingKoma, BoardPiece destPiece)
         {
-            koma.MountedPiece.RemoveKoma();
-            destPiece.PutKoma(koma);
-            koma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);
+            movingKoma.MountedPiece.RemoveKoma();
+            destPiece.PutKoma(movingKoma);
+            movingKoma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);
         }
 
         /// <summary>

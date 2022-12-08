@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Resolvers;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using Photon.Pun.UtilityScripts;
 using RtShogi.Scripts.Battle;
+using RtShogi.Scripts.Battle.UI;
 using Sirenix.Utilities;
 using UnityEngine;
 
@@ -14,6 +18,9 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private KomaViewProps[] komaViewPropsList;
         [SerializeField] private BoardManager boardManagerRef;
         [SerializeField] private BattleRpcaller battleRpcaller;
+        
+        [SerializeField] private BattleCanvas battleCanvas;
+        public BattleCanvas BattleCanvas => battleCanvas;
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
 
@@ -90,7 +97,7 @@ namespace RtShogi.Scripts.Battle
         private KomaUnit createKomaInternal(EKomaKind kind, ETeam team, KomaId id)
         {
             var koma = Instantiate(komaUnitPrefab, transform);
-            koma.InitProps(komaViewPropsList[(int)kind], team, id);
+            koma.InitProps(this, komaViewPropsList[(int)kind], team, id);
             return koma;
         }
 
@@ -102,6 +109,32 @@ namespace RtShogi.Scripts.Battle
         }
         
         
+        [FromBattleRpcaller]
+        public async UniTask SendToObtainedKoma(KomaUnit koma)
+        {
+            _boardKomaList.RemoveUnit(koma);
+                
+            var viewForIcon = GetViewProps(koma.Kind);
+            
+            switch (koma.Team)
+            {
+            case ETeam.Ally:
+                // TODO
+                Debug.Log("TODO");
+                break;
+            case ETeam.Enemy:
+                // ローカルプレイヤーが獲得
+                battleCanvas.ObtainedKomaGroup.IncElement(new ObtainedKomaElementProps(
+                    koma.Kind,
+                    viewForIcon.SprIcon));
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+            }
+
+            await koma.transform.DOScale(0, 0.5f).SetEase(Ease.InOutBack);
+            Util.DestroyGameObject(koma.gameObject);
+        }
          
     }
 }
