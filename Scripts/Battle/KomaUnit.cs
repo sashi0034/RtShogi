@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
@@ -13,6 +14,12 @@ namespace RtShogi.Scripts.Battle
     {
         [SerializeField] private MeshFilter viewMeshFilter;
         [SerializeField] private MeshRenderer viewMeshRenderer;
+        [SerializeField] private Material matEnemyBody;
+        
+        [SerializeField] private MeshRenderer meshRenderer;
+        public MeshRenderer MeshRenderer => meshRenderer;
+
+        public const string NameMatBody = "body";
         
         private EKomaKind _kind;
         
@@ -42,10 +49,18 @@ namespace RtShogi.Scripts.Battle
             if (props.Materials is { Length: > 0 }) viewMeshRenderer.materials = props.Materials;
             _team = team;
             if (team==ETeam.Ally) transform.Rotate(new Vector3(0, 180, 0));
+            if (team==ETeam.Enemy) changeToEnemyView();
             _originalKind = props.Kind;
             _kind = props.Kind;
             _id = id;
             _komaManager = komaManager;
+        }
+
+        private void changeToEnemyView()
+        {
+            meshRenderer.materials = meshRenderer.sharedMaterials
+                .Select(material => (material.name == NameMatBody) ? matEnemyBody : material)
+                .ToArray();
         }
 
         [FromBattleRpcaller]

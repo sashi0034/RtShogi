@@ -195,9 +195,9 @@ namespace RtShogi.Scripts.Battle
                 _ => throw new NotImplementedException()
             };
 
-            var mesh = _destKomaGhost.GetComponentInChildren<MeshRenderer>();
+            var mesh = _destKomaGhost.MeshRenderer;
             mesh.materials = mesh.sharedMaterials
-                .Select(material => (material.name == "body") ? matTransparentBlue : matTransparentBlack)
+                .Select(material => (material.name == KomaUnit.NameMatBody) ? matTransparentBlue : matTransparentBlack)
                 .ToArray();
             _destKomaGhost.gameObject.SetActive(false);
         }

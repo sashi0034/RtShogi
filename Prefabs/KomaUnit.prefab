@@ -47,6 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewMeshFilter: {fileID: 2222564435227905349}
   viewMeshRenderer: {fileID: 4124406507926059407}
+  matEnemyBody: {fileID: 2100000, guid: 718ca9316ecee754fa62ce1f1c126363, type: 2}
+  meshRenderer: {fileID: 4124406507926059407}
 --- !u!1001 &3385933397189682443
 PrefabInstance:
   m_ObjectHideFlags: 0
