@@ -12,6 +12,7 @@ namespace RtShogi.Scripts.Battle.UI
 {
     public class ButtonBecomeFormed : MonoBehaviour
     {
+        [SerializeField] private BattleCanvas canvasRef;
         [SerializeField] private Transform leftBottom;
 
         private Vector3 _startPos;
@@ -19,7 +20,7 @@ namespace RtShogi.Scripts.Battle.UI
         private KomaUnit? _currentTarget = null;
         private ButtonManager? _buttonManager;
         private CancellationTokenSource? _cancelDisappearByTimeOut = null;
-        private Tween? _tweenMoveInAppear;
+        private Tween? _animAppeared;
 
         [EventFunction]
         private void Awake()
@@ -71,9 +72,8 @@ namespace RtShogi.Scripts.Battle.UI
             transform.position = getScreenOutPos();
             transform.localScale = Vector3.one;
 
-            if (_tweenMoveInAppear is { active: true }) _tweenMoveInAppear.Kill();
-            await (_tweenMoveInAppear = 
-                transform.DOMove(_startPos, 0.5f).SetEase(Ease.InOutBack));
+            if (_animAppeared is { active: true }) _animAppeared.Kill();
+            await changeAnimAppeared(transform.DOMove(_startPos, 0.5f).SetEase(Ease.InOutBack));
             
             Logger.Print("ButtonBecomeFormed end appear");
         }
@@ -91,13 +91,19 @@ namespace RtShogi.Scripts.Battle.UI
             _isAppeared = false;
             if (_buttonManager != null) _buttonManager.Interactable(false);
 
-            if (_tweenMoveInAppear is { active: true }) _tweenMoveInAppear.Kill();
-            await (_tweenMoveInAppear = transform.DOMove(getScreenOutPos(), 0.5f).SetEase(Ease.InOutBack));
+            await changeAnimAppeared(transform.DOMove(getScreenOutPos(), 0.5f).SetEase(Ease.InOutBack));
 
             // 途中でstartAppearが呼ばれたときのために _isAppeared でActive判定
             gameObject.SetActive(_isAppeared);
             
             Logger.Print("ButtonBecomeFormed end disappear");
+        }
+
+        // TODO: これをクラスにしてアニメーションコントローラーを作れそう
+        private async UniTask changeAnimAppeared(Tween newAnim)
+        {
+            if (_animAppeared is { active: true }) _animAppeared.Kill();
+            await (_animAppeared = newAnim);
         }
 
         private Vector2 getScreenOutPos()
@@ -112,7 +118,7 @@ namespace RtShogi.Scripts.Battle.UI
             if (!_isAppeared) return;
             if (_currentTarget == null) return;
 
-            _currentTarget.FormSelf();
+            canvasRef.RootRef.Rpcaller.RpcallBecomeFormed(_currentTarget);
             disappearAfterClicked().Forget();
         }
 
@@ -120,7 +126,7 @@ namespace RtShogi.Scripts.Battle.UI
         {
             _isAppeared = false;
 
-            await transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
+            await changeAnimAppeared(transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack));
         }
 
     }

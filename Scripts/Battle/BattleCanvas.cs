@@ -22,6 +22,10 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private ButtonBecomeFormed buttonBecomeFormed;
         public ButtonBecomeFormed ButtonBecomeFormed => buttonBecomeFormed;
 
+        [SerializeField] private BattleRoot rootRef;
+        public BattleRoot RootRef => rootRef;
+        
+
         private RectTransform _rectTransform;
         public RectTransform RectTransform => _rectTransform;
 

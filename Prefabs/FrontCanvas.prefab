@@ -506,6 +506,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dd7627c4fdd47e0ae96cbf96fa618f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvasRef: {fileID: 6619063782842130026}
   leftBottom: {fileID: 3409015665423752472}
 --- !u!1 &501157222952304651
 GameObject:
@@ -2031,6 +2032,7 @@ MonoBehaviour:
   obtainedKomaEnemy: {fileID: 8180565311678412732}
   parentCanvas: {fileID: 7491167908546660375}
   buttonBecomeFormed: {fileID: 7474773460804035767}
+  rootRef: {fileID: 0}
 --- !u!1 &2403059270090221102
 GameObject:
   m_ObjectHideFlags: 0

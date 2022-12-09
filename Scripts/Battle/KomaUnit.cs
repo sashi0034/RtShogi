@@ -48,7 +48,8 @@ namespace RtShogi.Scripts.Battle
             _komaManager = komaManager;
         }
 
-        public void FormSelf()
+        [FromBattleRpcaller]
+        public void BecomeFormed()
         {
             var formed = new KomaKind(_kind).ToFormed();
             Debug.Assert(formed!=null);

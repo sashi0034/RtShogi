@@ -118,7 +118,7 @@ namespace RtShogi.Scripts.Battle.Player
             switch (formAble)
             {
             case EKomaFormAble.FormForced:
-                clickingKoma.FormSelf();
+                Rpcaller.RpcallBecomeFormed(clickingKoma);
                 break;
             case EKomaFormAble.FormAble:
                 BattleCanvas.ButtonBecomeFormed

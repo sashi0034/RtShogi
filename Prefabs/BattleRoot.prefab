@@ -375,6 +375,8 @@ MonoBehaviour:
   komaManager: {fileID: 878369053750863485}
   playerCommander: {fileID: 6631865174615065520}
   boardManager: {fileID: 4574128778553497581}
+  battleCanvasRef: {fileID: 0}
+  rpcaller: {fileID: 2353827558821020601}
 --- !u!1 &3836209163274351066
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,6 +464,7 @@ MonoBehaviour:
     sprIcon: {fileID: 0}
   boardManagerRef: {fileID: 4574128778553497581}
   battleRpcaller: {fileID: 2353827558821020601}
+  battleCanvas: {fileID: 0}
 --- !u!1 &5590009322083145539
 GameObject:
   m_ObjectHideFlags: 0

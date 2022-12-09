@@ -23,5 +23,9 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private BattleCanvas battleCanvasRef;
         public BattleCanvas BattleCanvasRef => battleCanvasRef;
 
+        [SerializeField] private BattleRpcaller rpcaller;
+        public BattleRpcaller Rpcaller => rpcaller;
+        
+
     }
 }
