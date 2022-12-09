@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using RtShogi.Scripts.Battle.Param;
 using RtShogi.Scripts.Battle.Player;
 using RtShogi.Scripts.Battle.UI;
 using Sirenix.OdinInspector;
@@ -11,7 +12,18 @@ using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
-    public record PlayerCooldownTime(float Seconds);
+    public class PlayerCooldownTime
+    {
+        public readonly float Seconds;
+
+        public PlayerCooldownTime(float seconds)
+        {
+            Seconds = seconds;
+#if UNITY_EDITOR
+            if (DebugParameter.Instance.IsNoCooldownTime) Seconds = 0.1f;
+#endif
+        }
+    }
     
     public interface IPlayerClickable{}
 

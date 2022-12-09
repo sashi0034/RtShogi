@@ -36,11 +36,6 @@ namespace RtShogi.Scripts.Battle
         {
             Debug.Assert(komaViewPropsList.Length == KomaKind.NumUnformed);
             komaViewPropsList.Sort((a, b) => (int)a.Kind - (int)b.Kind);
-        }
-
-        [EventFunction]
-        private void Start()
-        {
             ResetBeforeBattle();
         }
 
@@ -50,8 +45,10 @@ namespace RtShogi.Scripts.Battle
             _boardKomaList.Clear();
         }
 
-        public void InitAllKomaOnBoard()
+        public void SetupAllKomaOnBoard()
         {
+            Logger.Print("setup all koma");
+            
             foreach(int x in Enumerable.Range(0, 9))
                 createAndInstallKoma(new BoardPoint(x, 2), EKomaKind.Hu, ETeam.Ally);
             

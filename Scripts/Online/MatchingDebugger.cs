@@ -1,6 +1,8 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Photon.Pun;
 using RtShogi.Scripts.Battle;
+using RtShogi.Scripts.Battle.Param;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Online
@@ -14,7 +16,22 @@ namespace RtShogi.Scripts.Online
         {
             var playerName = makeDebugPlayerName();
             Logger.Print("local player name: " + playerName);
-            startProcess(playerName).Forget();
+
+#if UNITY_EDITOR
+            if (DebugParameter.Instance.IsDebugBattleOfflineMode)
+                startDebugBattleOfflineMode();
+            else
+                startProcess(playerName).Forget();
+#endif
+        }
+
+        private void startDebugBattleOfflineMode()
+        {
+            Logger.Print("start debug battle offline mode");
+            
+            PhotonNetwork.OfflineMode = true;
+            PhotonNetwork.JoinRoom("Offline");
+            BattleRoot.Instance.KomaManager.SetupAllKomaOnBoard();
         }
 
         private async UniTask startProcess(string playerName)
@@ -22,7 +39,7 @@ namespace RtShogi.Scripts.Online
             await matchMakingManager.ProcessConnectToJoinRoom(new MatchPlayerRank(1), playerName, 3600);
             Logger.Print("finished connect");
             
-            BattleRoot.Instance.KomaManager.InitAllKomaOnBoard();
+            BattleRoot.Instance.KomaManager.SetupAllKomaOnBoard();
             Logger.Print("initialized koma on board");
         }
 
