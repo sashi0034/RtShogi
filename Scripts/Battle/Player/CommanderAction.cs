@@ -1,9 +1,11 @@
 ﻿#nullable enable
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using RtShogi.Scripts.Battle.Param;
 using RtShogi.Scripts.Battle.UI;
 using UnityEngine;
 
@@ -101,14 +103,33 @@ namespace RtShogi.Scripts.Battle.Player
                 clickingKoma.Kind,
                 new ImBoardPoint(clickingKoma.MountedPiece.Point), 
                 new ImBoardPoint(destPiece.Point));
-            if (formAble==EKomaFormAble.FormForced) clickingKoma.FormSelf();
-            
+            operateFormAbleKomaAfterMove(clickingKoma, formAble);
+
             // 盤上処理
             bool isKill = destPiece.Holding != null;
             if (isKill) Rpcaller.RpcallSendToObtainedKoma(destPiece.Holding);
             Rpcaller.RpcallMoveKomaOnBoard(clickingKoma, destPiece);
 
             return new PlayerCooldownTime(delay);
+        }
+
+        private void operateFormAbleKomaAfterMove(KomaUnit clickingKoma, EKomaFormAble formAble)
+        {
+            switch (formAble)
+            {
+            case EKomaFormAble.FormForced:
+                clickingKoma.FormSelf();
+                break;
+            case EKomaFormAble.FormAble:
+                BattleCanvas.ButtonBecomeFormed
+                    .EnableFormAbleKoma(clickingKoma, ConstParameter.Instance.KomaFormAbleEffectiveTime)
+                    .Forget();
+                break;
+            case EKomaFormAble.Impossible:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
         [FromBattleRpcaller]
