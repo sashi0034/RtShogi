@@ -26,7 +26,7 @@ namespace RtShogi.Scripts.Battle
         GinFormed,
     }
 
-    public class KomaKind
+    public struct KomaKind
     {
         public const EKomaKind UnformedLastKind = EKomaKind.Oh;
         public const int NumUnformed = (int)UnformedLastKind + 1;
@@ -51,8 +51,27 @@ namespace RtShogi.Scripts.Battle
                 _ => null
             };
         }
+
+        public EKomaKind? ToUnformed()
+        {
+            return Koma switch
+            {
+                EKomaKind.HuFormed => EKomaKind.Hu,
+                EKomaKind.KeimaFormed => EKomaKind.Keima,
+                EKomaKind.KyoshaFormed => EKomaKind.Kyosha,
+                EKomaKind.KakuFormed => EKomaKind.Kaku,
+                EKomaKind.HishaFormed => EKomaKind.Hisha,
+                EKomaKind.GinFormed => EKomaKind.Gin,
+                _ => null
+            };
+        }
+
+        public bool IsUnformed()
+        {
+            return ToFormed() != null;
+        }
     }
-    
+
     public enum ETeam
     {
         Ally,

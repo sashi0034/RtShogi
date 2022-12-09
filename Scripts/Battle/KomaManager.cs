@@ -129,11 +129,16 @@ namespace RtShogi.Scripts.Battle
 
             await koma.AnimKilled();
 
-            var viewForIcon = GetViewProps(koma.Kind);
+            var unformedKind = new KomaKind(koma.Kind).IsUnformed()
+                ? koma.Kind
+                : new KomaKind(koma.Kind).ToUnformed();
+            if (unformedKind==null) return;
+            
+            var viewForIcon = GetViewProps(unformedKind.Value);
 
             var obtainedTeam = TeamUtil.FlipTeam(koma.Team);
             battleCanvas.GetObtainedKomaGroup(obtainedTeam).IncElement(new ObtainedKomaElementProps(
-                koma.Kind,
+                unformedKind.Value,
                 viewForIcon.SprIcon,
                 obtainedTeam));
             
