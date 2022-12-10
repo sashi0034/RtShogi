@@ -18,7 +18,7 @@ namespace RtShogi.Scripts.Battle.UI
         
         private Transform buttonTransform => buttonManager.transform;
 
-        private Vector3 _startPos;
+        private Vector3 _buttonStartLocalPos;
         private bool _isAppeared = false;
         private KomaUnit? _currentTarget = null;
         private CancellationTokenSource? _cancelDisappearByTimeOut = null;
@@ -28,7 +28,7 @@ namespace RtShogi.Scripts.Battle.UI
         private void Start()
         {
             setActive(false);
-            _startPos = transform.position;
+            _buttonStartLocalPos = buttonTransform.localPosition;
         }
 
         private void setActive(bool isActive)
@@ -75,11 +75,11 @@ namespace RtShogi.Scripts.Battle.UI
 
             if (buttonManager != null) buttonManager.Interactable(true);
             
-            buttonTransform.position = getScreenOutPos();
+            buttonTransform.localPosition = getScreenOutPos();
             buttonTransform.localScale = Vector3.one;
 
             if (_animAppeared is { active: true }) _animAppeared.Kill();
-            await changeAnimAppeared(buttonTransform.DOMove(_startPos, 0.5f).SetEase(Ease.InOutBack));
+            await changeAnimAppeared(buttonTransform.DOLocalMove(_buttonStartLocalPos, 0.5f).SetEase(Ease.InOutBack));
             
             Logger.Print("ButtonBecomeFormed end appear");
         }
@@ -97,7 +97,7 @@ namespace RtShogi.Scripts.Battle.UI
             _isAppeared = false;
             if (buttonManager != null) buttonManager.Interactable(false);
 
-            await changeAnimAppeared(buttonTransform.DOMove(getScreenOutPos(), 0.5f).SetEase(Ease.InOutBack));
+            await changeAnimAppeared(buttonTransform.DOLocalMove(getScreenOutPos(), 0.5f).SetEase(Ease.InOutBack));
 
             // 途中でstartAppearが呼ばれたときのために _isAppeared でActive判定
             setActive(_isAppeared);
@@ -115,7 +115,7 @@ namespace RtShogi.Scripts.Battle.UI
         private Vector2 getScreenOutPos()
         {
             const float padY = -50f;
-            return new Vector2(_startPos.x, leftBottom.position.y + padY);
+            return new Vector2(_buttonStartLocalPos.x, padY);
         }
 
         [EventFunction]
