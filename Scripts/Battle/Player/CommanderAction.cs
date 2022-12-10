@@ -53,8 +53,9 @@ namespace RtShogi.Scripts.Battle.Player
                 .GetMovablePoints()
                 .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();
 
-            foreach (var movable in movableList) 
-                movable.EnableHighlight( new BoardPieceHighlightIntensity(0));
+            foreach (var movable in movableList)
+                movable.EnableHighlight(new BoardPieceHighlightIntensity(
+                    movable.Holding != null ? 1 : 0));
         }
 
         private bool canMoveAllyUnit(ImBoardPoint point)
