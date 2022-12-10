@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RtShogi.Scripts.Param;
 
 namespace RtShogi.Scripts.Battle
 {
@@ -14,7 +15,7 @@ namespace RtShogi.Scripts.Battle
     {
         BoardPoint currPoint => CurrPoint.Raw;
         private Func<BoardPoint, KomaUnit?> komaGetter => (point) => KomaGetter(new ImBoardPoint(point));
-        private int sideLength => BoardManager.SideLength;
+        private int sideLength => ConstParameter.BoardSideLength;
 
         private bool isNullOrEnemyPoint(BoardPoint point)
         {

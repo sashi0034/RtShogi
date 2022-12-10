@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using RtShogi.Scripts.Battle.Param;
 using RtShogi.Scripts.Battle.UI;
+using RtShogi.Scripts.Param;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.Player

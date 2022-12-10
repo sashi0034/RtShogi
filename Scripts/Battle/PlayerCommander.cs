@@ -4,9 +4,9 @@ using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using RtShogi.Scripts.Battle.Param;
 using RtShogi.Scripts.Battle.Player;
 using RtShogi.Scripts.Battle.UI;
+using RtShogi.Scripts.Param;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using RtShogi.Scripts.Param;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
@@ -23,8 +24,8 @@ namespace RtShogi.Scripts.Battle
         public bool IsValidPoint()
         {
             return
-                new IntRange(0, BoardManager.BoardSize.W - 1).IsInRange(X) &&
-                new IntRange(0, BoardManager.BoardSize.H - 1).IsInRange(Z);
+                new IntRange(0, ConstParameter.BoardSize.W - 1).IsInRange(X) &&
+                new IntRange(0, ConstParameter.BoardSize.H - 1).IsInRange(Z);
         }
 
         public BoardPoint Move(BoardPoint point)
@@ -38,7 +39,7 @@ namespace RtShogi.Scripts.Battle
 
         public BoardPoint ToReversed()
         {
-            return new BoardPoint(BoardManager.BoardSize.W - 1 - X, BoardManager.BoardSize.H - 1 - Z);
+            return new BoardPoint(ConstParameter.BoardSize.W - 1 - X, ConstParameter.BoardSize.H - 1 - Z);
         }
         
         public static BoardPoint operator+ (double z, BoardPoint w)
@@ -77,7 +78,7 @@ namespace RtShogi.Scripts.Battle
         {
             return isLocal
                 ? Raw
-                : new BoardPoint(BoardMap.BoardSize.W - 1 - Raw.X, BoardMap.BoardSize.H - 1 - Raw.Z);
+                : new BoardPoint(ConstParameter.BoardSize.W - 1 - Raw.X, ConstParameter.BoardSize.H - 1 - Raw.Z);
         }
 
         public static ImBoardPoint FromReal(BoardPoint point, bool isLocal)

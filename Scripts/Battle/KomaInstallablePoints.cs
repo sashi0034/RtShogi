@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RtShogi.Scripts.Param;
 
 namespace RtShogi.Scripts.Battle
 {
@@ -39,9 +40,9 @@ namespace RtShogi.Scripts.Battle
         private List<ImBoardPoint> getInstallableOfHu()
         {
             var result = new List<ImBoardPoint>() { };
-            foreach (int x in Enumerable.Range(0, BoardMap.SideLength))
+            foreach (int x in Enumerable.Range(0, ConstParameter.BoardSideLength))
             {
-                int numZ = BoardMap.SideLength - 1;
+                int numZ = ConstParameter.BoardSideLength - 1;
                 if (isHuOverlapLineX(x, numZ)) continue;
                 
                 result.AddRange(
@@ -69,8 +70,8 @@ namespace RtShogi.Scripts.Battle
         private List<ImBoardPoint> getInstallableOfRegular(int invalidEndZ)
         {
             return (
-                from x in Enumerable.Range(0, BoardMap.SideLength)
-                from z in Enumerable.Range(0, BoardMap.SideLength - invalidEndZ)
+                from x in Enumerable.Range(0, ConstParameter.BoardSideLength)
+                from z in Enumerable.Range(0, ConstParameter.BoardSideLength - invalidEndZ)
                 where KomaGetter(new ImBoardPoint(x, z)) == null
                 select new ImBoardPoint(x, z)
             ).ToList();

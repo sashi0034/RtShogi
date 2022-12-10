@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace RtShogi.Scripts.Battle.Param
+namespace RtShogi.Scripts.Param
 {
     public abstract class SingletonScriptableObject<T> : ScriptableObject where T : SingletonScriptableObject<T>
     {

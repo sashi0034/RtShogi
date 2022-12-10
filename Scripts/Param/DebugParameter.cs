@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace RtShogi.Scripts.Battle.Param
+namespace RtShogi.Scripts.Param
 {
     [CreateAssetMenu(fileName = nameof(DebugParameter), menuName = "ScriptableObjects/Create" + nameof(DebugParameter))]
     public class DebugParameter : SingletonScriptableObject<DebugParameter>

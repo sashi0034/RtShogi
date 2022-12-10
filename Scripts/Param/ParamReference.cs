@@ -1,7 +1,6 @@
-﻿using RtShogi.Scripts.Battle.Param;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace RtShogi.Scripts
+namespace RtShogi.Scripts.Param
 {
     public class ParamReference : MonoBehaviour
     {

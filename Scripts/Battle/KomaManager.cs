@@ -8,11 +8,14 @@ using DG.Tweening;
 using Photon.Pun.UtilityScripts;
 using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Battle.UI;
+using RtShogi.Scripts.Param;
 using Sirenix.Utilities;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
+    public record KomaInitialPutInfo(BoardPoint Point, EKomaKind Kind) {}
+    
     public class KomaManager : MonoBehaviour
     {
         [SerializeField] private KomaUnit komaUnitPrefab;
@@ -45,27 +48,28 @@ namespace RtShogi.Scripts.Battle
             _boardKomaList.Clear();
         }
 
-        public void SetupAllKomaOnBoard()
+        public void SetupAllAllyKomaOnBoard()
         {
-            Logger.Print("setup all koma");
+            Logger.Print("setup all ally koma");
             
-            foreach(int x in Enumerable.Range(0, 9))
-                createAndInstallKoma(new BoardPoint(x, 2), EKomaKind.Hu, ETeam.Ally);
-            
-            createAndInstallKoma(new BoardPoint(1, 1), EKomaKind.Kaku, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(7, 1), EKomaKind.Hisha, ETeam.Ally);
-            
-            createAndInstallKoma(new BoardPoint(0, 0), EKomaKind.Kyosha, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(1, 0), EKomaKind.Keima, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(2, 0), EKomaKind.Gin, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(3, 0), EKomaKind.Kin, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(4, 0), EKomaKind.Oh, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(5, 0), EKomaKind.Kin, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(6, 0), EKomaKind.Gin, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(7, 0), EKomaKind.Keima, ETeam.Ally);
-            createAndInstallKoma(new BoardPoint(8, 0), EKomaKind.Kyosha, ETeam.Ally);
+            foreach (var info in ConstParameter.KomaInitialPutInfos)
+            {
+                createAndInstallKoma(info.Point, info.Kind, ETeam.Ally);
+            }
         }
-        
+        public void SetupAllEnemyKomaOnBoardAsDebug()
+        {
+#if UNITY_EDITOR
+            Logger.Print("setup all enemy koma");
+            
+            foreach (var info in ConstParameter.KomaInitialPutInfos)
+            {
+                createAndInstallKoma(info.Point.ToReversed(), info.Kind, ETeam.Enemy);
+            }
+#else
+            throw new NotImplementedException();
+#endif
+        }
         
 
         [UsingBattleRpcaller]
