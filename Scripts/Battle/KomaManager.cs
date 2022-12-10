@@ -156,7 +156,7 @@ namespace RtShogi.Scripts.Battle
         private KomaUnit createKomaInternal(EKomaKind kind, ETeam team, KomaId id)
         {
             var koma = Instantiate(komaUnitPrefab, transform);
-            koma.InitProps(this, komaViewPropsList[(int)kind], team, id);
+            koma.InitProps(battleRoot, komaViewPropsList[(int)kind], team, id);
             return koma;
         }
 
@@ -183,7 +183,7 @@ namespace RtShogi.Scripts.Battle
         {
             await koma.AnimKilled();
 
-            var unformedKind = new KomaKind(koma.Kind).IsUnformed()
+            var unformedKind = new KomaKind(koma.Kind).IsNonFormed()
                 ? koma.Kind
                 : new KomaKind(koma.Kind).ToUnformed();
             

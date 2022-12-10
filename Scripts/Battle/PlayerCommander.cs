@@ -37,12 +37,15 @@ namespace RtShogi.Scripts.Battle
 
     public class PlayerCommander : MonoBehaviour
     {
-        [SerializeField] private BoardManager boardManagerRef;
+        [SerializeField] private BattleRoot battleRoot;
         [SerializeField] private Material matTransparentBlue;
         [SerializeField] private Material matTransparentBlack;
-        [SerializeField] private BattleCanvas battleCanvas;
-        [SerializeField] private KomaManager komaManager;
-        [SerializeField] private BattleRpcaller rpcaller;
+
+        private BoardManager boardManagerRef => battleRoot.BoardManager;
+        private BattleCanvas battleCanvas => battleRoot.BattleCanvasRef;
+        private KomaManager komaManager => battleRoot.KomaManager;
+        private BattleRpcaller rpcaller => battleRoot.Rpcaller;
+        
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
         
@@ -59,7 +62,8 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Awake()
         {
-            _myAction = new CommanderAction(komaManager, boardManagerRef, battleCanvas, rpcaller);
+            _myAction = 
+                new CommanderAction(komaManager, boardManagerRef, battleCanvas, rpcaller, battleRoot.EffectManager);
         }
 
         [EventFunction]

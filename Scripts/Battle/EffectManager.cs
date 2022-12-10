@@ -12,8 +12,14 @@ namespace RtShogi.Scripts.Battle
     {
         private const string effectTag = "Effects";
         
-        [FoldoutGroup(effectTag)][SerializeField] private EffectBirth effectBirth;
+        [FoldoutGroup(effectTag)] [SerializeField] private EffectBirth effectBirth;
         public EffectBirth EffectBirth => effectBirth;
+        
+        [FoldoutGroup(effectTag)] [SerializeField] private EffectBecomeFormed effectBecomeFormed;
+        public EffectBecomeFormed EffectBecomeFormed => effectBecomeFormed;
+
+        [FoldoutGroup(effectTag)] [SerializeField] private EffectClashing effectClashing;
+        public EffectClashing EffectClashing => effectClashing;
         
 
         public T? Produce<T>(T effect) where T : EffectBase

@@ -71,6 +71,13 @@ namespace RtShogi.Scripts.Battle
             return ToFormed() != null;
         }
 
+        public bool IsNonFormed()
+        {
+            return
+                Koma is EKomaKind.Oh or EKomaKind.Gyoku or EKomaKind.Kin ||
+                IsUnformed();
+        }
+
         public bool IsKing()
         {
             return Koma == EKomaKind.Oh || Koma == EKomaKind.Gyoku;

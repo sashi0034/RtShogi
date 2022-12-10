@@ -28,8 +28,10 @@ namespace RtShogi.Scripts.EditorUtil
         [EventFunction]
         private void OnGUI()
         {
-            if (GUILayout.Button("Test", GUILayout.Width(buttonsize.x), GUILayout.Height(buttonsize.y)))
-            { }
+            if (GUILayout.Button("Open Main Scene", GUILayout.Width(buttonsize.x), GUILayout.Height(buttonsize.y)))
+            {
+                EditorSceneManager.OpenScene("Assets/RtShogi/Scenes/MainScene.unity", OpenSceneMode.Single);
+            }
         }
     }
 }

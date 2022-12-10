@@ -15,7 +15,8 @@ namespace RtShogi.Scripts.Battle.Player
         KomaManager KomaManagerRef,
         BoardManager BoardManagerRef,
         BattleCanvas BattleCanvas,
-        BattleRpcaller Rpcaller)
+        BattleRpcaller Rpcaller,
+        EffectManager EffectManager)
     {
         private BoardMap boardMapRef => BoardManagerRef.BoardMap;
 
@@ -115,10 +116,22 @@ namespace RtShogi.Scripts.Battle.Player
 
             // 盤上処理
             bool isKill = destPiece.Holding != null;
-            if (isKill) Rpcaller.RpcallSendToObtainedKoma(destPiece.Holding);
+            if (isKill) await performKill(destPiece.Holding);
             Rpcaller.RpcallMoveKomaOnBoard(clickingKoma, destPiece);
 
             return cooldownTime;
+        }
+
+        private async UniTask performKill(KomaUnit killedKoma)
+        {
+            var effect = EffectManager.Produce(EffectManager.EffectClashing);
+            if (effect != null)
+            {
+                effect.transform.position = killedKoma.transform.position;
+                await UniTask.Delay(0.2f.ToIntMilli());
+            }
+            
+            Rpcaller.RpcallSendToObtainedKoma(killedKoma);
         }
 
         private void operateFormAbleKomaAfterMove(KomaUnit clickingKoma, EKomaFormAble formAble)

@@ -36,14 +36,14 @@ namespace RtShogi.Scripts.Battle
         private KomaId _id;
         public KomaId Id => _id;
 
-        private KomaManager _komaManager;
+        private BattleRoot _battleRoot;
 
         public void ResetMountedPiece(BoardPiece piece)
         {
             _mountedPiece = piece;
         }
 
-        public void InitProps(KomaManager komaManager, KomaViewProps props, ETeam team, KomaId id)
+        public void InitProps(BattleRoot root, KomaViewProps props, ETeam team, KomaId id)
         {
             viewMeshFilter.sharedMesh = props.Mesh;
             if (props.Materials is { Length: > 0 }) viewMeshRenderer.materials = props.Materials;
@@ -53,7 +53,7 @@ namespace RtShogi.Scripts.Battle
             _originalKind = props.Kind;
             _kind = props.Kind;
             _id = id;
-            _komaManager = komaManager;
+            _battleRoot = root;
         }
 
         private void changeToEnemyView()
@@ -69,7 +69,19 @@ namespace RtShogi.Scripts.Battle
             var formed = new KomaKind(_kind).ToFormed();
             Debug.Assert(formed!=null);
             _kind = formed.Value;
-            transform.DORotate(new Vector3(0, 0, 180), 0.3f)
+            animFormed();
+        }
+
+        private async UniTask animFormed()
+        {
+            var effect = _battleRoot.EffectManager.Produce(_battleRoot.EffectManager.EffectBecomeFormed);
+            if (effect != null)
+            {
+                effect.transform.position = _mountedPiece.transform.position.FixY(0);
+                await UniTask.Delay(0.3f.ToIntMilli());
+            }
+            
+            transform.DORotate(new Vector3(0, 0, 180), 0.7f)
                 .SetEase(Ease.OutQuad)
                 .SetRelative(true);
         }

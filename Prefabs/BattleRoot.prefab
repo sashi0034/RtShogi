@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectBirth: {fileID: 5675324078041816350, guid: d7dd15dcaaa4eb34fa8b6a2a87d9695e, type: 3}
+  effectBecomeFormed: {fileID: 6190545451926701435, guid: bf4edc6dcad8a854bae212570d363732, type: 3}
+  effectClashing: {fileID: 4193526565177275338, guid: 3ced898abd2d63844bccfacaec15920e, type: 3}
 --- !u!1 &749500325140234422
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,12 +556,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0af1f348bbd4d689f35ee76adfb6e9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardManagerRef: {fileID: 4574128778553497581}
+  battleRoot: {fileID: 3455996133615162230}
   matTransparentBlue: {fileID: 2100000, guid: fbe6695ef1c01db4cb61c054e5513878, type: 2}
   matTransparentBlack: {fileID: 2100000, guid: 092986a7ec19c8c4f95cbf04b6627102, type: 2}
-  battleCanvas: {fileID: 0}
-  komaManager: {fileID: 878369053750863485}
-  rpcaller: {fileID: 2353827558821020601}
 --- !u!1 &5692008916695536819
 GameObject:
   m_ObjectHideFlags: 0
