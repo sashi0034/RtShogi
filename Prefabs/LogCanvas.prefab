@@ -264,7 +264,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press Alt + L to show log.
+  m_text: Alt + L to show log.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67e00d063a025bf4bb8812bd064c8658, type: 2}
   m_sharedMaterial: {fileID: 1502127668158385754, guid: 67e00d063a025bf4bb8812bd064c8658, type: 2}

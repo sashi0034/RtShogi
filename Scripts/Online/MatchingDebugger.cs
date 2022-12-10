@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Photon.Pun;
 using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Param;
+using TMPro;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Online
@@ -10,6 +11,7 @@ namespace RtShogi.Scripts.Online
     public class MatchingDebugger : MonoBehaviour
     {
         [SerializeField] private MatchMakingManager matchMakingManager;
+        [SerializeField] private TextMeshProUGUI textWaitForOtherPlayer;
 
         [EventFunction]
         private void Start()
@@ -22,6 +24,9 @@ namespace RtShogi.Scripts.Online
                 startDebugBattleOfflineMode();
             else
                 startProcess(playerName).Forget();
+#else
+            // 実機デバッグ用
+            startProcess(playerName).Forget();
 #endif
         }
 
@@ -37,11 +42,15 @@ namespace RtShogi.Scripts.Online
 
         private async UniTask startProcess(string playerName)
         {
+            textWaitForOtherPlayer.gameObject.SetActive(true);
+            
             await matchMakingManager.ProcessConnectToJoinRoom(new MatchPlayerRank(1), playerName, 3600);
             Logger.Print("finished connect");
             
             BattleRoot.Instance.KomaManager.SetupAllAllyKomaOnBoard();
             Logger.Print("initialized koma on board");
+            
+            textWaitForOtherPlayer.gameObject.SetActive(false);
         }
 
         private string makeDebugPlayerName()

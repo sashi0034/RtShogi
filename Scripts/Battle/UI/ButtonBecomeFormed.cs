@@ -14,22 +14,28 @@ namespace RtShogi.Scripts.Battle.UI
     {
         [SerializeField] private BattleCanvas canvasRef;
         [SerializeField] private Transform leftBottom;
+        [SerializeField] private ButtonManager buttonManager;
+        
+        private Transform buttonTransform => buttonManager.transform;
 
         private Vector3 _startPos;
         private bool _isAppeared = false;
         private KomaUnit? _currentTarget = null;
-        private ButtonManager? _buttonManager;
         private CancellationTokenSource? _cancelDisappearByTimeOut = null;
         private Tween? _animAppeared;
 
         [EventFunction]
-        private void Awake()
+        private void Start()
         {
-            gameObject.SetActive(false);
+            setActive(false);
             _startPos = transform.position;
-            _buttonManager = GetComponent<ButtonManager>();
         }
-        
+
+        private void setActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+            buttonTransform.gameObject.SetActive(isActive);
+        }
 
         // 駒を成れるようにボタンを有効化
         public async UniTask EnableFormAbleKoma(KomaUnit koma, float enableTime)
@@ -38,8 +44,8 @@ namespace RtShogi.Scripts.Battle.UI
             _cancelDisappearByTimeOut?.Cancel();
             if (!_isAppeared) await startAppear();
             
-            await transform.DOScale(1.3f, 0.3f).SetEase(Ease.OutBack);
-            await transform.DOScale(1.0f, 0.3f).SetEase(Ease.OutBack);
+            await buttonTransform.DOScale(1.3f, 0.3f).SetEase(Ease.OutBack);
+            await buttonTransform.DOScale(1.0f, 0.3f).SetEase(Ease.OutBack);
 
             _cancelDisappearByTimeOut = new CancellationTokenSource();
             disappearByTimeOut(_cancelDisappearByTimeOut.Token, enableTime).Forget();
@@ -65,15 +71,15 @@ namespace RtShogi.Scripts.Battle.UI
             Logger.Print("ButtonBecomeFormed start appear");
             
             _isAppeared = true;
-            gameObject.SetActive(true);
+            setActive(true);
 
-            if (_buttonManager != null) _buttonManager.Interactable(true);
+            if (buttonManager != null) buttonManager.Interactable(true);
             
-            transform.position = getScreenOutPos();
-            transform.localScale = Vector3.one;
+            buttonTransform.position = getScreenOutPos();
+            buttonTransform.localScale = Vector3.one;
 
             if (_animAppeared is { active: true }) _animAppeared.Kill();
-            await changeAnimAppeared(transform.DOMove(_startPos, 0.5f).SetEase(Ease.InOutBack));
+            await changeAnimAppeared(buttonTransform.DOMove(_startPos, 0.5f).SetEase(Ease.InOutBack));
             
             Logger.Print("ButtonBecomeFormed end appear");
         }
@@ -89,12 +95,12 @@ namespace RtShogi.Scripts.Battle.UI
             Logger.Print("ButtonBecomeFormed start disappear");
             
             _isAppeared = false;
-            if (_buttonManager != null) _buttonManager.Interactable(false);
+            if (buttonManager != null) buttonManager.Interactable(false);
 
-            await changeAnimAppeared(transform.DOMove(getScreenOutPos(), 0.5f).SetEase(Ease.InOutBack));
+            await changeAnimAppeared(buttonTransform.DOMove(getScreenOutPos(), 0.5f).SetEase(Ease.InOutBack));
 
             // 途中でstartAppearが呼ばれたときのために _isAppeared でActive判定
-            gameObject.SetActive(_isAppeared);
+            setActive(_isAppeared);
             
             Logger.Print("ButtonBecomeFormed end disappear");
         }
@@ -126,7 +132,7 @@ namespace RtShogi.Scripts.Battle.UI
         {
             _isAppeared = false;
 
-            await changeAnimAppeared(transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack));
+            await changeAnimAppeared(buttonTransform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack));
         }
 
     }

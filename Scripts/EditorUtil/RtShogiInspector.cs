@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+
+using System;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -31,3 +33,5 @@ namespace RtShogi.Scripts.EditorUtil
         }
     }
 }
+
+#endif

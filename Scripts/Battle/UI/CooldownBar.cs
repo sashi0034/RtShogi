@@ -13,23 +13,23 @@ namespace RtShogi.Scripts.Battle.UI
         [SerializeField] private Michsky.MUIP.ProgressBar progressBar;
         [SerializeField] private TextMeshProUGUI textSecondsCurrent;
         [SerializeField] private TextMeshProUGUI textSecondsMax;
-        [SerializeField] private GameObject rightTop;
+        [SerializeField] private Transform rightTop;
+        [SerializeField] private Transform center;
         [SerializeField] private float animDuration = 0.1f;
 
-        private Vector3 startPos;
+        private Vector3 startPos => center.position;
 
         [EventFunction]
-        private void Awake()
+        private void Start()
         {
-            startPos = gameObject.transform.position;
-            //gameObject.SetActive(false);
+            // gameObject.SetActive(false);
             transform.position = getHidePos();
         }
         
         [Button]
         public async UniTask StartAppear()
         {
-            //gameObject.SetActive(true);
+            // gameObject.SetActive(true);
             gameObject.transform.position = getHidePos();
 
             await transform.DOMove(startPos, animDuration).SetEase(Ease.OutSine);
@@ -40,7 +40,7 @@ namespace RtShogi.Scripts.Battle.UI
         {
             await transform.DOMove(getHidePos(), animDuration).SetEase(Ease.OutSine);
             
-            //gameObject.SetActive(false);
+            // gameObject.SetActive(false);
         }
 
         public void SetValues(float current, float max)
@@ -53,7 +53,7 @@ namespace RtShogi.Scripts.Battle.UI
         public Vector3 getHidePos()
         {
             float paddingY = 0;
-            return new Vector3(startPos.x, rightTop.transform.position.y, startPos.z) + Vector3.up * paddingY;
+            return new Vector3(startPos.x, rightTop.position.y, startPos.z) + Vector3.up * paddingY;
         }
         
         
