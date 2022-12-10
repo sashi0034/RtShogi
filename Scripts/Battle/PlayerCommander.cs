@@ -109,7 +109,7 @@ namespace RtShogi.Scripts.Battle
         private async UniTask<bool> checkStopProcess()
         {
             await UniTask.DelayFrame(1);
-            return false;
+            return komaManager.BattleStatus is BattleStatusFinished;
         }
 
         private void checkDownLeftMouse()

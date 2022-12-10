@@ -15,7 +15,13 @@ using UnityEngine;
 namespace RtShogi.Scripts.Battle
 {
     public record KomaInitialPutInfo(BoardPoint Point, EKomaKind Kind) {}
-    
+
+    public interface IBattleStatus{};
+    public class BattleStatusContinuing : IBattleStatus { }
+    public record BattleStatusFinished(
+        bool IsWin
+        ) : IBattleStatus { }
+
     public class KomaManager : MonoBehaviour
     {
         [SerializeField] private KomaUnit komaUnitPrefab;
@@ -32,6 +38,9 @@ namespace RtShogi.Scripts.Battle
 
         private readonly BoardKomaList _boardKomaList = new BoardKomaList();
         public IBoardKomaListGetter List => _boardKomaList;
+
+        private IBattleStatus _status = new BattleStatusContinuing();
+        public IBattleStatus BattleStatus => _status;
         
 
         [EventFunction]
@@ -46,6 +55,7 @@ namespace RtShogi.Scripts.Battle
         {
             _createdLocalCounter.Reset();
             _boardKomaList.Clear();
+            _status = new BattleStatusContinuing();
         }
 
         public void SetupAllAllyKomaOnBoard()
@@ -75,7 +85,12 @@ namespace RtShogi.Scripts.Battle
         [UsingBattleRpcaller]
         private void createAndInstallKoma(BoardPoint point, EKomaKind kind, ETeam team)
         {
-            installKomaInternal(point, kind, team, false);
+            var actualKind = kind != EKomaKind.Oh
+                ? kind
+                : battleRpcaller.IsRoomHost()
+                    ? EKomaKind.Oh
+                    : EKomaKind.Gyoku; 
+            installKomaInternal(point, actualKind, team, false);
         }
         
         [UsingBattleRpcaller]
@@ -131,13 +146,23 @@ namespace RtShogi.Scripts.Battle
         {
             _boardKomaList.RemoveUnit(koma);
 
+            if (new KomaKind(koma.Kind).IsKing())
+                await performKilledKing(koma);
+            else
+                await sendToObtainedKomaInternal(koma);
+        }
+
+        private async UniTask sendToObtainedKomaInternal(KomaUnit koma)
+        {
             await koma.AnimKilled();
 
             var unformedKind = new KomaKind(koma.Kind).IsUnformed()
                 ? koma.Kind
                 : new KomaKind(koma.Kind).ToUnformed();
-            if (unformedKind==null) return;
             
+            Debug.Assert(unformedKind != null);
+            if (unformedKind == null) return;
+
             var viewForIcon = GetViewProps(unformedKind.Value);
 
             var obtainedTeam = TeamUtil.FlipTeam(koma.Team);
@@ -145,9 +170,21 @@ namespace RtShogi.Scripts.Battle
                 unformedKind.Value,
                 viewForIcon.SprIcon,
                 obtainedTeam));
-            
-
         }
-        
+
+        private async UniTask performKilledKing(KomaUnit kingUnit)
+        {
+            Logger.Print("killed king");
+            
+            kingUnit.AnimKilled().Forget();
+
+            bool isWin = kingUnit.Team == ETeam.Enemy;
+
+            _status = new BattleStatusFinished(isWin);
+
+            await (isWin
+                ? battleCanvas.MessageWinLose.PerformWin()
+                : battleCanvas.MessageWinLose.PerformLose());
+        }
     }
 }

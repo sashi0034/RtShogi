@@ -70,6 +70,11 @@ namespace RtShogi.Scripts.Battle
         {
             return ToFormed() != null;
         }
+
+        public bool IsKing()
+        {
+            return Koma == EKomaKind.Oh || Koma == EKomaKind.Gyoku;
+        }
     }
 
     public enum ETeam

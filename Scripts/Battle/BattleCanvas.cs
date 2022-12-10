@@ -22,6 +22,9 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private ButtonBecomeFormed buttonBecomeFormed;
         public ButtonBecomeFormed ButtonBecomeFormed => buttonBecomeFormed;
 
+        [SerializeField] private MessageWinLose messageWinLose;
+        public MessageWinLose MessageWinLose => messageWinLose;
+
         [SerializeField] private BattleRoot rootRef;
         public BattleRoot RootRef => rootRef;
         
