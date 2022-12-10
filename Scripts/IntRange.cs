@@ -1,4 +1,8 @@
-﻿namespace RtShogi.Scripts
+﻿using UnityEngine.ProBuilder;
+using UnityEngine.Timeline;
+using Math = System.Math;
+
+namespace RtShogi.Scripts
 {
     public struct IntRange
     {
@@ -14,6 +18,11 @@
         public bool IsInRange(int value)
         {
             return Min <= value && value <= Max;
+        }
+
+        public int RoundInRange(int value)
+        {
+            return Math.Max(Min, Math.Min(value, Max));
         }
     }
 }

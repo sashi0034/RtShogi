@@ -14,8 +14,6 @@ namespace RtShogi.Scripts.Battle
     {
         public List<ImBoardPoint> GetInstallablePoints()
         {
-            // TODO: 正しいものを作る
-            // TODO: 次回
             return Kind switch
             {
                 EKomaKind.Hu => getInstallableOfHu(),

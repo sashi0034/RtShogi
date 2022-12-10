@@ -10,7 +10,13 @@ namespace RtShogi.Scripts.Param
     {
         [SerializeField] private float komaFormAbleEffectiveTime = 3f;
         public float KomaFormAbleEffectiveTime => komaFormAbleEffectiveTime;
+
+        [SerializeField] private Color[] boardPieceHighlightColors;
+        public IReadOnlyList<Color> BoardPieceHighlightColors => boardPieceHighlightColors;
         
+        [SerializeField] private float[] cooldownTimeList;
+        public float[] CooldownTimeList => cooldownTimeList;
+
         private static KomaInitialPutInfo[] _komaInitialPutInfo = getKomaInitialPutInfos();
         public static IReadOnlyList<KomaInitialPutInfo> KomaInitialPutInfos => _komaInitialPutInfo;
         

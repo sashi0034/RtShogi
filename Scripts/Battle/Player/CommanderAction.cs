@@ -52,21 +52,14 @@ namespace RtShogi.Scripts.Battle.Player
                 .GetMovablePoints()
                 .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();
 
-            hilightPieceList(movableList);
+            foreach (var movable in movableList) 
+                movable.EnableHighlight( new BoardPieceHighlightIntensity(0));
         }
 
         private bool canMoveAllyUnit(ImBoardPoint point)
         {
             var koma = boardMapRef.TakePiece(point.ToReal(true)).Holding;
             return koma==null || koma.Team==ETeam.Enemy;
-        }
-
-        private static void hilightPieceList(List<BoardPiece> list)
-        {
-            foreach (var movable in list)
-            {
-                movable.EnableHighlight(true);
-            }
         }
 
         public void HighlightInstallableList(EKomaKind kind)
@@ -78,7 +71,21 @@ namespace RtShogi.Scripts.Battle.Player
                 .GetInstallablePoints()
                 .Select(p => boardMapRef.TakePiece(p.Raw)).ToList();
 
-            hilightPieceList(movableList);
+            foreach (var movable in movableList) 
+                movable.EnableHighlight(new BoardPieceHighlightIntensity(
+                    isKillablePoint(kind, movable) ? 2 : 1));
+        }
+
+        private bool isKillablePoint(EKomaKind kind, BoardPiece piece)
+        {
+            return new KomaMovableRoute(
+                    kind,
+                    ImBoardPoint.FromReal(piece.Point, true),
+                    ETeam.Enemy,
+                    (point) => boardMapRef.TakePieceNullable(point.ToReal(true))?.Holding
+                )
+                .GetMovablePoints()
+                .Any(p => boardMapRef.TakePiece(p.Raw).Holding != null);
         }
         
         /// <summary>
@@ -91,12 +98,13 @@ namespace RtShogi.Scripts.Battle.Player
             UI.CooldownBar cooldownBar)
         {
             if (clickingKoma==null || destPiece==null) return new PlayerCooldownTime(0);
-            if (!destPiece.IsActiveHighlight()) return new PlayerCooldownTime(0);
             
-            const float delay = 1.5f;
+            var highlightIntensity = destPiece.HighlightIntensity;
+            if (!destPiece.IsActiveHighlight() || highlightIntensity == null) return new PlayerCooldownTime(0);
+            var cooldownTime = highlightIntensity.GetCooldownTime();
             
             // クールダウンバーを画面に出す
-            await CooldownAnimation.ShowCooldown(cooldownBar, delay);
+            await CooldownAnimation.ShowCooldown(cooldownBar, cooldownTime.Seconds);
             
             // 裏返す
             var formAble = KomaFormingChecker.CheckFormAble(
@@ -110,7 +118,7 @@ namespace RtShogi.Scripts.Battle.Player
             if (isKill) Rpcaller.RpcallSendToObtainedKoma(destPiece.Holding);
             Rpcaller.RpcallMoveKomaOnBoard(clickingKoma, destPiece);
 
-            return new PlayerCooldownTime(delay);
+            return cooldownTime;
         }
 
         private void operateFormAbleKomaAfterMove(KomaUnit clickingKoma, EKomaFormAble formAble)
@@ -150,17 +158,18 @@ namespace RtShogi.Scripts.Battle.Player
             KomaManager komaManager)
         {
             if (dragging==null || destPiece==null) return new PlayerCooldownTime(0);
-            if (!destPiece.IsActiveHighlight()) return new PlayerCooldownTime(0);
-            
-            const float delay = 2.0f;
-            
+
+            var highlightIntensity = destPiece.HighlightIntensity;
+            if (!destPiece.IsActiveHighlight() || highlightIntensity == null) return new PlayerCooldownTime(0);
+            var cooldownTime = highlightIntensity.GetCooldownTime();
+
             // クールダウンバーを画面に出す
-            await CooldownAnimation.ShowCooldown(cooldownBar, delay);
+            await CooldownAnimation.ShowCooldown(cooldownBar, cooldownTime.Seconds);
             
             // 盤上処理
             komaManager.ConsumeObtainedAndInstallKoma(destPiece.Point, dragging.Kind, ETeam.Ally);
 
-            return new PlayerCooldownTime(delay);
+            return cooldownTime;
         }
     }
 }

@@ -1,18 +1,47 @@
 ﻿#nullable enable
+using RtShogi.Scripts.Param;
 using Unity.Collections;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
 {
+    public class BoardPieceHighlightIntensity
+    {
+        public readonly int Value;
+        
+        public BoardPieceHighlightIntensity(int value)
+        {
+            Debug.Assert(
+                new IntRange(0, ConstParameter.Instance.BoardPieceHighlightColors.Count - 1)
+                .IsInRange(value));
+            Value = value;
+        }
+
+        public Color GetHighlightColor()
+        {
+            return ConstParameter.Instance.BoardPieceHighlightColors[Value];
+        }
+
+        public PlayerCooldownTime GetCooldownTime()
+        {
+            var range = new IntRange(0, ConstParameter.Instance.CooldownTimeList.Length);
+            Debug.Assert(range.IsInRange(Value));
+            return new PlayerCooldownTime(ConstParameter.Instance.CooldownTimeList[range.RoundInRange(Value)]);
+        }
+    }
+    
     public class BoardPiece : MonoBehaviour
     {
-        [SerializeField] private GameObject highlightObject;
-        
+        [SerializeField] private MeshRenderer highlightObject;
+
         [SerializeField, ReadOnly] private Vector2Int installedPoint;
         public BoardPoint Point => new BoardPoint(installedPoint.x, installedPoint.y);
         
         private KomaUnit? holdingKoma = null;
         public KomaUnit? Holding => holdingKoma;
+
+        private BoardPieceHighlightIntensity? _highlightIntensity = null;
+        public BoardPieceHighlightIntensity? HighlightIntensity => _highlightIntensity;
         
         public const float KomaPosY = 0.55f;
         
@@ -39,14 +68,22 @@ namespace RtShogi.Scripts.Battle
             installedPoint = point;
         }
 
-        public void EnableHighlight(bool isActive)
+        public void EnableHighlight(BoardPieceHighlightIntensity intensity)
         {
-            highlightObject.SetActive(isActive);
+            highlightObject.gameObject.SetActive(true);
+            highlightObject.material.color = intensity.GetHighlightColor();
+            _highlightIntensity = intensity;
+        }
+
+        public void DisableHighlight()
+        {
+            highlightObject.gameObject.SetActive(false);
+            _highlightIntensity = null;
         }
 
         public bool IsActiveHighlight()
         {
-            return highlightObject.activeSelf;
+            return _highlightIntensity != null;
         }
     }
 }

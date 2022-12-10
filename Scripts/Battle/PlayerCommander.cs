@@ -236,7 +236,7 @@ namespace RtShogi.Scripts.Battle
             };
 
             // 進める場所や置ける場所ハイライト解除
-            boardMapRef.ForEach(piece => piece.EnableHighlight(false));
+            boardMapRef.ForEach(piece => piece.DisableHighlight());
             
             // クリック中の駒を解除
             onUnselectSelectedKoma(cooldown);
