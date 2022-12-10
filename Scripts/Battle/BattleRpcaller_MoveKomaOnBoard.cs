@@ -8,6 +8,8 @@ namespace RtShogi.Scripts.Battle
     {
         public void RpcallMoveKomaOnBoard(KomaUnit koma, BoardPiece destPiece)
         {
+            Logger.Print(nameof(RpcallMoveKomaOnBoard));
+            
             photonView.RPC(nameof(moveKomaOnBoard), RpcTarget.AllViaServer,
                 getLocalActorNumber(), // int photonActorNumber,
                 koma.Id.Value, // int komaId,
@@ -22,6 +24,8 @@ namespace RtShogi.Scripts.Battle
             byte[] destPoint
         )
         {
+            Logger.Print("called " + nameof(moveKomaOnBoard));
+            
             var koma = komaManager.List.GetOf(new KomaId(komaId));
             if (checkNull(koma)) return;
             

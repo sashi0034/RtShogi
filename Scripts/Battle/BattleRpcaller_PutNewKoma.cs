@@ -15,6 +15,8 @@ namespace RtShogi.Scripts.Battle
     {
         public void RpcallPutNewKoma(KomaPutInfo putInfo)
         {
+            Logger.Print(nameof(RpcallPutNewKoma));
+            
             photonView.RPC(nameof(putNewKoma), RpcTarget.AllViaServer,
                 getLocalActorNumber(), // int photonActorNumber,
                 putInfo.Point.SerializeToBytes(), // byte[] point,
@@ -35,6 +37,8 @@ namespace RtShogi.Scripts.Battle
             bool isFromObtained
             )
         {
+            Logger.Print("called " + nameof(putNewKoma));
+            
             var actualPoint = correctReceivesPoint(photonActorNumber, BoardPoint.DeserializeFromBytes(point));
             var actualTeam = correctReceivedTeam(photonActorNumber, team);
             

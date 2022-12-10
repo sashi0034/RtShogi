@@ -9,6 +9,8 @@ namespace RtShogi.Scripts.Battle
     {
         public void RpcallSendToObtainedKoma(KomaUnit koma)
         {
+            Logger.Print(nameof(RpcallSendToObtainedKoma));
+            
             photonView.RPC(nameof(sendToObtainedKoma), RpcTarget.AllViaServer,
                 getLocalActorNumber(), // int photonActorNumber,
                 koma.Id.Value // int komaId
@@ -21,6 +23,8 @@ namespace RtShogi.Scripts.Battle
             int komaId
         )
         {
+            Logger.Print("called " + nameof(sendToObtainedKoma));
+            
             var koma = komaManager.List.GetOf(new KomaId(komaId));
             if (checkNull(koma)) return;
             

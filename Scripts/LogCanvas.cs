@@ -7,6 +7,9 @@ namespace RtShogi.Scripts
 {
     public class LogCanvas : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI textLog;
+        [SerializeField] private TextMeshProUGUI textWhenSleep;
+        
         public static LogCanvas Instance;
         public LogCanvas()
         {
@@ -14,13 +17,25 @@ namespace RtShogi.Scripts
         }
         
         [SerializeField] private int maxLine = 16;
-        private TextMeshProUGUI _text;
         private List<String> _currLog = new List<string>();
 
+        [EventFunction]
         private void Awake()
         {
-            _text = GetComponent<TextMeshProUGUI>();
-            gameObject.SetActive(false);
+            enableSleep(true);
+        }
+
+        [EventFunction]
+        private void Update()
+        {
+            if (isTriggerKeySleep())
+                flipSleep();
+        }
+
+        private static bool isTriggerKeySleep()
+        {
+            return (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) &&
+                Input.GetKeyDown(KeyCode.L);
         }
 
         public void Print(String logText)
@@ -37,7 +52,18 @@ namespace RtShogi.Scripts
                 log += line + "\n";
             }
 
-            _text.text = log;
+            textLog.text = log;
+        }
+
+        private void flipSleep()
+        {
+            bool isSleep = textWhenSleep.gameObject.activeSelf;
+            enableSleep(!isSleep);
+        }
+        private void enableSleep(bool isSleep)
+        {
+            textLog.gameObject.SetActive(!isSleep);
+            textWhenSleep.gameObject.SetActive(isSleep);
         }
     }
 }
