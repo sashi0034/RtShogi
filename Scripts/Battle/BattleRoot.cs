@@ -25,7 +25,10 @@ namespace RtShogi.Scripts.Battle
 
         [SerializeField] private BattleRpcaller rpcaller;
         public BattleRpcaller Rpcaller => rpcaller;
-        
+
+        [SerializeField] private EffectManager effectManager;
+        public EffectManager EffectManager => effectManager;
+
 
     }
 }

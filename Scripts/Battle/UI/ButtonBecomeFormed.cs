@@ -132,7 +132,7 @@ namespace RtShogi.Scripts.Battle.UI
         {
             _isAppeared = false;
 
-            await changeAnimAppeared(buttonTransform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack));
+            await changeAnimAppeared(buttonTransform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack));
         }
 
     }

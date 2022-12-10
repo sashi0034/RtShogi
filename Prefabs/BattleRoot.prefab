@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &112962191202226283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7457966557813923041}
+  - component: {fileID: 6416892373094781848}
+  m_Layer: 0
+  m_Name: EffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7457966557813923041
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112962191202226283}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3652667405635496189}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6416892373094781848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112962191202226283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9be169a126bb4fa99f9171e7efc2d4ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectBirth: {fileID: 5675324078041816350, guid: d7dd15dcaaa4eb34fa8b6a2a87d9695e, type: 3}
 --- !u!1 &749500325140234422
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,6 +402,7 @@ Transform:
   - {fileID: 5093700832706305225}
   - {fileID: 8289093391071072552}
   - {fileID: 2849194236164588044}
+  - {fileID: 7457966557813923041}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -377,6 +423,7 @@ MonoBehaviour:
   boardManager: {fileID: 4574128778553497581}
   battleCanvasRef: {fileID: 0}
   rpcaller: {fileID: 2353827558821020601}
+  effectManager: {fileID: 6416892373094781848}
 --- !u!1 &3836209163274351066
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,9 +509,7 @@ MonoBehaviour:
     mesh: {fileID: -3189834749401520736, guid: 5e44607c4f73d9f4eab9b5de9e4a3959, type: 3}
     materials: []
     sprIcon: {fileID: 0}
-  boardManagerRef: {fileID: 4574128778553497581}
-  battleRpcaller: {fileID: 2353827558821020601}
-  battleCanvas: {fileID: 0}
+  battleRoot: {fileID: 3455996133615162230}
 --- !u!1 &5590009322083145539
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,10 +26,11 @@ namespace RtShogi.Scripts.Battle
     {
         [SerializeField] private KomaUnit komaUnitPrefab;
         [SerializeField] private KomaViewProps[] komaViewPropsList;
-        [SerializeField] private BoardManager boardManagerRef;
-        [SerializeField] private BattleRpcaller battleRpcaller;
+        [SerializeField] private BattleRoot battleRoot;
         
-        [SerializeField] private BattleCanvas battleCanvas;
+        private BoardManager boardManagerRef => battleRoot.BoardManager;
+        private BattleRpcaller battleRpcaller => battleRoot.Rpcaller;
+        private BattleCanvas battleCanvas => battleRoot.BattleCanvasRef;
         public BattleCanvas BattleCanvas => battleCanvas;
         
         private BoardMap boardMapRef => boardManagerRef.BoardMap;
@@ -119,6 +120,32 @@ namespace RtShogi.Scripts.Battle
 
             // 持ち駒の個数を減らす
             if (putInfo.IsFromObtainedKoma) battleCanvas.GetObtainedKomaGroup(koma.Team).FindAndDecElement(koma.Kind);
+
+            // エフェクトもつける
+            if (putInfo.IsFromObtainedKoma) effectBirth(koma).Forget();
+        }
+
+        private async UniTask effectBirth(KomaUnit koma)
+        {
+            var effect = battleRoot.EffectManager.Produce(battleRoot.EffectManager.EffectBirth);
+            if (effect == null) return;
+
+            koma.transform.localScale = Vector3.zero;
+
+            // 魔法陣を出して
+            await effect.AnimAppear(koma.transform.position);
+            
+            // 駒にアニメーションをかけて 
+            koma.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack);
+            const float moveY = 0.5f;
+            koma.transform.DOMoveY(moveY, 0.5f).SetEase(Ease.OutBack).SetRelative(true);
+            await koma.transform.DORotate(new Vector3(0, 360, 0), 0.3f)
+                .SetEase(Ease.Linear).SetRelative(true).SetLoops(3);
+
+            koma.transform.DOMoveY(-moveY, 0.3f).SetEase(Ease.InQuart).SetRelative(true);
+
+            // 魔法陣を消す
+            await effect.AnimDisappear();
         }
 
         public KomaUnit CreateVirtualKoma(EKomaKind kind, ETeam team)
