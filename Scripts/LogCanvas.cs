@@ -1,5 +1,8 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
+using RtShogi.Scripts.Param;
 using TMPro;
 using UnityEngine;
 
@@ -10,17 +13,26 @@ namespace RtShogi.Scripts
         [SerializeField] private TextMeshProUGUI textLog;
         [SerializeField] private TextMeshProUGUI textWhenSleep;
         
-        public static LogCanvas Instance;
+        public static LogCanvas? Instance;
+
+        [SerializeField] private int maxLine = 16;
+        private List<String> _currLog = new List<string>();
+
         public LogCanvas()
         {
             Instance = this;
         }
         
-        [SerializeField] private int maxLine = 16;
-        private List<String> _currLog = new List<string>();
-
         [EventFunction]
         private void Awake()
+        {
+            if (!DebugParameter.Instance.IsClearDebug) return;
+            Util.DestroyGameObject(gameObject);
+            Instance = null;
+        }
+
+        [EventFunction]
+        private void Start()
         {
             enableSleep(true);
         }

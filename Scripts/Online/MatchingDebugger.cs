@@ -14,6 +14,12 @@ namespace RtShogi.Scripts.Online
         [SerializeField] private TextMeshProUGUI textWaitForOtherPlayer;
 
         [EventFunction]
+        private void Awake()
+        {
+            if (DebugParameter.Instance.IsClearDebug) Util.DestroyGameObject(gameObject);
+        }
+
+        [EventFunction]
         private void Start()
         {
             var playerName = makeDebugPlayerName();

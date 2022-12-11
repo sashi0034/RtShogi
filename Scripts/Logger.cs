@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#nullable enable
+
+using UnityEngine;
 
 namespace RtShogi.Scripts
 {
@@ -8,7 +10,7 @@ namespace RtShogi.Scripts
         {
             var showingText = fixText(text);
             UnityEngine.Debug.Log(showingText);
-            LogCanvas.Instance.Print(showingText);
+            LogCanvas.Instance?.Print(showingText);
         }
         
         private static string fixText(string text)
