@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ExitGames.Client.Photon;
+using RtShogi.Scripts.Param;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Online
@@ -8,9 +9,9 @@ namespace RtShogi.Scripts.Online
     public readonly struct MatchPlayerRank
     {
         public readonly int Value;
-        private const int InvalidValue = 0;
-        private const int MinValue = 1;
-        private const int MaxValue = 3;
+        private const int invalidValue = 0;
+        private const int minValue = ConstParameter.MinPlayerRank;
+        private static int maxValue => ConstParameter.Instance.MaxPlayerRank;
 
         public MatchPlayerRank(int value)
         {
@@ -19,12 +20,12 @@ namespace RtShogi.Scripts.Online
 
         public static MatchPlayerRank MakeRandom()
         {
-            return new MatchPlayerRank(Random.Range(MinValue, MaxValue + 1));
+            return new MatchPlayerRank(Random.Range(minValue, maxValue + 1));
         }
 
         public static MatchPlayerRank MakeInvalidRank()
         {
-            return new MatchPlayerRank(InvalidValue);
+            return new MatchPlayerRank(invalidValue);
         }
 
         public List<MatchPlayerRank> GetNearRanks()
@@ -36,7 +37,7 @@ namespace RtShogi.Scripts.Online
 
         public bool IsValid()
         {
-            return Value != InvalidValue && MinValue <= Value && Value <= MaxValue;
+            return Value != invalidValue && minValue <= Value && Value <= maxValue;
         }
 
         public override string ToString()

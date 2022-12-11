@@ -50,7 +50,7 @@ namespace RtShogi.Scripts.Online
         {
             textWaitForOtherPlayer.gameObject.SetActive(true);
             
-            await matchMakingManager.ProcessConnectToJoinRoom(new MatchPlayerRank(1), playerName, 3600);
+            await matchMakingManager.ProcessConnectAllFlows(new MatchPlayerRank(1), playerName, 3600);
             Logger.Print("finished connect");
             
             BattleRoot.Instance.KomaManager.SetupAllAllyKomaOnBoard();

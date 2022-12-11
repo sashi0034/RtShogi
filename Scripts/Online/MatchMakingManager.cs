@@ -16,33 +16,45 @@ namespace RtShogi.Scripts.Online
     {
         private static readonly string[] keysForLobby = new[] { MatchPlayerRankUtil.KeyRank };
 
-        private readonly Subject<Unit> _onConnectedToMaster = new Subject<Unit>();
+        private readonly Subject<Unit> _onFinishedConnectedToMaster = new Subject<Unit>();
+
         private readonly Subject<Unit> _onLeftRoom = new Subject<Unit>();
         private readonly Subject<MatchMakingResult> _onConnectedToRoom = new Subject<MatchMakingResult>();
         public const int MaxPlayerInRoom = 2;
-        
+
 
         /// <summary>
         /// 対戦までの接続の流れ
         /// </summary>
-        public async UniTask<MatchMakingResult> ProcessConnectToJoinRoom(
-            MatchPlayerRank playerRank, 
+        public async UniTask<MatchMakingResult> ProcessConnectAllFlows(
+            MatchPlayerRank playerRank,
             string playerName,
             int sessionTimeSec)
+        {
+            await ProcessConnectToMaster(playerRank, playerName);
+            return await ProcessConnectToJoinRoom(playerRank, sessionTimeSec);
+        }
+
+        public async UniTask ProcessConnectToMaster(MatchPlayerRank playerRank, string playerName)
         {
             Logger.Print("init connect settings");
 
             PhotonNetwork.OfflineMode = false;
             PhotonNetwork.NickName = playerName;
-        
+
             // 入力値から自分のランクを設定
             PhotonNetwork.LocalPlayer.SetCustomProperties(MatchPlayerRankUtil.CreateRankProps(playerRank));
 
             // マスターへ接続
             Logger.Print("start connect...");
             PhotonNetwork.ConnectUsingSettings();
-            await _onConnectedToMaster.Take(1).GetAwaiter();
+            await _onFinishedConnectedToMaster.Take(1).GetAwaiter();
+        }
         
+        public async UniTask<MatchMakingResult> ProcessConnectToJoinRoom(
+            MatchPlayerRank playerRank,
+            int sessionTimeSec)
+        {
             // 最適なルームへランダムに参加する
             var joinedResult = await joinSuitableRoomAsync(playerRank, sessionTimeSec);
             if (joinedResult == MatchMakingResult.Succeeded) return MatchMakingResult.Succeeded;
@@ -77,7 +89,7 @@ namespace RtShogi.Scripts.Online
 
             // 部屋を抜けた後の再接続処理
             PhotonNetwork.ConnectUsingSettings();
-            await _onConnectedToMaster.Take(1).GetAwaiter();
+            await _onFinishedConnectedToMaster.Take(1).GetAwaiter();
 
             // プレイヤーと同じランクの部屋が無い場合、近いランクの部屋があれば入る
             MatchMakingResult reJoinResult = await tryJoinRoomNearPlayerRank(playerRank);
@@ -118,7 +130,7 @@ namespace RtShogi.Scripts.Online
         {
             Logger.Print("connected to master");
 
-            _onConnectedToMaster.OnNext(Unit.Default);
+            _onFinishedConnectedToMaster.OnNext(Unit.Default);
         }
 
         public override void OnLeftRoom()

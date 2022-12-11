@@ -17,6 +17,18 @@ namespace RtShogi.Scripts.Param
         [SerializeField] private float[] cooldownTimeList;
         public float[] CooldownTimeList => cooldownTimeList;
 
+        public const int MinPlayerRank = 1;
+
+        [SerializeField] private int maxPlayerRank = 1;
+        public int MaxPlayerRank => maxPlayerRank;
+
+        [SerializeField] private int maxPlayerNameLength = 12;
+        public int MaxPlayerNameLength => maxPlayerNameLength;
+
+        [SerializeField] private int maxMatchingWaitSeconds = 60 * 10;
+        public int MaxMatchingWaitSeconds => maxMatchingWaitSeconds;
+        
+
         private static KomaInitialPutInfo[] _komaInitialPutInfo = getKomaInitialPutInfos();
         public static IReadOnlyList<KomaInitialPutInfo> KomaInitialPutInfos => _komaInitialPutInfo;
         
