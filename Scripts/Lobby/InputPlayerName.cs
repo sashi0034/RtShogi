@@ -1,6 +1,7 @@
 ﻿using System;
 using Michsky.MUIP;
 using RtShogi.Scripts.Param;
+using RtShogi.Scripts.Storage;
 using Sirenix.Utilities;
 using UnityEngine;
 
@@ -12,6 +13,13 @@ namespace RtShogi.Scripts.Lobby
 
         private string _oldPlayerName = "通りすがりの人";
         public string PlayerName => customInputField.inputText.text;
+
+        public void ResetBeforeLobby(SaveData saveData)
+        {
+            var saveDataPlayerName = saveData.PlayerName;
+            if (saveDataPlayerName.IsNullOrWhitespace()) return;
+            customInputField.inputText.text = saveDataPlayerName;
+        }
 
         public void OnChangedPlayerName()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using RtShogi.Scripts.Lobby;
 using Sirenix.OdinInspector;
 using TMPro;
 using UniRx;
@@ -8,13 +9,43 @@ using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.UI
 {
+    public enum EWinLose
+    {
+        Win,
+        Lose
+    }
+
+    public static class WinLoseUtil
+    {
+        public static EWinLoseDisconnected ToIncludeDisconnected(EWinLose winLose, bool isDisconnected)
+        {
+            return winLose == EWinLose.Win
+                ? EWinLoseDisconnected.Win
+                : isDisconnected
+                    ? EWinLoseDisconnected.Disconnected
+                    : EWinLoseDisconnected.Lose;
+        }
+    }
+
+    public enum EWinLoseDisconnected
+    {
+        Win,
+        Lose,
+        Disconnected
+    }
+
+    public record BattleResultForRating(
+        EWinLoseDisconnected WinLose,
+        PlayerRating NewPlayerRating);
+    
+    
     public class MessageWinLose : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI textWin;
         [SerializeField] private TextMeshProUGUI textLose;
 
-        private Subject<Unit> _onCompletedWinOrLose = new();
-        public IObservable<Unit> OnCompletedWinOrLose => _onCompletedWinOrLose;
+        private Subject<EWinLose> _onCompletedWinOrLose = new();
+        public IObservable<EWinLose> OnCompletedWinOrLose => _onCompletedWinOrLose;
 
         public void ResetBeforeBattle()
         {
@@ -37,7 +68,7 @@ namespace RtShogi.Scripts.Battle.UI
             gameObject.SetActive(true);
             textLose.gameObject.SetActive(false);
             await performMessage(textWin);
-            _onCompletedWinOrLose.OnNext(Unit.Default);
+            _onCompletedWinOrLose.OnNext(EWinLose.Win);
         }
 
         public async UniTask PerformLose()
@@ -45,7 +76,7 @@ namespace RtShogi.Scripts.Battle.UI
             gameObject.SetActive(true);
             textWin.gameObject.SetActive(false);
             await performMessage(textLose);
-            _onCompletedWinOrLose.OnNext(Unit.Default);
+            _onCompletedWinOrLose.OnNext(EWinLose.Lose);
         }
 
         private static async UniTask performMessage(TextMeshProUGUI text)

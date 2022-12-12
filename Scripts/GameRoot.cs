@@ -7,6 +7,8 @@ using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Lobby;
 using RtShogi.Scripts.Online;
 using RtShogi.Scripts.Param;
+using RtShogi.Scripts.Storage;
+using Sirenix.Utilities;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,8 +20,13 @@ namespace RtShogi.Scripts
         [SerializeField] private BattleRoot battleRoot;
 
         [SerializeField] private LobbyCanvas lobbyCanvas;
+        public LobbyCanvas LobbyCanvas => lobbyCanvas;
 
         [SerializeField] private MatchingDebugger matchingDebugger;
+
+        [SerializeField] private SaveData saveData = new SaveData();
+        public SaveData SaveData => saveData;
+        
         
         public void Start()
         {
@@ -47,7 +54,8 @@ namespace RtShogi.Scripts
 
         private async UniTask processGame()
         {
-            lobbyCanvas.ResetBeforeLobby();
+            readSaveData();
+            lobbyCanvas.ResetBeforeLobby(this, ELobbyResetOption.AfterInit);
             
             while (gameObject != null)
             {
@@ -61,6 +69,7 @@ namespace RtShogi.Scripts
         {
             Util.ResetScaleAndActivate(lobbyCanvas);
             await lobbyCanvas.ProcessLobby();
+            writeSaveData();
         }
         
         private async UniTask processBattleBetweenLobby()
@@ -70,13 +79,43 @@ namespace RtShogi.Scripts
             await lobbyCanvas.transform.DOScale(0f, 0.5f).SetEase(Ease.InBack);
             lobbyCanvas.SleepOutLobby();
 
-            await battleRoot.ProcessBattle();
+            await battleRoot.ProcessBattle(this);
             
-            lobbyCanvas.ResetBeforeLobby();
+            lobbyCanvas.ResetBeforeLobby(this, ELobbyResetOption.AfterBattle);
             
             await lobbyCanvas.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack);
 
             battleRoot.SleepOutBattle();
+            
+            // TODO: レーティングをセーブデータに
+            // saveData.SetPlayerRating();
+            
+            writeSaveData();
+
+            // TODO: パラメーター渡す
+            // await lobbyCanvas.PerformAfterBattle();
+        }
+
+        private void writeSaveData()
+        {
+            saveData.UpdateByCopyDataFromGame(this);
+            string jsonData = JsonUtility.ToJson(saveData);
+            ES3.Save(ConstParameter.SaveDataKey, jsonData);
+            
+            Logger.Print("write save data:\n" + jsonData);
+        }
+
+        private void readSaveData()
+        {
+            string jsonData = ES3.Load<string>(ConstParameter.SaveDataKey, defaultValue: "");
+            if (jsonData.IsNullOrWhitespace()) return;
+            
+            Logger.Print("read save data:\n" + jsonData);
+
+            var temp = JsonUtility.FromJson<SaveData>(jsonData);
+            Debug.Assert(temp != null);
+            if (temp == null) return;
+            saveData = temp;
         }
 
     }

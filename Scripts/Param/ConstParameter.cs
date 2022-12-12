@@ -35,6 +35,8 @@ namespace RtShogi.Scripts.Param
         public const int BoardSideLength = 9;
         
         public static readonly IntSize BoardSize = new IntSize(BoardSideLength, BoardSideLength);
+
+        public const string SaveDataKey = "JsonSaveData"; 
         
         private static KomaInitialPutInfo[] getKomaInitialPutInfos()
         {

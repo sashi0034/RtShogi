@@ -1,4 +1,5 @@
 ﻿using System;
+using RtShogi.Scripts.Lobby;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Storage
@@ -14,5 +15,15 @@ namespace RtShogi.Scripts.Storage
 
         [SerializeField] private string playerName = "";
         public string PlayerName => playerName;
+
+        public void UpdateByCopyDataFromGame(GameRoot gameRoot)
+        {
+            playerName = gameRoot.LobbyCanvas.InputPlayerName.PlayerName;
+        }
+
+        public void SetPlayerRating(PlayerRating rating)
+        {
+            playerRating = rating.Value;
+        }
     }
 }

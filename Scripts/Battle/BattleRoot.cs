@@ -50,7 +50,7 @@ namespace RtShogi.Scripts.Battle
             battleCanvasRef.gameObject.SetActive(false);
         }
         
-        public async UniTask ProcessBattle()
+        public async UniTask ProcessBattle(GameRoot gameRoot)
         {
             // TODO: ちゃんとしたバトル同期
             await UniTask.Delay(3000);
@@ -58,11 +58,13 @@ namespace RtShogi.Scripts.Battle
             // バトル開始
             InvokeStartBattle();
 
-            await battleCanvasRef.MessageWinLose.OnCompletedWinOrLose.Take(1);
+            var winLose = await battleCanvasRef.MessageWinLose.OnCompletedWinOrLose.Take(1);
+            gameRoot.SaveData.MatchResultCount.IncAfterBattle(winLose);
+            
             // バトル終了
             await UniTask.Delay(3f.ToIntMilli());
             
-            PhotonNetwork.Disconnect();
+            if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
         }
 
         public void InvokeStartBattle()

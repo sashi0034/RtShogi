@@ -1,4 +1,5 @@
 ﻿using System;
+using RtShogi.Scripts.Battle.UI;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Storage
@@ -14,6 +15,14 @@ namespace RtShogi.Scripts.Storage
 
         [SerializeField] private int numDisconnected = 0;
         public int NumDisconnected => numDisconnected;
+
+        public void IncAfterBattle(EWinLose winLose)
+        {
+            if (winLose == EWinLose.Win) 
+                IncWin();
+            else
+                IncLose();
+        }
 
         public void IncWin()
         {
