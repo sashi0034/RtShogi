@@ -18,8 +18,15 @@ namespace RtShogi.Scripts.Lobby
 
         public void ResetBeforeLobby()
         {
+            this.gameObject.SetActive(true);
             buttonStartMatching.ResetBeforeLobby();
         }
+
+        public void SleepOutLobby()
+        {
+            this.gameObject.SetActive(false);
+        }
+        
         public async UniTask ProcessLobby()
         {
             await buttonStartMatching.OnCompletedMatchMaking.Take(1);

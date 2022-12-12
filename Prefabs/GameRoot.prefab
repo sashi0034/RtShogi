@@ -339,6 +339,7 @@ MonoBehaviour:
   battleCanvas: {fileID: 3528516198131431318}
   battleRoot: {fileID: 4831866662229352850}
   lobbyCanvas: {fileID: 5222767675312892731}
+  matchingDebugger: {fileID: 799421023960019427}
 --- !u!1 &7825579447883209293
 GameObject:
   m_ObjectHideFlags: 0
@@ -1396,6 +1397,17 @@ PrefabInstance:
       objectReference: {fileID: 660608228214319832}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7766356cbd6c51d46a7686b8cfad6db6, type: 3}
+--- !u!114 &799421023960019427 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4715455495700011067, guid: 7766356cbd6c51d46a7686b8cfad6db6, type: 3}
+  m_PrefabInstance: {fileID: 5361734254713727448}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c9ea3848b3e43b597301a907709f42c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2128196508499543865 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6332179373526281953, guid: 7766356cbd6c51d46a7686b8cfad6db6, type: 3}

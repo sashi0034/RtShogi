@@ -36,9 +36,18 @@ namespace RtShogi.Scripts.Battle
 
         public void ResetBeforeBattle()
         {
+            this.gameObject.SetActive(true);
+            battleCanvasRef.gameObject.SetActive(true);
+
             komaManager.ResetBeforeBattle();
             boardManager.ResetBeforeBattle();
             battleCanvasRef.ResetBeforeBattle();
+        }
+
+        public void SleepOutBattle()
+        {
+            this.gameObject.SetActive(false);
+            battleCanvasRef.gameObject.SetActive(false);
         }
         
         public async UniTask ProcessBattle()
@@ -47,8 +56,7 @@ namespace RtShogi.Scripts.Battle
             await UniTask.Delay(3000);
 
             // バトル開始
-            playerCommander.ProcessPlayer().Forget();
-            komaManager.SetupAllAllyKomaOnBoard();
+            InvokeStartBattle();
 
             await battleCanvasRef.MessageWinLose.OnCompletedWinOrLose.Take(1);
             // バトル終了
@@ -57,6 +65,10 @@ namespace RtShogi.Scripts.Battle
             PhotonNetwork.Disconnect();
         }
 
-
+        public void InvokeStartBattle()
+        {
+            playerCommander.ProcessPlayer().Forget();
+            komaManager.SetupAllAllyKomaOnBoard();
+        }
     }
 }

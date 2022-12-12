@@ -12,7 +12,10 @@ namespace RtShogi.Scripts.Param
         public bool IsClearDebug => isClearDebug;
         
         
-#if UNITY_EDITOR 
+#if UNITY_EDITOR
+        [SerializeField] private bool isStartBattleImmediately;
+        public bool IsStartBattleImmediately => isStartBattleImmediately;
+
         [SerializeField] private bool isDebugBattleOfflineMode = false;
         public bool IsDebugBattleOfflineMode => isDebugBattleOfflineMode;
         

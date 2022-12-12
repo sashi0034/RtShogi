@@ -2,8 +2,11 @@
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Photon.Pun;
 using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Lobby;
+using RtShogi.Scripts.Online;
+using RtShogi.Scripts.Param;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,11 +18,32 @@ namespace RtShogi.Scripts
         [SerializeField] private BattleRoot battleRoot;
 
         [SerializeField] private LobbyCanvas lobbyCanvas;
+
+        [SerializeField] private MatchingDebugger matchingDebugger;
         
         public void Start()
         {
+            lobbyCanvas.SleepOutLobby();
+            battleRoot.SleepOutBattle();
+            
+#if UNITY_EDITOR
+            if (DebugParameter.Instance.IsStartBattleImmediately)
+            {
+                debugBattleImmediately();
+                return;
+            }
+#endif
             processGame().Forget();
         }
+
+#if UNITY_EDITOR
+
+        private void debugBattleImmediately()
+        {
+            battleRoot.ResetBeforeBattle();
+            matchingDebugger.StartDebug();
+        }
+#endif
 
         private async UniTask processGame()
         {
@@ -35,30 +59,24 @@ namespace RtShogi.Scripts
         
         private async UniTask processLobby()
         {
-            battleCanvas.gameObject.SetActive(false);
-            battleRoot.gameObject.SetActive(false);
-
             Util.ResetScaleAndActivate(lobbyCanvas);
             await lobbyCanvas.ProcessLobby();
         }
         
         private async UniTask processBattleBetweenLobby()
         {
-            battleRoot.gameObject.SetActive(true);
-            battleCanvas.gameObject.SetActive(true);
             battleRoot.ResetBeforeBattle();
 
             await lobbyCanvas.transform.DOScale(0f, 0.5f).SetEase(Ease.InBack);
-            lobbyCanvas.gameObject.SetActive(false);
+            lobbyCanvas.SleepOutLobby();
 
             await battleRoot.ProcessBattle();
             
             lobbyCanvas.ResetBeforeLobby();
-            lobbyCanvas.gameObject.SetActive(true);
+            
             await lobbyCanvas.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack);
 
-            battleRoot.gameObject.SetActive(false);
-            lobbyCanvas.gameObject.SetActive(false);
+            battleRoot.SleepOutBattle();
         }
 
     }

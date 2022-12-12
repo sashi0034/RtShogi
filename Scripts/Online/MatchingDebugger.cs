@@ -18,9 +18,8 @@ namespace RtShogi.Scripts.Online
         {
             if (DebugParameter.Instance.IsClearDebug) Util.DestroyGameObject(gameObject);
         }
-
-        [EventFunction]
-        private void Start()
+        
+        public void StartDebug()
         {
             var playerName = makeDebugPlayerName();
             Logger.Print("local player name: " + playerName);
@@ -42,7 +41,7 @@ namespace RtShogi.Scripts.Online
             
             PhotonNetwork.OfflineMode = true;
             PhotonNetwork.JoinRoom("Offline");
-            BattleRoot.Instance.KomaManager.SetupAllAllyKomaOnBoard();
+            BattleRoot.Instance.InvokeStartBattle();
             BattleRoot.Instance.KomaManager.SetupAllEnemyKomaOnBoardAsDebug();
         }
 
