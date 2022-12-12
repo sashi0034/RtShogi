@@ -69,10 +69,10 @@ namespace RtShogi.Scripts.Battle
         [EventFunction]
         private void Start()
         {
-            controlProcessAsync().Forget();
+            // ProcessPlayer().Forget();
         }
 
-        private async UniTask controlProcessAsync()
+        public async UniTask ProcessPlayer()
         {
             while (true)
             {
@@ -82,8 +82,6 @@ namespace RtShogi.Scripts.Battle
                 if (cooldown.Seconds > 0) await CooldownAnimation.ChargeThenHideCooldown(battleCanvas.CooldownBar, cooldown.Seconds);
                 if (await checkStopProcess()) return;
             }
-            
-
         }
 
         private async UniTask<PlayerCooldownTime> processUpAndDownLeftClick()

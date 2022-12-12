@@ -72,6 +72,12 @@ namespace RtShogi.Scripts
             return new Vector3(before.x, before.y, z);
         }
 
+        public static void ResetScaleAndActivate(MonoBehaviour actor)
+        {
+            actor.transform.localScale = Vector3.one;
+            actor.gameObject.SetActive(true);
+        }
+
     }
     
     [AttributeUsage(AttributeTargets.Method)]

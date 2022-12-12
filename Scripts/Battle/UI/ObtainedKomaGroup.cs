@@ -18,6 +18,11 @@ namespace RtShogi.Scripts.Battle.UI
         [EventFunction]
         private void Awake()
         {
+            // destroyAllElements();
+        }
+
+        public void ResetBeforeBattle()
+        {
             destroyAllElements();
         }
 

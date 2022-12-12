@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
+using UniRx;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.UI
@@ -11,6 +12,14 @@ namespace RtShogi.Scripts.Battle.UI
     {
         [SerializeField] private TextMeshProUGUI textWin;
         [SerializeField] private TextMeshProUGUI textLose;
+
+        private Subject<Unit> _onCompletedWinOrLose = new();
+        public IObservable<Unit> OnCompletedWinOrLose => _onCompletedWinOrLose;
+
+        public void ResetBeforeBattle()
+        {
+            gameObject.SetActive(false);
+        }
 
         [Button]
         public void TestPerformWin()
@@ -25,14 +34,18 @@ namespace RtShogi.Scripts.Battle.UI
 
         public async UniTask PerformWin()
         {
+            gameObject.SetActive(true);
             textLose.gameObject.SetActive(false);
             await performMessage(textWin);
+            _onCompletedWinOrLose.OnNext(Unit.Default);
         }
 
         public async UniTask PerformLose()
         {
+            gameObject.SetActive(true);
             textWin.gameObject.SetActive(false);
             await performMessage(textLose);
+            _onCompletedWinOrLose.OnNext(Unit.Default);
         }
 
         private static async UniTask performMessage(TextMeshProUGUI text)

@@ -47,5 +47,14 @@ namespace RtShogi.Scripts.Battle
                 _ => throw new ArgumentOutOfRangeException(nameof(team), team, null)
             };
         }
+
+        public void ResetBeforeBattle()
+        {
+            cooldownBar.RestBeforeBattle();
+            obtainedKomaAlly.ResetBeforeBattle();
+            obtainedKomaEnemy.ResetBeforeBattle();
+            buttonBecomeFormed.ResetBeforeBattle();
+            messageWinLose.ResetBeforeBattle();
+        }
     }
 }

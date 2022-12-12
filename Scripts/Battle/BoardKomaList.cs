@@ -17,6 +17,9 @@ namespace RtShogi.Scripts.Battle
 
         public void Clear()
         {
+            foreach (var unit in _unitList.Where(unit => unit != null))
+                Util.DestroyGameObject(unit.gameObject);
+
             _unitList.Clear();
         }
 

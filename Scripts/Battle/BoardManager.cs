@@ -9,7 +9,10 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private BoardMap boardMap;
         public BoardMap BoardMap => boardMap;
 
-
+        public void ResetBeforeBattle()
+        {
+            boardMap.ResetBeforeBattle();
+        }
 
 
 

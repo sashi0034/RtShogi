@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -6,10 +7,13 @@ using Michsky.MUIP;
 using RtShogi.Scripts.Online;
 using RtShogi.Scripts.Param;
 using TMPro;
+using UniRx;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Lobby
 {
+    record MatchingSessionTempResult(bool IsSuccess, int PassedTime);
+ 
     public class ButtonStartMatching : MonoBehaviour
     {
         [SerializeField] private LobbyCanvas lobbyCanvas;
@@ -27,13 +31,17 @@ namespace RtShogi.Scripts.Lobby
 
         private string playerName => lobbyCanvas.InputPlayerName.name;
 
-        // とりあえず今は5分を1セッション
-        private const int maxOneSessionTimeSec = 60 * 5;
-        
+        // とりあえず今は1分を1セッション
+        private const int maxOneSessionTimeSec = 60;
 
-        public void Setup()
+        private Subject<Unit> _onCompletedMatchMaking = new();
+        public IObservable<Unit> OnCompletedMatchMaking => _onCompletedMatchMaking;
+
+
+        public void ResetBeforeLobby()
         {
-            buttonStart.gameObject.SetActive(true);
+            buttonStart.enabled = true;
+            Util.ResetScaleAndActivate(buttonStart);
             textMatchingInProgress.gameObject.SetActive(false);
         }
 
@@ -57,25 +65,30 @@ namespace RtShogi.Scripts.Lobby
             await textMatchingInProgress.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
 
             // テキストを大きくしたり小さくしたりアニメーション
-            var cancelAnim = new CancellationTokenSource();
-            animSlowScalingLoop(cancelAnim.Token, textMatchingInProgress.transform).Forget();
+            var animScaling = animSlowScalingLoop(textMatchingInProgress.transform);
 
             // マスターに接続開始
             textMatchingInProgress.text = "マスターに接続しています...";
             await matchMakingManager.ProcessConnectToMaster(_playerRank, playerName);
 
             // 対戦相手が見つかるまでループ
-            while (await tryFindOpponentPlayer() == false) { } ;
+            MatchingSessionTempResult sessionTemp = new MatchingSessionTempResult(false, 0);
+            while ((sessionTemp = await tryFindOpponentPlayer(sessionTemp.PassedTime)).IsSuccess == false) { } ;
 
+            // 見つかった時の演出
             textMatchingInProgress.text = "対戦相手が見つかりました";
-            cancelAnim.Cancel();
+            animScaling.Kill();
+            textMatchingInProgress.transform.DOScale(1.5f, 3.0f).SetEase(Ease.InOutBack);
+            await UniTask.Delay(3.0f.ToIntMilli());
+            
+            _onCompletedMatchMaking.OnNext(Unit.Default);
         }
 
-        private async UniTask<bool> tryFindOpponentPlayer()
+        private async UniTask<MatchingSessionTempResult> tryFindOpponentPlayer(int passedTime)
         {
             var processJoinRoom =
                 matchMakingManager.ProcessConnectToJoinRoom(_playerRank, maxOneSessionTimeSec);
-            int waitingSec = 0;
+            int waitingSec = passedTime;
 
             // タスク終了まで待つ
             while (processJoinRoom.Status == UniTaskStatus.Pending)
@@ -86,18 +99,17 @@ namespace RtShogi.Scripts.Lobby
                 waitingSec++;
             }
 
-            return (await processJoinRoom == MatchMakingResult.Succeeded);
+            return new MatchingSessionTempResult(
+                await processJoinRoom == MatchMakingResult.Succeeded,
+                waitingSec);
         }
 
-        private static async UniTask animSlowScalingLoop(CancellationToken cancel, Transform transform)
+        private static Tween animSlowScalingLoop(Transform transform)
         {
-            while (true)
-            {
-                if (cancel.IsCancellationRequested) return;
-                await transform.DOScale(1.1f, 1.0f).SetEase(Ease.OutSine);
-                await transform.DOScale(1.0f, 1.0f).SetEase(Ease.InSine);
-            }
-            
+            return DOTween.Sequence()
+                .Append(transform.DOScale(1.1f, 1.0f).SetEase(Ease.OutSine))
+                .Append(transform.DOScale(1.0f, 1.0f).SetEase(Ease.InSine))
+                .SetLoops(-1);
         }
     }
 }

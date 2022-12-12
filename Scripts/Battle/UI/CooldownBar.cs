@@ -18,9 +18,8 @@ namespace RtShogi.Scripts.Battle.UI
         [SerializeField] private float animDuration = 0.1f;
 
         private Vector3 startPos => center.position;
-
-        [EventFunction]
-        private void Start()
+        
+        public void RestBeforeBattle()
         {
             // gameObject.SetActive(false);
             transform.position = getHidePos();

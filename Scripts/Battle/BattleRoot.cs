@@ -1,4 +1,8 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
+using Photon.Pun;
+using RtShogi.Scripts.Online;
+using UniRx;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle
@@ -28,6 +32,30 @@ namespace RtShogi.Scripts.Battle
 
         [SerializeField] private EffectManager effectManager;
         public EffectManager EffectManager => effectManager;
+
+
+        public void ResetBeforeBattle()
+        {
+            komaManager.ResetBeforeBattle();
+            boardManager.ResetBeforeBattle();
+            battleCanvasRef.ResetBeforeBattle();
+        }
+        
+        public async UniTask ProcessBattle()
+        {
+            // TODO: ちゃんとしたバトル同期
+            await UniTask.Delay(3000);
+
+            // バトル開始
+            playerCommander.ProcessPlayer().Forget();
+            komaManager.SetupAllAllyKomaOnBoard();
+
+            await battleCanvasRef.MessageWinLose.OnCompletedWinOrLose.Take(1);
+            // バトル終了
+            await UniTask.Delay(3f.ToIntMilli());
+            
+            PhotonNetwork.Disconnect();
+        }
 
 
     }

@@ -52,6 +52,14 @@ namespace RtShogi.Scripts.Battle
         {
             return TakePiece(new BoardPoint(x, z));
         }
+
+        public void ResetBeforeBattle()
+        {
+            foreach (var piece in boardPieces)
+            {
+                piece.ResetBeforeBattle();
+            }
+        }
         
 
         [Button]
@@ -64,15 +72,19 @@ namespace RtShogi.Scripts.Battle
             {
                 for (int z = 0; z < size.H; ++z)
                 {
-                    var piece = 
+                    var piece =
 #if UNITY_EDITOR
-                        PrefabUtility.InstantiatePrefab(boardPiecePrefab, transform) as BoardPiece;
+                        EditorApplication.isPlaying
+                            ? Instantiate(boardPiecePrefab, transform)
+                            : PrefabUtility.InstantiatePrefab(boardPiecePrefab, transform) as BoardPiece;
 #else
                         Instantiate(boardPiecePrefab, transform);                        
 #endif
-                    
-                    piece.transform.position = new Vector3(x-size.W / 2, 0, z-size.H / 2);
+
+#if UNITY_EDITOR
                     piece.gameObject.name = $"Piece({x}, {z})";
+#endif
+                    piece.transform.position = new Vector3(x-size.W / 2, 0, z-size.H / 2);
                     piece.Initialize(new Vector2Int(x, z));
                     created.Add(piece);
                 }

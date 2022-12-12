@@ -18,7 +18,7 @@ namespace RtShogi.Scripts.Battle.UI
         
         private Transform buttonTransform => buttonManager.transform;
 
-        private Vector3 _buttonStartLocalPos;
+        private readonly Vector3 buttonStartLocalPos = Vector3.zero;
         private bool _isAppeared = false;
         private KomaUnit? _currentTarget = null;
         private CancellationTokenSource? _cancelDisappearByTimeOut = null;
@@ -27,8 +27,13 @@ namespace RtShogi.Scripts.Battle.UI
         [EventFunction]
         private void Start()
         {
+            // _buttonStartLocalPos = Vector3.zero;
+        }
+
+        public void ResetBeforeBattle()
+        {
             setActive(false);
-            _buttonStartLocalPos = buttonTransform.localPosition;
+            buttonTransform.localPosition = buttonStartLocalPos;
         }
 
         private void setActive(bool isActive)
@@ -79,7 +84,7 @@ namespace RtShogi.Scripts.Battle.UI
             buttonTransform.localScale = Vector3.one;
 
             if (_animAppeared is { active: true }) _animAppeared.Kill();
-            await changeAnimAppeared(buttonTransform.DOLocalMove(_buttonStartLocalPos, 0.5f).SetEase(Ease.InOutBack));
+            await changeAnimAppeared(buttonTransform.DOLocalMove(buttonStartLocalPos, 0.5f).SetEase(Ease.InOutBack));
             
             Logger.Print("ButtonBecomeFormed end appear");
         }
@@ -115,7 +120,7 @@ namespace RtShogi.Scripts.Battle.UI
         private Vector2 getScreenOutPos()
         {
             const float padY = -50f;
-            return new Vector2(_buttonStartLocalPos.x, padY);
+            return new Vector2(buttonStartLocalPos.x, padY);
         }
 
         [EventFunction]

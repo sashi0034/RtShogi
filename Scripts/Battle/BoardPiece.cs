@@ -63,6 +63,12 @@ namespace RtShogi.Scripts.Battle
             holdingKoma = null;
         }
 
+        public void ResetBeforeBattle()
+        {
+            holdingKoma = null;
+            DisableHighlight();
+        }
+
         public void Initialize(Vector2Int point)
         {
             installedPoint = point;
