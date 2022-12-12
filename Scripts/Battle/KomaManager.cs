@@ -9,6 +9,7 @@ using Photon.Pun.UtilityScripts;
 using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Param;
+using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using UnityEngine;
 
@@ -113,6 +114,9 @@ namespace RtShogi.Scripts.Battle
         {
             var koma = createKomaInternal(putInfo.Kind, putInfo.Team, putInfo.Id);
             _boardKomaList.AddUnit(koma);
+#if UNITY_EDITOR
+            koma.gameObject.name = $"{putInfo.Kind} ({putInfo.Team})";
+#endif
 
             var boardPiece = boardMapRef.TakePiece(putInfo.Point);
             boardPiece.PutKoma(koma);
@@ -213,5 +217,19 @@ namespace RtShogi.Scripts.Battle
                 ? battleCanvas.MessageWinLose.PerformWin()
                 : battleCanvas.MessageWinLose.PerformLose());
         }
+
+#if UNITY_EDITOR
+        // 駒に角度がついていたほうが見やすいかもと思い追加
+        [Button]
+        public void TestKomaViewAngle(float rotX)
+        {
+            foreach (var unit in _boardKomaList.RawList)
+            {
+                unit.transform.rotation = Quaternion.Euler(
+                    unit.transform.rotation.eulerAngles
+                        .FixX(rotX)); 
+            }
+        }
+#endif
     }
 }

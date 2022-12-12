@@ -13,6 +13,7 @@ namespace RtShogi.Scripts.Battle
     public class BoardKomaList : IBoardKomaListGetter
     {
         private readonly List<KomaUnit> _unitList = new List<KomaUnit>();
+        public List<KomaUnit> RawList => _unitList;
 
         public void Clear()
         {

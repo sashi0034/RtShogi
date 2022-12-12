@@ -604,7 +604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPropsAbove:
-    pos: {x: 0, y: 9, z: 0}
+    pos: {x: 0, y: 8.5, z: 0}
     rot: {x: 90, y: 0, z: 0}
   cameraPropsDiagonal:
     pos: {x: 0, y: 8, z: -2.5}
