@@ -27,6 +27,10 @@ namespace RtShogi.Scripts.Param
 
         [SerializeField] private int maxMatchingWaitSeconds = 60 * 10;
         public int MaxMatchingWaitSeconds => maxMatchingWaitSeconds;
+
+        [SerializeField] private int maxSavableBattleLog = 50;
+        public int MaxSavableBattleLog => maxSavableBattleLog;
+        
         
 
         private static KomaInitialPutInfo[] _komaInitialPutInfo = getKomaInitialPutInfos();

@@ -80,8 +80,9 @@ namespace RtShogi.Scripts
             lobbyCanvas.SleepOutLobby();
 
             // バトル開始
-            var battleResult = await battleRoot.ProcessBattle(this);
+            var (battleResult, battleLog) = await battleRoot.ProcessBattle(this);
             saveData.SetPlayerRating(battleResult.NewPlayerRating);
+            saveData.PushBattleLog(battleLog);
             writeSaveData();
             
             lobbyCanvas.ResetBeforeLobby(this, ELobbyResetOption.AfterBattle);

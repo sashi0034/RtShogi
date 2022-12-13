@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Globalization;
 using Cysharp.Threading.Tasks;
 using Photon.Pun;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Lobby;
 using RtShogi.Scripts.Online;
+using RtShogi.Scripts.Storage;
 using UniRx;
 using UnityEngine;
 
@@ -51,8 +53,8 @@ namespace RtShogi.Scripts.Battle
             this.gameObject.SetActive(false);
             battleCanvasRef.gameObject.SetActive(false);
         }
-        
-        public async UniTask<BattleResultForRating> ProcessBattle(GameRoot gameRoot)
+
+        public async UniTask<(BattleResultForRating, BattleLogElement)> ProcessBattle(GameRoot gameRoot)
         {
             // TODO: ちゃんとしたバトル同期
             await UniTask.Delay(3000);
@@ -62,18 +64,23 @@ namespace RtShogi.Scripts.Battle
 
             var winLose = await battleCanvasRef.MessageWinLose.OnCompletedWinOrLose.Take(1);
             gameRoot.SaveData.MatchResultCount.IncAfterBattle(winLose);
-            
+
             // バトル終了
             await UniTask.Delay(3f.ToIntMilli());
-            
+
             if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
 
-            // 新しいレート計算
+            // 対戦結果を返す
             var winLoseResult = WinLoseUtil.ToIncludeDisconnected(winLose, false);
-            return new BattleResultForRating(
-                winLoseResult,
-                new PlayerRating(gameRoot.SaveData.PlayerRating).CalcNext(winLoseResult)
-                );
+            return (
+                new BattleResultForRating(
+                    winLoseResult,
+                    new PlayerRating(gameRoot.SaveData.PlayerRating).CalcNext(winLoseResult)),
+                new BattleLogElement(
+                    1000,
+                    "OPPOPNENT",
+                    DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                    winLoseResult));
         }
 
         public void InvokeStartBattle()

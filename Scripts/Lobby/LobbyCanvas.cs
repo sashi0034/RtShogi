@@ -5,6 +5,7 @@ using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Online;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RtShogi.Scripts.Lobby
 {
@@ -34,14 +35,22 @@ namespace RtShogi.Scripts.Lobby
         [SerializeField] private TextAfterBattle textAfterBattle;
         public TextAfterBattle TextAfterBattle => textAfterBattle;
         
+        [SerializeField] private PopUpBattleLog popUpBattleLog;
+        public PopUpBattleLog PopUpBattleLog => popUpBattleLog;
+
+        [SerializeField] private Image popUpBackground;
+        public Image PopUpBackground => popUpBackground;
         
-        
+
+
         public void ResetBeforeLobby(GameRoot gameRoot, ELobbyResetOption resetOption)
         {
             this.gameObject.SetActive(true);
             buttonStartMatching.ResetBeforeLobby();
             chartWinLose.ResetBeforeLobby(gameRoot.SaveData);
             inputPlayerName.ResetBeforeLobby(gameRoot.SaveData);
+            popUpBattleLog.ResetBeforeBattle(gameRoot.SaveData);
+            popUpBackground.gameObject.SetActive(false);
 
             switch (resetOption)
             {
