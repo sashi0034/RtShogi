@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using Photon.Pun;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Lobby;
-using RtShogi.Scripts.Online;
+using RtShogi.Scripts.Matching;
 using RtShogi.Scripts.Storage;
 using UniRx;
 using UnityEngine;
@@ -37,6 +37,9 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private EffectManager effectManager;
         public EffectManager EffectManager => effectManager;
 
+        [SerializeField] private SetupRpcaller setupRpcallerRef;
+        public SetupRpcaller SetupRpcallerRef => setupRpcallerRef;
+
 
         public void ResetBeforeBattle()
         {
@@ -56,29 +59,35 @@ namespace RtShogi.Scripts.Battle
 
         public async UniTask<(BattleResultForRating, BattleLogElement)> ProcessBattle(GameRoot gameRoot)
         {
-            // TODO: ちゃんとしたバトル同期
-            await UniTask.Delay(3000);
+            await UniTask.WaitUntil(() => setupRpcallerRef.Opponent.HasReceivedPlayerData);
+
+            // 敵の情報を表示
+            await battleCanvasRef.PopUpEnemyInfo.PerformPopUpEnemyInfo(battleCanvasRef, setupRpcallerRef);
+
+            setupRpcallerRef.RpcallNotifyHasSetupJustBeforeOnlineBattle();
+            await UniTask.WaitUntil(() => setupRpcallerRef.Opponent.HasSetupJustBeforeOnlineBattle);
 
             // バトル開始
             InvokeStartBattle();
 
-            var winLose = await battleCanvasRef.MessageWinLose.OnCompletedWinOrLose.Take(1);
-            gameRoot.SaveData.MatchResultCount.IncAfterBattle(winLose);
-
             // バトル終了
+            var winLose = await battleCanvasRef.MessageWinLose.OnCompletedWinOrLose.Take(1);
+            
             await UniTask.Delay(3f.ToIntMilli());
 
+            // 終了処理
             if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
 
             // 対戦結果を返す
             var winLoseResult = WinLoseUtil.ToIncludeDisconnected(winLose, false);
+            gameRoot.SaveData.MatchResultCount.IncAfterBattle(winLoseResult);
             return (
                 new BattleResultForRating(
                     winLoseResult,
                     new PlayerRating(gameRoot.SaveData.PlayerRating).CalcNext(winLoseResult)),
                 new BattleLogElement(
-                    1000,
-                    "OPPOPNENT",
+                    setupRpcallerRef.Opponent.PlayerRating,
+                    setupRpcallerRef.Opponent.PlayerName,
                     DateTime.Now.ToString(CultureInfo.InvariantCulture),
                     winLoseResult));
         }

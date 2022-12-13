@@ -4,7 +4,7 @@ using ExitGames.Client.Photon;
 using RtShogi.Scripts.Param;
 using UnityEngine;
 
-namespace RtShogi.Scripts.Online
+namespace RtShogi.Scripts.Matching
 {
     public readonly struct MatchPlayerRank
     {

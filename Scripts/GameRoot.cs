@@ -5,7 +5,7 @@ using DG.Tweening;
 using Photon.Pun;
 using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Lobby;
-using RtShogi.Scripts.Online;
+using RtShogi.Scripts.Matching;
 using RtShogi.Scripts.Param;
 using RtShogi.Scripts.Storage;
 using Sirenix.Utilities;
@@ -68,7 +68,12 @@ namespace RtShogi.Scripts
         private async UniTask processLobby()
         {
             Util.ResetScaleAndActivate(lobbyCanvas);
+            
+            // ロビーに入る前にSetupRpcallerを初期化して、マッチング完了時には初期化が終わってる状態にしておく
+            battleRoot.SetupRpcallerRef.ResetParam();
+            
             await lobbyCanvas.ProcessLobby();
+            
             writeSaveData();
         }
         

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Michsky.MUIP;
-using RtShogi.Scripts.Online;
+using RtShogi.Scripts.Matching;
 using RtShogi.Scripts.Param;
 using TMPro;
 using UniRx;
@@ -80,6 +80,11 @@ namespace RtShogi.Scripts.Lobby
             textMatchingInProgress.text = "対戦相手が見つかりました";
             animScaling.Kill();
             textMatchingInProgress.transform.DOScale(1.5f, 3.0f).SetEase(Ease.InOutBack);
+            
+            matchMakingManager.SetupRpcallerRef.RpcallSetupPlayerData(
+                lobbyCanvas.LabelRating.PlayerRating.Value, 
+                lobbyCanvas.InputPlayerName.PlayerName);
+
             await UniTask.Delay(3.0f.ToIntMilli());
             
             _onCompletedMatchMaking.OnNext(Unit.Default);

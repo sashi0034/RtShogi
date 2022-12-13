@@ -426,6 +426,7 @@ MonoBehaviour:
   battleCanvasRef: {fileID: 0}
   rpcaller: {fileID: 2353827558821020601}
   effectManager: {fileID: 6416892373094781848}
+  setupRpcaller: {fileID: 0}
 --- !u!1 &3836209163274351066
 GameObject:
   m_ObjectHideFlags: 0

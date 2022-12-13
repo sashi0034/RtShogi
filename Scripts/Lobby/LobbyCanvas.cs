@@ -2,7 +2,7 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RtShogi.Scripts.Battle.UI;
-using RtShogi.Scripts.Online;
+using RtShogi.Scripts.Matching;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;

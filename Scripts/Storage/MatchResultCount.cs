@@ -16,12 +16,22 @@ namespace RtShogi.Scripts.Storage
         [SerializeField] private int numDisconnected = 0;
         public int NumDisconnected => numDisconnected;
 
-        public void IncAfterBattle(EWinLose winLose)
+        public void IncAfterBattle(EWinLoseDisconnected winLose)
         {
-            if (winLose == EWinLose.Win) 
+            switch (winLose)
+            {
+            case EWinLoseDisconnected.Win:
                 IncWin();
-            else
+                break;
+            case EWinLoseDisconnected.Lose:
                 IncLose();
+                break;
+            case EWinLoseDisconnected.Disconnected:
+                IncDisconnected();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(winLose), winLose, null);
+            }
         }
 
         public void IncWin()

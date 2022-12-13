@@ -25,6 +25,13 @@ namespace RtShogi.Scripts.Battle
         [SerializeField] private MessageWinLose messageWinLose;
         public MessageWinLose MessageWinLose => messageWinLose;
 
+        [SerializeField] private LabelEnemyInfo labelEnemyInfo;
+        public LabelEnemyInfo LabelEnemyInfo => labelEnemyInfo;
+
+        [SerializeField] private PopUpEnemyInfo popUpEnemyInfo;
+        public PopUpEnemyInfo PopUpEnemyInfo => popUpEnemyInfo;
+        
+
         [SerializeField] private BattleRoot rootRef;
         public BattleRoot RootRef => rootRef;
         
@@ -55,6 +62,8 @@ namespace RtShogi.Scripts.Battle
             obtainedKomaEnemy.ResetBeforeBattle();
             buttonBecomeFormed.ResetBeforeBattle();
             messageWinLose.ResetBeforeBattle();
+            labelEnemyInfo.ResetBeforeBattle();
+            popUpEnemyInfo.ResetBeforeBattle();
         }
     }
 }

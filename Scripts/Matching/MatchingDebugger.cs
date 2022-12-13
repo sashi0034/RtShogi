@@ -6,7 +6,7 @@ using RtShogi.Scripts.Param;
 using TMPro;
 using UnityEngine;
 
-namespace RtShogi.Scripts.Online
+namespace RtShogi.Scripts.Matching
 {
     public class MatchingDebugger : MonoBehaviour
     {

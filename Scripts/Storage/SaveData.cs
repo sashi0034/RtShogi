@@ -11,9 +11,11 @@ namespace RtShogi.Scripts.Storage
     [Serializable]
     public class BattleLogElement
     { 
+        // 敵のレート
         [SerializeField] private int rating;
         public int Rating => rating;
 
+        // 敵の名前
         [SerializeField] private string playerName;
         public string PlayerName => playerName;
 

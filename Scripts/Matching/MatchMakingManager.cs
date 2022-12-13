@@ -3,8 +3,9 @@ using Cysharp.Threading.Tasks;
 using Photon.Pun;
 using Photon.Realtime;
 using UniRx;
+using UnityEngine;
 
-namespace RtShogi.Scripts.Online
+namespace RtShogi.Scripts.Matching
 {
     public enum MatchMakingResult
     {
@@ -14,6 +15,10 @@ namespace RtShogi.Scripts.Online
 
     public class MatchMakingManager : MonoBehaviourPunCallbacks
     {
+        [SerializeField] private SetupRpcaller setupRpcallerRef;
+        public SetupRpcaller SetupRpcallerRef => setupRpcallerRef;
+        
+        
         private static readonly string[] keysForLobby = new[] { MatchPlayerRankUtil.KeyRank };
 
         private readonly Subject<Unit> _onFinishedConnectedToMaster = new Subject<Unit>();
