@@ -7,10 +7,10 @@ using UnityEngine.UI;
 
 namespace RtShogi.Scripts.Lobby
 {
-    public class ButtonShowLog : ButtonShowPopUpBase
+    public class ButtonShowTips : ButtonShowPopUpBase
     {
         [SerializeField] private ButtonManager buttonManager;
-        [SerializeField] private PopUpBattleLog popUpBattleLog;
+        [SerializeField] private PopUpShowTips popUpShowTips;
         [SerializeField] private Image popUpBackGround;
 
         [EventFunction]
@@ -19,7 +19,7 @@ namespace RtShogi.Scripts.Lobby
             ButtonShowPopUpBase.PerformPopUp(
                 buttonManager,
                 popUpBackGround,
-                popUpBattleLog).Forget();
+                popUpShowTips).Forget();
         }
     }
 }

@@ -38,6 +38,10 @@ namespace RtShogi.Scripts.Lobby
         [SerializeField] private PopUpBattleLog popUpBattleLog;
         public PopUpBattleLog PopUpBattleLog => popUpBattleLog;
 
+        [SerializeField] private PopUpShowTips popUpShowTips;
+        public PopUpShowTips PopUpShowTips => popUpShowTips;
+        
+
         [SerializeField] private Image popUpBackground;
         public Image PopUpBackground => popUpBackground;
         
@@ -49,7 +53,8 @@ namespace RtShogi.Scripts.Lobby
             buttonStartMatching.ResetBeforeLobby();
             chartWinLose.ResetBeforeLobby(gameRoot.SaveData);
             inputPlayerName.ResetBeforeLobby(gameRoot.SaveData);
-            popUpBattleLog.ResetBeforeBattle(gameRoot.SaveData);
+            popUpBattleLog.ResetBeforeLobby(gameRoot.SaveData);
+            popUpShowTips.ResetBeforeBattle();
             popUpBackground.gameObject.SetActive(false);
 
             switch (resetOption)

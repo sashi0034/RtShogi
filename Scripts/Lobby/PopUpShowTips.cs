@@ -3,18 +3,16 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RtShogi.Scripts.Storage;
 using UniRx;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace RtShogi.Scripts.Lobby
 {
-    public class PopUpBattleLog : MonoBehaviour, IPopUp
+    public class PopUpShowTips : MonoBehaviour, IPopUp
     {
         [SerializeField] private Button buttonExit;
-        [SerializeField] private LabelBattleLogElement labelBattleLogElementPrefab;
         [SerializeField] private VerticalLayoutGroup viewportContent;
-        
+
         private readonly Subject<Unit> _onExit = new();
         public IObservable<Unit> OnExit => _onExit;
 
@@ -36,22 +34,9 @@ namespace RtShogi.Scripts.Lobby
             _onExit.OnNext(Unit.Default);
         }
 
-        public void ResetBeforeLobby(SaveData saveData)
+        public void ResetBeforeBattle()
         {
             gameObject.SetActive(false);
-            
-            // いったん中身をクリアして
-            foreach (var child in viewportContent.transform.GetChildren())
-            {
-                Util.DestroyGameObject(child.gameObject);
-            }
-
-            // 要素挿入
-            foreach (var logElement in saveData.BattleLogList)
-            {
-                var label = Instantiate(labelBattleLogElementPrefab, viewportContent.transform);
-                label.SetupView(logElement);
-            }
         }
     }
 }
