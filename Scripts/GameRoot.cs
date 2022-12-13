@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Photon.Pun;
 using RtShogi.Scripts.Battle;
+using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Lobby;
 using RtShogi.Scripts.Matching;
 using RtShogi.Scripts.Param;
@@ -56,6 +57,7 @@ namespace RtShogi.Scripts
         private async UniTask processGame()
         {
             readSaveData();
+            checkShutdownedWhileLastBattle();
             lobbyCanvas.ResetBeforeLobby(this, ELobbyResetOption.AfterInit);
             
             while (gameObject != null)
@@ -85,10 +87,20 @@ namespace RtShogi.Scripts
             await lobbyCanvas.transform.DOScale(0f, 0.5f).SetEase(Ease.InBack);
             lobbyCanvas.SleepOutLobby();
 
+            // 敵と同期
+            var opponent = battleRoot.SetupRpcallerRef.Opponent;
+            await UniTask.WaitUntil(() => opponent.HasReceivedPlayerData || 
+                                          SetupRpcaller.IsInvalidOnlineRoomNow());
+            
+            // バトル開始前のセーブ
+            saveData.EnterBeforeBattle(new LastBattleOpponentCache(opponent.PlayerName, opponent.PlayerRating, DateTime.Now));
+            writeSaveData();
+            
             // バトル開始
             var (battleResult, battleLog) = await battleRoot.ProcessBattle(this);
             saveData.SetPlayerRating(battleResult.NewPlayerRating);
             saveData.PushBattleLog(battleLog);
+            saveData.LeaveAfterBattle();
             writeSaveData();
             
             lobbyCanvas.ResetBeforeLobby(this, ELobbyResetOption.AfterBattle);
@@ -99,6 +111,24 @@ namespace RtShogi.Scripts
             
             // レート加算の演出
             await lobbyCanvas.PerformAfterBattle(battleResult);
+        }
+
+        private void checkShutdownedWhileLastBattle()
+        {
+            if (saveData.IsEnteredBattle == false) return;
+
+            var lastOpponent = saveData.LastOpponent;
+            saveData.SetPlayerRating(new PlayerRating(saveData.PlayerRating)
+                .CalcNext(EWinLoseDisconnected.Disconnected, new PlayerRating(lastOpponent.OpponentRating)));
+            saveData.PushBattleLog(new BattleLogElement(
+                lastOpponent.OpponentRating,
+                lastOpponent.OpponentName,
+                lastOpponent.DateTime,
+                EWinLoseDisconnected.Disconnected
+                ));
+            saveData.LeaveAfterBattle();
+            
+            writeSaveData();
         }
 
         private void writeSaveData()

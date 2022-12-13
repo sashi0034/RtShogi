@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Lobby;
@@ -33,7 +34,30 @@ namespace RtShogi.Scripts.Storage
             this.winLose = winLose;
         }
     }
+
+    [Serializable]
+    public class LastBattleOpponentCache
+    {
+        [SerializeField] private string opponentName = "";
+        public string OpponentName => opponentName;
+
+        [SerializeField] private int opponentRating = 0;
+        public int OpponentRating => opponentRating;
+
+        [SerializeField] private string dateTime = "";
+        public string DateTime => dateTime;
+        
+
+        public LastBattleOpponentCache() {}
+        public LastBattleOpponentCache(string opponentName, int opponentRating, DateTime date)
+        {
+            this.opponentName = opponentName;
+            this.opponentRating = opponentRating;
+            this.dateTime = date.ToString(CultureInfo.InvariantCulture);
+        }
+    }
     
+
     [Serializable]
     public class SaveData
     {
@@ -48,6 +72,15 @@ namespace RtShogi.Scripts.Storage
 
         [SerializeField] private List<BattleLogElement> battleLogList = new List<BattleLogElement>();
         public List<BattleLogElement> BattleLogList => battleLogList;
+
+        // 通信切断処理に実装
+        [SerializeField] private bool isEnteredBattle;
+        public bool IsEnteredBattle => isEnteredBattle;
+
+        [SerializeField] private LastBattleOpponentCache lastOpponent = new LastBattleOpponentCache();
+        public LastBattleOpponentCache LastOpponent => lastOpponent;
+        
+        
         
 
         public void UpdateByCopyDataFromSomeObjects(GameRoot gameRoot)
@@ -65,6 +98,17 @@ namespace RtShogi.Scripts.Storage
             battleLogList.Insert(0, newLog);
             if (battleLogList.Count < ConstParameter.Instance.MaxSavableBattleLog) return;
             battleLogList.RemoveAt(battleLogList.Count - 1);
+        }
+
+        public void EnterBeforeBattle(LastBattleOpponentCache opponent)
+        {
+            isEnteredBattle = true;
+            this.lastOpponent = opponent;
+        }
+
+        public void LeaveAfterBattle()
+        {
+            isEnteredBattle = false;
         }
     }
 }

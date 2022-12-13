@@ -60,8 +60,6 @@ namespace RtShogi.Scripts.Battle
         public async UniTask<(BattleResultForRating, BattleLogElement)> ProcessBattle(GameRoot gameRoot)
         {
             var opponent = setupRpcallerRef.Opponent;
-            await UniTask.WaitUntil(() => opponent.HasReceivedPlayerData || 
-                                          SetupRpcaller.IsInvalidOnlineRoomNow());
 
             // 敵の情報を表示
             await battleCanvasRef.PopUpEnemyInfo.PerformPopUpEnemyInfo(battleCanvasRef, setupRpcallerRef);
