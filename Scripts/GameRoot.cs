@@ -8,6 +8,7 @@ using RtShogi.Scripts.Lobby;
 using RtShogi.Scripts.Matching;
 using RtShogi.Scripts.Param;
 using RtShogi.Scripts.Storage;
+using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -121,6 +122,15 @@ namespace RtShogi.Scripts
             if (temp == null) return;
             saveData = temp;
         }
+
+#if UNITY_EDITOR
+        [Button]
+        public void DebugResetPlayerRate()
+        {
+            saveData.SetPlayerRating(ConstParameter.InitialPlayerRating);
+            lobbyCanvas.ResetBeforeLobby(this, ELobbyResetOption.AfterInit);
+        }
+#endif
 
     }
 }

@@ -9,23 +9,23 @@ using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.UI
 {
-    public enum EWinLose
-    {
-        Win,
-        Lose
-    }
-
-    public static class WinLoseUtil
-    {
-        public static EWinLoseDisconnected ToIncludeDisconnected(EWinLose winLose, bool isDisconnected)
-        {
-            return winLose == EWinLose.Win
-                ? EWinLoseDisconnected.Win
-                : isDisconnected
-                    ? EWinLoseDisconnected.Disconnected
-                    : EWinLoseDisconnected.Lose;
-        }
-    }
+    // public enum EWinLose
+    // {
+    //     Win,
+    //     Lose
+    // }
+    //
+    // public static class WinLoseUtil
+    // {
+    //     public static EWinLoseDisconnected ToIncludeDisconnected(EWinLose winLose, bool isDisconnected)
+    //     {
+    //         return winLose == EWinLose.Win
+    //             ? EWinLoseDisconnected.Win
+    //             : isDisconnected
+    //                 ? EWinLoseDisconnected.Disconnected
+    //                 : EWinLoseDisconnected.Lose;
+    //     }
+    // }
 
     public enum EWinLoseDisconnected
     {
@@ -42,10 +42,13 @@ namespace RtShogi.Scripts.Battle.UI
     public class MessageWinLose : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI textWin;
+        [SerializeField] private TextMeshProUGUI textWinByDisconnected;
+        
         [SerializeField] private TextMeshProUGUI textLose;
+        [SerializeField] private TextMeshProUGUI textLoseByDisconnected;
 
-        private Subject<EWinLose> _onCompletedWinOrLose = new();
-        public IObservable<EWinLose> OnCompletedWinOrLose => _onCompletedWinOrLose;
+        private Subject<EWinLoseDisconnected> _onCompletedWinOrLose = new();
+        public IObservable<EWinLoseDisconnected> OnCompletedWinOrLose => _onCompletedWinOrLose;
 
         public void ResetBeforeBattle()
         {
@@ -55,28 +58,32 @@ namespace RtShogi.Scripts.Battle.UI
         [Button]
         public void TestPerformWin()
         {
-            PerformWin().Forget();
+            PerformWin(false).Forget();
         }
         [Button]
         public void TestPerformLose()
         {
-            PerformLose().Forget();
+            PerformLose(false).Forget();
         }
 
-        public async UniTask PerformWin()
+        public async UniTask PerformWin(bool isDisconnected)
         {
             gameObject.SetActive(true);
             textLose.gameObject.SetActive(false);
+            textLoseByDisconnected.gameObject.SetActive(isDisconnected);
             await performMessage(textWin);
-            _onCompletedWinOrLose.OnNext(EWinLose.Win);
+            _onCompletedWinOrLose.OnNext(EWinLoseDisconnected.Win);
         }
 
-        public async UniTask PerformLose()
+        public async UniTask PerformLose(bool isDisconnected)
         {
             gameObject.SetActive(true);
             textWin.gameObject.SetActive(false);
+            textLoseByDisconnected.gameObject.SetActive(isDisconnected);
             await performMessage(textLose);
-            _onCompletedWinOrLose.OnNext(EWinLose.Lose);
+            _onCompletedWinOrLose.OnNext(isDisconnected 
+                ? EWinLoseDisconnected.Disconnected
+                : EWinLoseDisconnected.Lose);
         }
 
         private static async UniTask performMessage(TextMeshProUGUI text)

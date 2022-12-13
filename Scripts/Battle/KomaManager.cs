@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using System.Xml.Resolvers;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using RtShogi.Scripts.Battle;
 using RtShogi.Scripts.Battle.UI;
+using RtShogi.Scripts.Matching;
 using RtShogi.Scripts.Param;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
@@ -82,7 +84,33 @@ namespace RtShogi.Scripts.Battle
             throw new NotImplementedException();
 #endif
         }
-        
+
+        // プレイヤーの通信状況を非同期でチェック
+        public async UniTask CheckDisconnectionAsync()
+        {
+            while (_status is BattleStatusContinuing)
+            {
+                await UniTask.DelayFrame(1);
+
+                if (checkDisconnectAlly()) break;
+                if (checkDisconnectEnemy()) break;
+            }
+        }
+
+        private bool checkDisconnectAlly()
+        {
+            if (PhotonNetwork.IsConnected) return false;
+            finishBattle(false, true).Forget();
+            return true;
+        }
+        private bool checkDisconnectEnemy()
+        {
+            if (PhotonNetwork.IsConnected == false) return false;
+            if (PhotonNetwork.CurrentRoom is { PlayerCount: MatchMakingManager.MaxPlayerInRoom }) return false;
+            finishBattle(true, true).Forget();
+            return true;
+        }
+
 
         [UsingBattleRpcaller]
         private void createAndInstallKoma(BoardPoint point, EKomaKind kind, ETeam team)
@@ -212,11 +240,16 @@ namespace RtShogi.Scripts.Battle
 
             bool isWin = kingUnit.Team == ETeam.Enemy;
 
+            await finishBattle(isWin, false);
+        }
+
+        private async UniTask finishBattle(bool isWin, bool isDisconnected)
+        {
             _status = new BattleStatusFinished(isWin);
 
             await (isWin
-                ? battleCanvas.MessageWinLose.PerformWin()
-                : battleCanvas.MessageWinLose.PerformLose());
+                ? battleCanvas.MessageWinLose.PerformWin(isDisconnected)
+                : battleCanvas.MessageWinLose.PerformLose(isDisconnected));
         }
 
 #if UNITY_EDITOR

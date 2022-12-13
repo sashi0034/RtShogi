@@ -59,13 +59,16 @@ namespace RtShogi.Scripts.Battle
 
         public async UniTask<(BattleResultForRating, BattleLogElement)> ProcessBattle(GameRoot gameRoot)
         {
-            await UniTask.WaitUntil(() => setupRpcallerRef.Opponent.HasReceivedPlayerData);
+            var opponent = setupRpcallerRef.Opponent;
+            await UniTask.WaitUntil(() => opponent.HasReceivedPlayerData || 
+                                          SetupRpcaller.IsInvalidOnlineRoomNow());
 
             // 敵の情報を表示
             await battleCanvasRef.PopUpEnemyInfo.PerformPopUpEnemyInfo(battleCanvasRef, setupRpcallerRef);
 
             setupRpcallerRef.RpcallNotifyHasSetupJustBeforeOnlineBattle();
-            await UniTask.WaitUntil(() => setupRpcallerRef.Opponent.HasSetupJustBeforeOnlineBattle);
+            await UniTask.WaitUntil(() => setupRpcallerRef.Opponent.HasSetupJustBeforeOnlineBattle || 
+                                          SetupRpcaller.IsInvalidOnlineRoomNow());
 
             // バトル開始
             InvokeStartBattle();
@@ -79,23 +82,24 @@ namespace RtShogi.Scripts.Battle
             if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
 
             // 対戦結果を返す
-            var winLoseResult = WinLoseUtil.ToIncludeDisconnected(winLose, false);
-            gameRoot.SaveData.MatchResultCount.IncAfterBattle(winLoseResult);
+            gameRoot.SaveData.MatchResultCount.IncAfterBattle(winLose);
             return (
                 new BattleResultForRating(
-                    winLoseResult,
-                    new PlayerRating(gameRoot.SaveData.PlayerRating).CalcNext(winLoseResult)),
+                    winLose,
+                    new PlayerRating(gameRoot.SaveData.PlayerRating)
+                        .CalcNext(winLose, new PlayerRating(opponent.PlayerRating))),
                 new BattleLogElement(
-                    setupRpcallerRef.Opponent.PlayerRating,
-                    setupRpcallerRef.Opponent.PlayerName,
+                    opponent.PlayerRating,
+                    opponent.PlayerName,
                     DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                    winLoseResult));
+                    winLose));
         }
 
         public void InvokeStartBattle()
         {
             playerCommander.ProcessPlayer().Forget();
             komaManager.SetupAllAllyKomaOnBoard();
+            komaManager.CheckDisconnectionAsync().Forget();
         }
     }
 }

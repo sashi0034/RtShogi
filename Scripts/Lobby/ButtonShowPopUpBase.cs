@@ -24,8 +24,8 @@ namespace RtShogi.Scripts.Lobby
         private void Start()
         {
             DOTween.Sequence(triangle)
-                .Append(triangle.transform.DOMoveX(10f, 0.3f).SetEase(Ease.InOutSine).SetRelative(true))
-                .Append(triangle.transform.DOMoveX(-10f, 0.6f).SetEase(Ease.InOutSine).SetRelative(true))
+                .Append(triangle.transform.DOLocalMoveX(10f, 0.3f).SetEase(Ease.InOutSine).SetRelative(true))
+                .Append(triangle.transform.DOLocalMoveX(-10f, 0.6f).SetEase(Ease.InOutSine).SetRelative(true))
                 .SetLoops(-1);
         }
 

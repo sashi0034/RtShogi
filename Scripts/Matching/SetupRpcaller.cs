@@ -2,6 +2,7 @@
 
 using System;
 using Photon.Pun;
+using Photon.Realtime;
 using RtShogi.Scripts.Battle;
 
 namespace RtShogi.Scripts.Matching
@@ -96,6 +97,19 @@ namespace RtShogi.Scripts.Matching
         public static bool IsLocalPhotonActor(int photonActorNumber)
         {
             return BattleRpcaller.IsLocalPhotonActor(photonActorNumber);
+        }
+        
+        /// <summary>
+        /// 自分や対戦相手が抜けたりしていたらtrue
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsInvalidOnlineRoomNow()
+        {
+            if (PhotonNetwork.CurrentRoom == null) return true;
+            if (PhotonNetwork.CurrentRoom.PlayerCount != MatchMakingManager.MaxPlayerInRoom) return true;
+
+            // valid room
+            return false;
         }
 
 

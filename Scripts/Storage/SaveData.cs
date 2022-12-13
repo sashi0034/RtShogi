@@ -37,7 +37,7 @@ namespace RtShogi.Scripts.Storage
     [Serializable]
     public class SaveData
     {
-        [SerializeField] private int playerRating = 1000;
+        [SerializeField] private int playerRating = ConstParameter.InitialPlayerRating.Value;
         public int PlayerRating => playerRating;
 
         [SerializeField] private MatchResultCount matchResultCount = new MatchResultCount();

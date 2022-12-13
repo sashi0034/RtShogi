@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RtShogi.Scripts.Battle;
+using RtShogi.Scripts.Lobby;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Param
@@ -30,7 +31,17 @@ namespace RtShogi.Scripts.Param
 
         [SerializeField] private int maxSavableBattleLog = 50;
         public int MaxSavableBattleLog => maxSavableBattleLog;
-        
+
+        [SerializeField] private int minPlayerRating = 1;
+        public int MinPlayerRating => minPlayerRating;
+
+        [SerializeField] private int maxPlayerRating = 100000;
+        public int MaxPlayerRating => maxPlayerRating;
+
+        public IntRange PlayerRatingRange => new IntRange(minPlayerRating, maxPlayerRating);
+
+        [SerializeField] private int maxDeltaRating = 200;
+        public int MaxDeltaRating => maxDeltaRating;
         
 
         private static KomaInitialPutInfo[] _komaInitialPutInfo = getKomaInitialPutInfos();
@@ -41,6 +52,9 @@ namespace RtShogi.Scripts.Param
         public static readonly IntSize BoardSize = new IntSize(BoardSideLength, BoardSideLength);
 
         public const string SaveDataKey = "JsonSaveData"; 
+        
+        public static readonly PlayerRating InitialPlayerRating = new PlayerRating(1000);
+
         
         private static KomaInitialPutInfo[] getKomaInitialPutInfos()
         {

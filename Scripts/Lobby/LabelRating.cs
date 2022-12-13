@@ -4,6 +4,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RtShogi.Scripts.Battle.UI;
+using RtShogi.Scripts.Param;
 using RtShogi.Scripts.Storage;
 using TMPro;
 using UnityEngine;
@@ -19,15 +20,33 @@ namespace RtShogi.Scripts.Lobby
             return this;
         }
 
-        public PlayerRating CalcNext(EWinLoseDisconnected winLose)
+        public PlayerRating CalcNext(EWinLoseDisconnected winLose, PlayerRating enemyRating)
         {
-            return winLose switch
+            float rate = (float)enemyRating.Value / this.Value;
+
+            var baseDelta = winLose switch
             {
-                EWinLoseDisconnected.Win => new PlayerRating(Value + 100),
-                EWinLoseDisconnected.Lose => new PlayerRating(Value - 100),
-                EWinLoseDisconnected.Disconnected => new PlayerRating(Value - 100),
+                EWinLoseDisconnected.Win => 50,
+                EWinLoseDisconnected.Lose => -50,
+                EWinLoseDisconnected.Disconnected => -50,
                 _ => throw new ArgumentOutOfRangeException(nameof(winLose), winLose, null)
             };
+
+            int appliedDelta = winLose switch
+            {
+                EWinLoseDisconnected.Win => (int)(baseDelta * rate),
+                EWinLoseDisconnected.Lose => -(int)(baseDelta / rate),
+                EWinLoseDisconnected.Disconnected => baseDelta,
+                _ => throw new ArgumentOutOfRangeException(nameof(winLose), winLose, null)
+            };
+
+            int fixedAppliedDelta = appliedDelta == 0
+                ? Math.Sign(baseDelta)
+                : Math.Abs(appliedDelta) > ConstParameter.Instance.MaxDeltaRating
+                    ? ConstParameter.Instance.MaxDeltaRating * Math.Sign(baseDelta)
+                    : appliedDelta;
+
+            return new PlayerRating(ConstParameter.Instance.PlayerRatingRange.RoundInRange(Value + fixedAppliedDelta));
         }
     }
     
