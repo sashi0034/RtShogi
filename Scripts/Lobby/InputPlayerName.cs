@@ -18,6 +18,7 @@ namespace RtShogi.Scripts.Lobby
         {
             var saveDataPlayerName = saveData.PlayerName;
             if (saveDataPlayerName.IsNullOrWhitespace()) return;
+            _oldPlayerName = saveDataPlayerName;
             customInputField.inputText.text = saveDataPlayerName;
         }
 

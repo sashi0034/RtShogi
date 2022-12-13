@@ -107,7 +107,7 @@ namespace RtShogi.Scripts.Battle.Player
             
             // クールダウンバーを画面に出す
             await CooldownAnimation.ShowCooldown(cooldownBar, cooldownTime.Seconds);
-            
+
             // 裏返す
             var formAble = KomaFormingChecker.CheckFormAble(
                 clickingKoma.Kind,
@@ -117,22 +117,16 @@ namespace RtShogi.Scripts.Battle.Player
 
             // 盤上処理
             bool isKill = destPiece.Holding != null;
-            if (isKill) await performKill(destPiece.Holding);
+            if (isKill) killKomaDelayed(destPiece.Holding).Forget();
             Rpcaller.RpcallMoveKomaOnBoard(clickingKoma, destPiece);
 
             return cooldownTime;
         }
 
-        private async UniTask performKill(KomaUnit killedKoma)
+        private async UniTask killKomaDelayed(KomaUnit koma)
         {
-            var effect = EffectManager.Produce(EffectManager.EffectClashing);
-            if (effect != null)
-            {
-                effect.transform.position = killedKoma.transform.position;
-                await UniTask.Delay(0.2f.ToIntMilli());
-            }
-            
-            Rpcaller.RpcallSendToObtainedKoma(killedKoma);
+            await UniTask.Delay(0.2f.ToIntMilli());
+            Rpcaller.RpcallSendToObtainedKoma(koma);
         }
 
         private void operateFormAbleKomaAfterMove(KomaUnit clickingKoma, EKomaFormAble formAble)
@@ -157,6 +151,10 @@ namespace RtShogi.Scripts.Battle.Player
         [FromBattleRpcaller]
         public static void MoveKomaOnBoard(KomaUnit movingKoma, BoardPiece destPiece)
         {
+            SeManager.Instance.PlaySe(movingKoma.Team == ETeam.Ally 
+                ? SeManager.Instance.SeKomaMoveAlly
+                : SeManager.Instance.SeKomaMoveEnemy);
+            
             movingKoma.MountedPiece.RemoveKoma();
             destPiece.PutKoma(movingKoma);
             movingKoma.transform.DOMove(destPiece.GetKomaPos(), 0.3f).SetEase(Ease.OutQuart);

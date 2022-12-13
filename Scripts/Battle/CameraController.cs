@@ -104,6 +104,8 @@ namespace RtShogi.Scripts.Battle
         [Button]
         public void OnPushAbove()
         {
+            SeManager.Instance.PlaySe(SeManager.Instance.SeChangeCamera);
+            
             _destPos = cameraPropsAbove.Pos;
             mainCamera.transform.DORotate(cameraPropsAbove.Rot, animDurationQuick);
         }
@@ -111,6 +113,8 @@ namespace RtShogi.Scripts.Battle
         [Button]
         public void OnPushDiagonal()
         {
+            SeManager.Instance.PlaySe(SeManager.Instance.SeChangeCamera);
+            
             _destPos = cameraPropsDiagonal.Pos;
             mainCamera.transform.DORotate(cameraPropsDiagonal.Rot, animDurationQuick);
         }

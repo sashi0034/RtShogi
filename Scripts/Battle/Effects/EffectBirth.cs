@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -6,6 +7,12 @@ namespace RtShogi.Scripts.Battle.Effects
 {
     public class EffectBirth : EffectBase
     {
+        [EventFunction]
+        private void Start()
+        {
+            SeManager.Instance.PlaySe(SeManager.Instance.SeKomaBirth);
+        }
+
         public async UniTask AnimAppear(Vector3 pos)
         {
             transform.position = pos;

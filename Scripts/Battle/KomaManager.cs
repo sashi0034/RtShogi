@@ -206,10 +206,28 @@ namespace RtShogi.Scripts.Battle
         {
             _boardKomaList.RemoveUnit(koma);
 
+            performKill(koma).Forget();
+
             if (new KomaKind(koma.Kind).IsKing())
                 await performKilledKing(koma);
             else
                 await sendToObtainedKomaInternal(koma);
+        }
+
+        private async UniTask performKill(KomaUnit killedKoma)
+        {
+            var effect = battleRoot.EffectManager.Produce(battleRoot.EffectManager.EffectClashing);
+            if (effect != null)
+            {
+                effect.transform.position = killedKoma.transform.position;
+
+                // 効果音を遅延させて鳴らすことを想定していた
+                await UniTask.Delay(0f.ToIntMilli());
+                
+                SeManager.Instance.PlaySe(killedKoma.Team == ETeam.Ally
+                    ? SeManager.Instance.SeKomaKillPlayer
+                    : SeManager.Instance.SeKomaKillEnemy);
+            }
         }
 
         private async UniTask sendToObtainedKomaInternal(KomaUnit koma)

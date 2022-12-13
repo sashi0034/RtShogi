@@ -34,6 +34,8 @@ namespace RtShogi.Scripts.Lobby
             Image popUpBackGround,
             IPopUp popUpBattleLog)
         {
+            SeManager.Instance.PlaySe(SeManager.Instance.SePopUp);
+
             popUpBattleLog.gameObject.SetActive(true);
             popUpBattleLog.Setup();
             popUpBattleLog.transform.localScale = Vector3.zero;
@@ -45,6 +47,7 @@ namespace RtShogi.Scripts.Lobby
             popUpBackGround.gameObject.SetActive(true);
 
             await popUpBattleLog.OnExit.Take(1);
+            SeManager.Instance.PlaySe(SeManager.Instance.SeOk);
             
             popUpBackGround.gameObject.SetActive(false);
             

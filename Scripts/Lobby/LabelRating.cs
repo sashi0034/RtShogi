@@ -93,6 +93,8 @@ namespace RtShogi.Scripts.Lobby
                     animDuration)
                 .SetEase(Ease.OutSine);
 
+            SeManager.Instance.PlaySe(SeManager.Instance.SeCountRating);
+            
             await UniTask.Delay(animDuration.ToIntMilli());
             await UniTask.Delay(1.0f.ToIntMilli());
 

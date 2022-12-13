@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.Effects
@@ -11,6 +12,14 @@ namespace RtShogi.Scripts.Battle.Effects
         private void Start()
         {
             _particleSystem = GetComponentInChildren<ParticleSystem>();
+
+            playSe().Forget();
+        }
+
+        private static async UniTask playSe()
+        {
+            await UniTask.Delay(0.2f.ToIntMilli());
+            SeManager.Instance.PlaySe(SeManager.Instance.SeKomaForm);
         }
 
         [EventFunction]

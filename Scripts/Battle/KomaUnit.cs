@@ -69,7 +69,7 @@ namespace RtShogi.Scripts.Battle
             var formed = new KomaKind(_kind).ToFormed();
             Debug.Assert(formed!=null);
             _kind = formed.Value;
-            animFormed();
+            animFormed().Forget();
         }
 
         private async UniTask animFormed()

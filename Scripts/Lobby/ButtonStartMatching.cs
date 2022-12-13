@@ -59,6 +59,8 @@ namespace RtShogi.Scripts.Lobby
 
         private async UniTask processStartMatchig()
         {
+            SeManager.Instance.PlaySe(SeManager.Instance.SeStartMatchMaking);
+            
             await buttonStart.transform.DOScale(0f, 0.3f).SetEase(Ease.InBack);
             buttonStart.gameObject.SetActive(false);
             animMascotGreenOnionWhileMatching(mascotGreenOnion, _onCompletedMatchMaking).Forget();
@@ -82,6 +84,7 @@ namespace RtShogi.Scripts.Lobby
             while ((sessionTemp = await tryFindOpponentPlayer(sessionTemp.PassedTime)).IsSuccess == false) { } ;
 
             // 見つかった時の演出
+            SeManager.Instance.PlaySe(SeManager.Instance.SeEndMatchMaking);
             textMatchingInProgress.text = "対戦相手が見つかりました";
             animScaling.Kill();
             textMatchingInProgress.transform.DOScale(1.5f, 3.0f).SetEase(Ease.InOutBack);

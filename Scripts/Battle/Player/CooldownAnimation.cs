@@ -38,6 +38,8 @@ namespace RtShogi.Scripts.Battle.Player
             }
             
             cooldownBar.StartDisappear().Forget();
+            
+            SeManager.Instance.PlaySe(SeManager.Instance.EndCooldown);
         }
 
     }

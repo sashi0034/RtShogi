@@ -215,6 +215,67 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &5170906224298567794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5181849965256556027}
+  - component: {fileID: 3946628148909851817}
+  m_Layer: 0
+  m_Name: SeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5181849965256556027
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5170906224298567794}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7722668102753071062}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3946628148909851817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5170906224298567794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d3533964304b38baec5a6c708aa517, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  sePopUp: {fileID: 8300000, guid: cf6c0e7fbef9449c98a0cdb5ea0c4d9f, type: 3}
+  seOk: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  seStartMatchMaking: {fileID: 8300000, guid: 486015aa9a168444a9311e199b362bf8, type: 3}
+  seEndMatchMaking: {fileID: 8300000, guid: dffb52ea83f8ad54aa7c0740eb52bf96, type: 3}
+  seStartBattle: {fileID: 8300000, guid: 20b6832bf96b8ca4783b45fbce63e33f, type: 3}
+  seChangeCamera: {fileID: 8300000, guid: ee42761d020406044b22f8a4f05ca5e2, type: 3}
+  seKomaForm: {fileID: 8300000, guid: 97a270949c700b74cb1e290514e53793, type: 3}
+  seKomaBirth: {fileID: 8300000, guid: 01d24571a15d6cb49b69c3bec3dcac6e, type: 3}
+  seKomaKillPlayer: {fileID: 8300000, guid: 51b5883aa535e4244a04c1bc7c7fff24, type: 3}
+  seKomaKillEnemy: {fileID: 8300000, guid: b906824691bcda94db231c738df99191, type: 3}
+  seKomaMoveAlly: {fileID: 8300000, guid: f0a63183a42391749b9ef05b0b11082c, type: 3}
+  seKomaMoveEnemy: {fileID: 8300000, guid: af77857b02e10e44092e1a10d629b2a5, type: 3}
+  endCooldown: {fileID: 8300000, guid: 3df8ec412883b5c40a4ab200f6562869, type: 3}
+  seBattleWin: {fileID: 8300000, guid: 955a025ed19feee44bed25eefca1fe02, type: 3}
+  seBattleLose: {fileID: 8300000, guid: b91bde9ef88f6bd4896b0b5bc4963b11, type: 3}
+  seCountRating: {fileID: 8300000, guid: a78de6eb394f26748b6fa3dc83632f21, type: 3}
 --- !u!1 &5867204031388088009
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,6 +382,7 @@ Transform:
   - {fileID: 925934186531545576}
   - {fileID: 6793951249486567961}
   - {fileID: 4819145010309317386}
+  - {fileID: 5181849965256556027}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -348,6 +410,11 @@ MonoBehaviour:
       numDisconnected: 0
     playerName: 
     battleLogList: []
+    isEnteredBattle: 0
+    lastOpponent:
+      opponentName: 
+      opponentRating: 0
+      dateTime: 
 --- !u!1 &7825579447883209293
 GameObject:
   m_ObjectHideFlags: 0

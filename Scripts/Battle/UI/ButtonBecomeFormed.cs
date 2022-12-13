@@ -129,6 +129,7 @@ namespace RtShogi.Scripts.Battle.UI
             if (!_isAppeared) return;
             if (_currentTarget == null) return;
 
+            SeManager.Instance.PlaySe(SeManager.Instance.SePopUp);
             canvasRef.RootRef.Rpcaller.RpcallBecomeFormed(_currentTarget);
             disappearAfterClicked().Forget();
         }

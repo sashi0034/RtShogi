@@ -61,6 +61,8 @@ namespace RtShogi.Scripts.Battle
         {
             var opponent = setupRpcallerRef.Opponent;
 
+            SeManager.Instance.PlaySe(SeManager.Instance.SeStartBattle);
+            
             // 敵の情報を表示
             await battleCanvasRef.PopUpEnemyInfo.PerformPopUpEnemyInfo(battleCanvasRef, setupRpcallerRef);
 

@@ -68,15 +68,19 @@ namespace RtShogi.Scripts.Battle.UI
 
         public async UniTask PerformWin(bool isDisconnected)
         {
+            SeManager.Instance.PlaySe(SeManager.Instance.SeBattleWin);
+            
             gameObject.SetActive(true);
             textLose.gameObject.SetActive(false);
-            textLoseByDisconnected.gameObject.SetActive(isDisconnected);
+            textWinByDisconnected.gameObject.SetActive(isDisconnected);
             await performMessage(textWin);
             _onCompletedWinOrLose.OnNext(EWinLoseDisconnected.Win);
         }
 
         public async UniTask PerformLose(bool isDisconnected)
         {
+            SeManager.Instance.PlaySe(SeManager.Instance.SeBattleLose);
+            
             gameObject.SetActive(true);
             textWin.gameObject.SetActive(false);
             textLoseByDisconnected.gameObject.SetActive(isDisconnected);
