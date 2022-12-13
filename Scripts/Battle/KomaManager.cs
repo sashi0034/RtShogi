@@ -143,8 +143,9 @@ namespace RtShogi.Scripts.Battle
             koma.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack);
             const float moveY = 0.5f;
             koma.transform.DOMoveY(moveY, 0.5f).SetEase(Ease.OutBack).SetRelative(true);
-            await koma.transform.DORotate(new Vector3(0, 360, 0), 0.3f)
-                .SetEase(Ease.Linear).SetRelative(true).SetLoops(3);
+            const int numRotate = 3;
+            await koma.transform.DORotate(new Vector3(0, 360 * numRotate, 0), 0.3f * numRotate)
+                .SetEase(Ease.InOutCubic).SetRelative(true);
 
             koma.transform.DOMoveY(-moveY, 0.3f).SetEase(Ease.InQuart).SetRelative(true);
 

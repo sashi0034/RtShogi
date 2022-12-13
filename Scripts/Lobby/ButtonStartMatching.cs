@@ -9,6 +9,7 @@ using RtShogi.Scripts.Param;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RtShogi.Scripts.Lobby
 {
@@ -23,6 +24,8 @@ namespace RtShogi.Scripts.Lobby
 
         [SerializeField] private TextMeshProUGUI textMatchingInProgress;
         // public TextMeshProUGUI TextMatchingInProgress => textMatchingInProgress;
+
+        [SerializeField] private Image mascotGreenOnion;
 
         private MatchMakingManager matchMakingManager => lobbyCanvas.MatchMakingManagerRef;
 
@@ -44,6 +47,7 @@ namespace RtShogi.Scripts.Lobby
             buttonStart.enabled = true;
             Util.ResetScaleAndActivate(buttonStart);
             textMatchingInProgress.gameObject.SetActive(false);
+            mascotGreenOnion.gameObject.SetActive(false);
         }
 
         [EventFunction]
@@ -57,6 +61,7 @@ namespace RtShogi.Scripts.Lobby
         {
             await buttonStart.transform.DOScale(0f, 0.3f).SetEase(Ease.InBack);
             buttonStart.gameObject.SetActive(false);
+            animMascotGreenOnionWhileMatching(mascotGreenOnion, _onCompletedMatchMaking).Forget();
             
             // 状況メッセージを表示
             textMatchingInProgress.gameObject.SetActive(true);
@@ -116,6 +121,24 @@ namespace RtShogi.Scripts.Lobby
                 .Append(transform.DOScale(1.1f, 1.0f).SetEase(Ease.OutSine))
                 .Append(transform.DOScale(1.0f, 1.0f).SetEase(Ease.InSine))
                 .SetLoops(-1);
+        }
+
+        private static async UniTask animMascotGreenOnionWhileMatching(Image greenOnion, IObservable<Unit> onCompletedMatching)
+        {
+            // ネギをぐるぐる回すアニメ
+            greenOnion.gameObject.SetActive(true);
+            greenOnion.transform.localScale = Vector3.zero;
+            greenOnion.transform.rotation = Quaternion.Euler(Vector3.zero);
+
+            await greenOnion.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack);
+
+            var anim = DOTween.Sequence(greenOnion)
+                .Append(greenOnion.transform.DORotate(new Vector3(0, 0, 360 * 5), 5.0f).SetRelative(true).SetEase(Ease.InOutQuint))
+                .Append(greenOnion.transform.DORotate(new Vector3(0, 0, 360 * -5), 5.0f).SetRelative(true).SetEase(Ease.InOutBounce))
+                .Append(DOVirtual.DelayedCall(1.0f, ()=>{})).SetLoops(-1).Play();
+            
+            await onCompletedMatching.Take(1);
+            anim.Kill();
         }
     }
 }
