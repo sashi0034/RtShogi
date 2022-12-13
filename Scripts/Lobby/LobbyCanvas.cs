@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Online;
 using UniRx;
@@ -45,7 +46,8 @@ namespace RtShogi.Scripts.Lobby
             switch (resetOption)
             {
             case ELobbyResetOption.AfterInit:
-                labelRating.ResetBeforeBattle(gameRoot.SaveData);
+                labelRating.ResetBeforeLobby(gameRoot.SaveData);
+                textAfterBattle.gameObject.SetActive(false);
                 break;
             case ELobbyResetOption.AfterBattle:
                 buttonStartMatching.transform.localScale = Vector3.zero;
@@ -63,6 +65,7 @@ namespace RtShogi.Scripts.Lobby
         public async UniTask PerformAfterBattle(BattleResultForRating battleResult)
         {
             await labelRating.PerformAfterBattle(textAfterBattle, battleResult);
+            buttonStartMatching.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
         }
         
         

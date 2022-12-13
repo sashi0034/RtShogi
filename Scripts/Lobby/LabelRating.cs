@@ -1,6 +1,8 @@
 ﻿#nullable enable
 
+using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Storage;
 using TMPro;
@@ -16,6 +18,17 @@ namespace RtShogi.Scripts.Lobby
             text.text = Value.ToString();
             return this;
         }
+
+        public PlayerRating CalcNext(EWinLoseDisconnected winLose)
+        {
+            return winLose switch
+            {
+                EWinLoseDisconnected.Win => new PlayerRating(Value + 100),
+                EWinLoseDisconnected.Lose => new PlayerRating(Value - 100),
+                EWinLoseDisconnected.Disconnected => new PlayerRating(Value - 100),
+                _ => throw new ArgumentOutOfRangeException(nameof(winLose), winLose, null)
+            };
+        }
     }
     
     public class LabelRating : MonoBehaviour
@@ -25,17 +38,47 @@ namespace RtShogi.Scripts.Lobby
         private PlayerRating _playerRating = new PlayerRating(0);
         public PlayerRating PlayerRating => _playerRating;
 
-        public void ResetBeforeBattle(SaveData saveData)
+        public void ResetBeforeLobby(SaveData saveData)
         {
             _playerRating = new PlayerRating(saveData.PlayerRating).WithApplyText(textMesh);
         }
 
         public async UniTask PerformAfterBattle(TextAfterBattle textAfterBattle, BattleResultForRating battleResult)
         {
+            textAfterBattle.gameObject.SetActive(true);
             textAfterBattle.ChangeStyle(battleResult);
-            await UniTask.Delay(1f.ToIntMilli());
+            textAfterBattle.transform.localScale = Vector3.zero;
             
-            // TODO: 数値が減っていく演出
+            // 変化量を先に書き換えておく
+            int deltaAbs = Math.Abs(battleResult.NewPlayerRating.Value - _playerRating.Value);
+            string deltaPrefix = battleResult.WinLose == EWinLoseDisconnected.Win ? "+ " : "- ";
+            textAfterBattle.TextRatingDelta.text = deltaPrefix + deltaAbs;
+
+            await textAfterBattle.transform.DOScale(1.0f, 0.3f).SetEase(Ease.OutBack);
+            
+            await UniTask.Delay(1f.ToIntMilli());
+
+            // カウントダウンの演出
+            float animDuration = 1.0f;
+            DOTween.To(
+                () => _playerRating.Value,
+                (value) => { _playerRating = new PlayerRating(value).WithApplyText(textMesh); },
+                battleResult.NewPlayerRating.Value, 
+                animDuration)
+                .SetEase(Ease.OutSine);
+
+            DOTween.To(
+                    () => deltaAbs,
+                    (value) => { textAfterBattle.TextRatingDelta.text = deltaPrefix + deltaAbs; deltaAbs = value; },
+                    0, 
+                    animDuration)
+                .SetEase(Ease.OutSine);
+
+            await UniTask.Delay(animDuration.ToIntMilli());
+            await UniTask.Delay(1.0f.ToIntMilli());
+
+            await textAfterBattle.transform.DOScale(0f, 0.5f).SetEase(Ease.InBack);
+            textAfterBattle.gameObject.SetActive(false);
         }
 
     }

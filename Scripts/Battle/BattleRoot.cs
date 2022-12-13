@@ -1,6 +1,8 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using Photon.Pun;
+using RtShogi.Scripts.Battle.UI;
+using RtShogi.Scripts.Lobby;
 using RtShogi.Scripts.Online;
 using UniRx;
 using UnityEngine;
@@ -50,7 +52,7 @@ namespace RtShogi.Scripts.Battle
             battleCanvasRef.gameObject.SetActive(false);
         }
         
-        public async UniTask ProcessBattle(GameRoot gameRoot)
+        public async UniTask<BattleResultForRating> ProcessBattle(GameRoot gameRoot)
         {
             // TODO: ちゃんとしたバトル同期
             await UniTask.Delay(3000);
@@ -65,6 +67,13 @@ namespace RtShogi.Scripts.Battle
             await UniTask.Delay(3f.ToIntMilli());
             
             if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
+
+            // 新しいレート計算
+            var winLoseResult = WinLoseUtil.ToIncludeDisconnected(winLose, false);
+            return new BattleResultForRating(
+                winLoseResult,
+                new PlayerRating(gameRoot.SaveData.PlayerRating).CalcNext(winLoseResult)
+                );
         }
 
         public void InvokeStartBattle()

@@ -40,6 +40,7 @@ namespace RtShogi.Scripts.Lobby
 
         public void ResetBeforeLobby()
         {
+            gameObject.SetActive(true);
             buttonStart.enabled = true;
             Util.ResetScaleAndActivate(buttonStart);
             textMatchingInProgress.gameObject.SetActive(false);

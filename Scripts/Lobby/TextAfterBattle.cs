@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using RtShogi.Scripts.Battle.UI;
 using TMPro;
 using UnityEngine;

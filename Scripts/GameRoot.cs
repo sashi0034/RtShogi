@@ -79,7 +79,10 @@ namespace RtShogi.Scripts
             await lobbyCanvas.transform.DOScale(0f, 0.5f).SetEase(Ease.InBack);
             lobbyCanvas.SleepOutLobby();
 
-            await battleRoot.ProcessBattle(this);
+            // バトル開始
+            var battleResult = await battleRoot.ProcessBattle(this);
+            saveData.SetPlayerRating(battleResult.NewPlayerRating);
+            writeSaveData();
             
             lobbyCanvas.ResetBeforeLobby(this, ELobbyResetOption.AfterBattle);
             
@@ -87,18 +90,13 @@ namespace RtShogi.Scripts
 
             battleRoot.SleepOutBattle();
             
-            // TODO: レーティングをセーブデータに
-            // saveData.SetPlayerRating();
-            
-            writeSaveData();
-
-            // TODO: パラメーター渡す
-            // await lobbyCanvas.PerformAfterBattle();
+            // レート加算の演出
+            await lobbyCanvas.PerformAfterBattle(battleResult);
         }
 
         private void writeSaveData()
         {
-            saveData.UpdateByCopyDataFromGame(this);
+            saveData.UpdateByCopyDataFromSomeObjects(this);
             string jsonData = JsonUtility.ToJson(saveData);
             ES3.Save(ConstParameter.SaveDataKey, jsonData);
             

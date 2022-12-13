@@ -16,7 +16,7 @@ namespace RtShogi.Scripts.Storage
         [SerializeField] private string playerName = "";
         public string PlayerName => playerName;
 
-        public void UpdateByCopyDataFromGame(GameRoot gameRoot)
+        public void UpdateByCopyDataFromSomeObjects(GameRoot gameRoot)
         {
             playerName = gameRoot.LobbyCanvas.InputPlayerName.PlayerName;
         }
