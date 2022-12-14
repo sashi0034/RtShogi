@@ -20,7 +20,7 @@ namespace RtShogi.Scripts.Lobby
             return this;
         }
 
-        public PlayerRating CalcNext(EWinLoseDisconnected winLose, PlayerRating enemyRating)
+        public PlayerRating CalcNext(EWinLoseDisconnected winLose, PlayerRating enemyRating, DateTime dateTime)
         {
             float rate = (float)enemyRating.Value / this.Value;
 
@@ -46,7 +46,15 @@ namespace RtShogi.Scripts.Lobby
                     ? ConstParameter.Instance.MaxDeltaRating * Math.Sign(baseDelta)
                     : appliedDelta;
 
-            return new PlayerRating(ConstParameter.Instance.PlayerRatingRange.RoundInRange(Value + fixedAppliedDelta));
+            int bonusRate =
+                winLose == EWinLoseDisconnected.Win &&
+                ConstParameter.Instance.HourBonusRatingRange.IsInRange(dateTime.Hour)
+                    ? 2
+                    : 1;
+
+            return new PlayerRating(
+                ConstParameter.Instance.PlayerRatingRange.RoundInRange(
+                    Value + fixedAppliedDelta * bonusRate));
         }
     }
     

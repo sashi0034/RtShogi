@@ -27,6 +27,8 @@ namespace RtShogi.Scripts.Lobby
 
         [SerializeField] private Image mascotGreenOnion;
 
+        [SerializeField] private TextMeshProUGUI textMatchingRecommendedTime;
+
         private MatchMakingManager matchMakingManager => lobbyCanvas.MatchMakingManagerRef;
 
         // とりあえず今はプレイヤーのマッチングランクは一定
@@ -48,6 +50,7 @@ namespace RtShogi.Scripts.Lobby
             Util.ResetScaleAndActivate(buttonStart);
             textMatchingInProgress.gameObject.SetActive(false);
             mascotGreenOnion.gameObject.SetActive(false);
+            textMatchingRecommendedTime.gameObject.SetActive(false);
         }
 
         [EventFunction]
@@ -111,11 +114,22 @@ namespace RtShogi.Scripts.Lobby
 
                 await UniTask.Delay(1000);
                 waitingSec++;
+
+                const int secShowRecommended = 30;
+                if (waitingSec == secShowRecommended) showTextMatchingRecommendedTime();
             }
 
             return new MatchingSessionTempResult(
                 await processJoinRoom == MatchMakingResult.Succeeded,
                 waitingSec);
+        }
+
+        // マッチングおすすめ時間を表示
+        private void showTextMatchingRecommendedTime()
+        {
+            textMatchingRecommendedTime.gameObject.SetActive(true);
+            textMatchingRecommendedTime.transform.localScale = Vector3.zero;
+            textMatchingRecommendedTime.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
         }
 
         private static Tween animSlowScalingLoop(Transform transform)

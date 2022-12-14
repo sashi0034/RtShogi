@@ -42,6 +42,10 @@ namespace RtShogi.Scripts.Param
 
         [SerializeField] private int maxDeltaRating = 200;
         public int MaxDeltaRating => maxDeltaRating;
+
+        [SerializeField] private int hourBonusRatingStart = 21;
+        [SerializeField] private int hourBonusRatingEnd = 22;
+        public IntRange HourBonusRatingRange => new IntRange(hourBonusRatingStart, hourBonusRatingEnd);
         
 
         private static KomaInitialPutInfo[] _komaInitialPutInfo = getKomaInitialPutInfos();
@@ -55,7 +59,7 @@ namespace RtShogi.Scripts.Param
         
         public static readonly PlayerRating InitialPlayerRating = new PlayerRating(1000);
 
-        public const string DefaultPlayerName = "beginner";
+        public const string DefaultPlayerName = "Beginner";
 
         
         private static KomaInitialPutInfo[] getKomaInitialPutInfos()

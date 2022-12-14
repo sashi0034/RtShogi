@@ -88,7 +88,7 @@ namespace RtShogi.Scripts.Battle
                 new BattleResultForRating(
                     winLose,
                     new PlayerRating(gameRoot.SaveData.PlayerRating)
-                        .CalcNext(winLose, new PlayerRating(opponent.PlayerRating))),
+                        .CalcNext(winLose, new PlayerRating(opponent.PlayerRating), DateTime.Now)),
                 new BattleLogElement(
                     opponent.PlayerRating,
                     opponent.PlayerName,

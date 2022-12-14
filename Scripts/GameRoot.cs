@@ -119,7 +119,7 @@ namespace RtShogi.Scripts
 
             var lastOpponent = saveData.LastOpponent;
             saveData.SetPlayerRating(new PlayerRating(saveData.PlayerRating)
-                .CalcNext(EWinLoseDisconnected.Disconnected, new PlayerRating(lastOpponent.OpponentRating)));
+                .CalcNext(EWinLoseDisconnected.Disconnected, new PlayerRating(lastOpponent.OpponentRating), DateTime.Now));
             saveData.PushBattleLog(new BattleLogElement(
                 lastOpponent.OpponentRating,
                 lastOpponent.OpponentName,
