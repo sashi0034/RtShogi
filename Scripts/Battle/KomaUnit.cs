@@ -1,25 +1,32 @@
-﻿using System;
+﻿#nullable enable
+
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using JetBrains.Annotations;
-using RtShogi.Scripts.Battle;
-using RtShogi.Scripts.Battle.UI;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RtShogi.Scripts.Battle
 {
     public class KomaUnit : MonoBehaviour
     {
-        [SerializeField] private MeshFilter viewMeshFilter;
-        [SerializeField] private MeshRenderer viewMeshRenderer;
-        [SerializeField] private Material matEnemyBody;
+        // [SerializeField] private MeshFilter viewMeshFilter;
+        // [SerializeField] private MeshRenderer viewMeshRenderer;
         
-        [SerializeField] private MeshRenderer meshRenderer;
-        public MeshRenderer MeshRenderer => meshRenderer;
+        [SerializeField] private Material matEnemyBody;
 
-        public const string NameMatBody = "body";
+        [SerializeField] private MeshRenderer meshFront;
+        public MeshRenderer MeshFront => meshFront;
+        
+        [SerializeField] private MeshRenderer? meshBack;
+        public MeshRenderer? MeshBack => meshBack; 
+        
+        [SerializeField] private MeshRenderer meshBody;
+        public MeshRenderer MeshBody => meshBody;
+
+        public const string NameMatBody = "Body";
         
         private EKomaKind _kind;
         
@@ -45,8 +52,14 @@ namespace RtShogi.Scripts.Battle
 
         public void InitProps(BattleRoot root, KomaViewProps props, ETeam team, KomaId id)
         {
-            viewMeshFilter.sharedMesh = props.Mesh;
-            if (props.Materials is { Length: > 0 }) viewMeshRenderer.materials = props.Materials;
+            meshFront.material.mainTexture = props.TexFront;
+            
+            Debug.Assert(meshBack != null);
+            if (props.TexBack != null)
+                meshBack.material.mainTexture = props.TexBack; 
+            else 
+                Util.DestroyGameObject(meshBack.GameObject());
+            
             _team = team;
             if (team==ETeam.Ally) transform.Rotate(new Vector3(0, 180, 0));
             if (team==ETeam.Enemy) changeToEnemyView();
@@ -58,7 +71,7 @@ namespace RtShogi.Scripts.Battle
 
         private void changeToEnemyView()
         {
-            meshRenderer.materials = meshRenderer.sharedMaterials
+            meshBody.materials = meshBody.sharedMaterials
                 .Select(material => (material.name == NameMatBody) ? matEnemyBody : material)
                 .ToArray();
         }
@@ -67,7 +80,7 @@ namespace RtShogi.Scripts.Battle
         public void BecomeFormed()
         {
             var formed = new KomaKind(_kind).ToFormed();
-            Debug.Assert(formed!=null);
+            Debug.Assert(formed != null);
             _kind = formed.Value;
             animFormed().Forget();
         }

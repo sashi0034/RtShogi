@@ -426,7 +426,7 @@ MonoBehaviour:
   battleCanvasRef: {fileID: 0}
   rpcaller: {fileID: 2353827558821020601}
   effectManager: {fileID: 6416892373094781848}
-  setupRpcaller: {fileID: 0}
+  setupRpcallerRef: {fileID: 0}
 --- !u!1 &3836209163274351066
 GameObject:
   m_ObjectHideFlags: 0
@@ -474,43 +474,40 @@ MonoBehaviour:
   komaUnitPrefab: {fileID: 907922033788964988, guid: 5154aecdd41377c428ffc780a65a796c, type: 3}
   komaViewPropsList:
   - kind: 0
-    mesh: {fileID: 1560901659307355135, guid: f157f158d4f1f0e488133b43ded09a84, type: 3}
-    materials:
-    - {fileID: 2100000, guid: e1b810c01a1c6e7429d5d675b6cac81d, type: 2}
-    - {fileID: 2100000, guid: d66bc665513a382418c64e74c5f7eb25, type: 2}
-    - {fileID: 2100000, guid: 718d2c065c7bab349953462d07f92737, type: 2}
+    texFront: {fileID: 2800000, guid: 4e1e51e0c61e7c146b1a692a3b841f35, type: 3}
+    texBack: {fileID: 2800000, guid: 617e38b35fe21d94e8346151cccbb675, type: 3}
     sprIcon: {fileID: 21300000, guid: e37668f45a5cbc344a6031a9aef32558, type: 3}
   - kind: 1
-    mesh: {fileID: -5904469712372167855, guid: 1f65736357580d04a8effd9cf5762f3d, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: 80c81ca670afb8d49bd76d39ce48d67e, type: 3}
+    texBack: {fileID: 2800000, guid: a2c4ee941702efb49b50c8a7a437ba0a, type: 3}
     sprIcon: {fileID: 21300000, guid: 6b0f3f0ad4f016947bb1d92d1d39ef45, type: 3}
   - kind: 2
-    mesh: {fileID: -3870257845623543280, guid: 301c153b468e1384eabae8ff977faf58, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: 83e35ee929a437144be9e576e743d259, type: 3}
+    texBack: {fileID: 2800000, guid: f8c32a855777fd94b8319bf249325e92, type: 3}
     sprIcon: {fileID: 21300000, guid: 463c1ec1adddb024584003df89e8378a, type: 3}
   - kind: 3
-    mesh: {fileID: -2667384456735817488, guid: 49616ff9ba105084da5c1526132c4314, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: 9fd9bda000dcd734ab5b348c7915c905, type: 3}
+    texBack: {fileID: 2800000, guid: c38a43a0b2a1b404a9751e33ac45c2d3, type: 3}
     sprIcon: {fileID: 21300000, guid: 6b82b0f8d55d86340b49623bd9a572f2, type: 3}
   - kind: 4
-    mesh: {fileID: 1024497075807512107, guid: 76f65efe5dc06f1499cb628c2c5f6b67, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: 869a6f419c057ae44b0fa05a037970a1, type: 3}
+    texBack: {fileID: 2800000, guid: 9435491dbd787484cb4393ae3d7fc663, type: 3}
     sprIcon: {fileID: 21300000, guid: e206a5ac0e3b5784e965e773373ebf92, type: 3}
   - kind: 5
-    mesh: {fileID: 6991556169247875198, guid: 5905596585263414e892ad0b77a7f34a, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: d951244741dedde40b546e9e54c30017, type: 3}
+    texBack: {fileID: 2800000, guid: 83d56aae7e46b0a489fe6eecdcf68bcc, type: 3}
     sprIcon: {fileID: 21300000, guid: cb82ec9f7baad55498e7c106d837d5ee, type: 3}
   - kind: 6
-    mesh: {fileID: -6221861591842170795, guid: 7492a892809b2b643a3b8a335b0d34eb, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: 92b3e89f6705371489561f27686a1492, type: 3}
+    texBack: {fileID: 0}
     sprIcon: {fileID: 21300000, guid: 5879e02bef983ad4cb7d7c134bdcfa7d, type: 3}
   - kind: 7
-    mesh: {fileID: -6396760216928863473, guid: f2bdb11751bac95499aebe732b51fcf2, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: 5ccf67f0ab0b22b439aad42547d0c204, type: 3}
+    texBack: {fileID: 0}
     sprIcon: {fileID: 0}
   - kind: 8
-    mesh: {fileID: -3189834749401520736, guid: 5e44607c4f73d9f4eab9b5de9e4a3959, type: 3}
-    materials: []
+    texFront: {fileID: 2800000, guid: 6ed6fcc6c877bb248afde7df1a043a7b, type: 3}
+    texBack: {fileID: 0}
     sprIcon: {fileID: 0}
   battleRoot: {fileID: 3455996133615162230}
 --- !u!1 &5590009322083145539
@@ -559,7 +556,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battleRoot: {fileID: 3455996133615162230}
   matTransparentBlue: {fileID: 2100000, guid: fbe6695ef1c01db4cb61c054e5513878, type: 2}
-  matTransparentBlack: {fileID: 2100000, guid: 092986a7ec19c8c4f95cbf04b6627102, type: 2}
+  matTransparentKanji: {fileID: 2100000, guid: bb8d3946c13748d438ab6e99bd9b66f6, type: 2}
 --- !u!1 &5692008916695536819
 GameObject:
   m_ObjectHideFlags: 0

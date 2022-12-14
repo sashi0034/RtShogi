@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Param;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RtShogi.Scripts.Battle.Player
@@ -19,6 +20,43 @@ namespace RtShogi.Scripts.Battle.Player
         EffectManager EffectManager)
     {
         private BoardMap boardMapRef => BoardManagerRef.BoardMap;
+
+        /// <summary>
+        /// ゴーストを半透明に (オリジナルがないときはゴースト自身がオリジナル) 
+        /// </summary>
+        public void MakeGhostTransparent(
+            KomaUnit ghostKoma, 
+            KomaUnit originalKoma, 
+            Material newMeshBody,
+            Material newMeshKanji)
+        {
+            ghostKoma.MeshBody.material = newMeshBody;
+            
+            var (ghostKanjiTexture, kanjiFront, kanjiBack) = 
+                new KomaKind(originalKoma.Kind).IsNonFormed()
+                ? (originalKoma.MeshFront.material.mainTexture, ghostKoma.MeshFront, ghostKoma.MeshBack)
+                : (originalKoma.MeshBack?.material.mainTexture, ghostKoma.MeshBack, ghostKoma.MeshFront);
+            Debug.Assert(ghostKanjiTexture != null);
+            if (ghostKanjiTexture == null) return;
+
+            // 表を半透明マテリアルに
+            kanjiFront.material = newMeshKanji;
+            
+            // 裏を削除
+            if (kanjiBack != null) Util.DestroyGameObject(kanjiBack.gameObject);
+            
+            Debug.Assert(kanjiFront != null);
+            if (kanjiFront == null) return;
+            
+            // 表の漢字を変更
+            kanjiFront.material.mainTexture = ghostKanjiTexture;
+
+            // 以前はテキスト部分もBodyと1つのメッシュにまとまってた
+            // var mesh = ghostKoma.MeshRenderer;
+            // mesh.materials = mesh.sharedMaterials
+            //     .Select(material => (material.name == KomaUnit.NameMatBody) ? matTransparentBlue : matTransparentBlack)
+            //     .ToArray();
+        }
 
 
         /// <summary>

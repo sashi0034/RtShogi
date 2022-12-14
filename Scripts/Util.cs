@@ -71,6 +71,13 @@ namespace RtShogi.Scripts
         {
             return new Vector3(before.x, before.y, z);
         }
+        
+        public static Color FixAlpha(this Color before, float a)
+        {
+            var newColor = before;
+            newColor.a = a;
+            return newColor;
+        }
 
         public static void ResetScaleAndActivate(MonoBehaviour actor)
         {

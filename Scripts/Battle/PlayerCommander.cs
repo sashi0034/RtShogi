@@ -9,6 +9,7 @@ using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Param;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RtShogi.Scripts.Battle
 {
@@ -39,7 +40,7 @@ namespace RtShogi.Scripts.Battle
     {
         [SerializeField] private BattleRoot battleRoot;
         [SerializeField] private Material matTransparentBlue;
-        [SerializeField] private Material matTransparentBlack;
+        [SerializeField] private Material matTransparentKanji;
 
         private BoardManager boardManagerRef => battleRoot.BoardManager;
         private BattleCanvas battleCanvas => battleRoot.BattleCanvasRef;
@@ -197,10 +198,18 @@ namespace RtShogi.Scripts.Battle
                 _ => throw new NotImplementedException()
             };
 
-            var mesh = _destKomaGhost.MeshRenderer;
-            mesh.materials = mesh.sharedMaterials
-                .Select(material => (material.name == KomaUnit.NameMatBody) ? matTransparentBlue : matTransparentBlack)
-                .ToArray();
+            // メッシュを半透明に
+            _myAction.MakeGhostTransparent(
+                _destKomaGhost, 
+                _selectingKoma switch
+                {
+                    PlayerClickedBoardKoma fieldKoma => fieldKoma.Koma,
+                    PlayerDraggingObtainedKoma _ => _destKomaGhost,
+                    _ => throw new NotImplementedException()
+                }, 
+                matTransparentBlue, 
+                matTransparentKanji);
+            
             _destKomaGhost.gameObject.SetActive(false);
         }
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -9,15 +11,15 @@ namespace RtShogi.Scripts.Battle
     public class KomaViewProps
     {
         [SerializeField] private EKomaKind kind;
-        public EKomaKind Kind => kind; 
-        
-        [SerializeField] private Mesh mesh;
-        public Mesh Mesh => mesh;
-        
-        [SerializeField] [CanBeNull] private Material[] materials;
-        [CanBeNull] public Material[] Materials => materials;
+        public EKomaKind Kind => kind;
 
-        [CanBeNull] [SerializeField] private Sprite sprIcon;
-        [CanBeNull] public Sprite SprIcon => sprIcon;
+        [SerializeField] private Texture texFront;
+        public Texture TexFront => texFront;
+
+        [SerializeField] private Texture? texBack;
+        public Texture? TexBack => texBack;
+
+        [SerializeField] private Sprite? sprIcon;
+        public Sprite? SprIcon => sprIcon;
     }
 }

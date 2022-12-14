@@ -11,7 +11,7 @@ namespace RtShogi.Scripts.Lobby
     {
         [SerializeField] private CustomInputField customInputField;
 
-        private string _oldPlayerName = "通りすがりの人";
+        private string _oldPlayerName = ConstParameter.DefaultPlayerName;
         public string PlayerName => customInputField.inputText.text;
 
         public void ResetBeforeLobby(SaveData saveData)

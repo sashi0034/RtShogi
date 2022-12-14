@@ -5,6 +5,7 @@ using Photon.Pun;
 using RtShogi.Scripts.Battle.UI;
 using RtShogi.Scripts.Lobby;
 using RtShogi.Scripts.Matching;
+using RtShogi.Scripts.Param;
 using RtShogi.Scripts.Storage;
 using UniRx;
 using UnityEngine;
@@ -99,7 +100,12 @@ namespace RtShogi.Scripts.Battle
         {
             playerCommander.ProcessPlayer().Forget();
             komaManager.SetupAllAllyKomaOnBoard();
+#if UNITY_EDITOR
+            if (DebugParameter.Instance.IsDebugBattleOfflineMode == false)
+                komaManager.CheckDisconnectionAsync().Forget();
+#else
             komaManager.CheckDisconnectionAsync().Forget();
+#endif
         }
     }
 }

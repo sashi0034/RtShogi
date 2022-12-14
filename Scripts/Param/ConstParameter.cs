@@ -55,6 +55,8 @@ namespace RtShogi.Scripts.Param
         
         public static readonly PlayerRating InitialPlayerRating = new PlayerRating(1000);
 
+        public const string DefaultPlayerName = "beginner";
+
         
         private static KomaInitialPutInfo[] getKomaInitialPutInfos()
         {
