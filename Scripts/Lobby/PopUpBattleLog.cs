@@ -3,7 +3,6 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RtShogi.Scripts.Storage;
 using UniRx;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 

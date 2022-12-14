@@ -35,7 +35,7 @@ namespace RtShogi.Scripts.Lobby
             int appliedDelta = winLose switch
             {
                 EWinLoseDisconnected.Win => (int)(baseDelta * rate),
-                EWinLoseDisconnected.Lose => -(int)(baseDelta / rate),
+                EWinLoseDisconnected.Lose => (int)(baseDelta / rate),
                 EWinLoseDisconnected.Disconnected => baseDelta,
                 _ => throw new ArgumentOutOfRangeException(nameof(winLose), winLose, null)
             };
