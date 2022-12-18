@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Photon.Pun;
 using RtShogi.Scripts.Battle.UI;
@@ -58,19 +59,34 @@ namespace RtShogi.Scripts.Battle
             battleCanvasRef.gameObject.SetActive(false);
         }
 
-        public async UniTask<(BattleResultForRating, BattleLogElement)> ProcessBattle(GameRoot gameRoot)
+        
+        public async UniTask SyncEnemyInfoBeforeBattle()
         {
+            // 敵と同期
             var opponent = setupRpcallerRef.Opponent;
-
-            SeManager.Instance.PlaySe(SeManager.Instance.SeStartBattle);
+            await UniTask.WaitUntil(() => opponent.HasReceivedPlayerData || 
+                                          SetupRpcaller.IsInvalidOnlineRoomNow());
             
+            SeManager.Instance.PlaySe(SeManager.Instance.SeStartBattle);
+
             // 敵の情報を表示
             await battleCanvasRef.PopUpEnemyInfo.PerformPopUpEnemyInfo(battleCanvasRef, setupRpcallerRef);
 
             setupRpcallerRef.RpcallNotifyHasSetupJustBeforeOnlineBattle();
+            
+            battleCanvasRef.TextWaitSetupOpponent.gameObject.SetActive(true);
+            
+            // また同期
             await UniTask.WaitUntil(() => setupRpcallerRef.Opponent.HasSetupJustBeforeOnlineBattle || 
                                           SetupRpcaller.IsInvalidOnlineRoomNow());
+            
+            battleCanvasRef.TextWaitSetupOpponent.gameObject.SetActive(false);
+        }
 
+        public async UniTask<(BattleResultForRating, BattleLogElement)> ProcessBattle(GameRoot gameRoot)
+        {
+            var opponent = setupRpcallerRef.Opponent;
+            
             // バトル開始
             InvokeStartBattle();
 
@@ -83,7 +99,6 @@ namespace RtShogi.Scripts.Battle
             if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
 
             // 対戦結果を返す
-            gameRoot.SaveData.MatchResultCount.IncAfterBattle(winLose);
             return (
                 new BattleResultForRating(
                     winLose,

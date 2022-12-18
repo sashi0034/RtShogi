@@ -45,7 +45,7 @@ namespace RtShogi.Scripts.Param
 
         [SerializeField] private int hourBonusRatingStart = 21;
         [SerializeField] private int hourBonusRatingEnd = 22;
-        public IntRange HourBonusRatingRange => new IntRange(hourBonusRatingStart, hourBonusRatingEnd);
+        public IntRange HourBonusRatingRange => new IntRange(hourBonusRatingStart, hourBonusRatingEnd - 1);
         
 
         private static KomaInitialPutInfo[] _komaInitialPutInfo = getKomaInitialPutInfos();

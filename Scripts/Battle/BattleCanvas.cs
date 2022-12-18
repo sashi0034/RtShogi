@@ -1,5 +1,6 @@
 ﻿using System;
 using RtShogi.Scripts.Battle.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -30,6 +31,10 @@ namespace RtShogi.Scripts.Battle
 
         [SerializeField] private PopUpEnemyInfo popUpEnemyInfo;
         public PopUpEnemyInfo PopUpEnemyInfo => popUpEnemyInfo;
+
+        [SerializeField] private TextMeshProUGUI textWaitSetupOpponent;
+        public TextMeshProUGUI TextWaitSetupOpponent => textWaitSetupOpponent;
+        
         
 
         [SerializeField] private BattleRoot rootRef;
@@ -64,6 +69,7 @@ namespace RtShogi.Scripts.Battle
             messageWinLose.ResetBeforeBattle();
             labelEnemyInfo.ResetBeforeBattle();
             popUpEnemyInfo.ResetBeforeBattle();
+            textWaitSetupOpponent.gameObject.SetActive(false);
         }
     }
 }

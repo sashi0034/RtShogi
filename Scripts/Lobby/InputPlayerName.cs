@@ -16,6 +16,8 @@ namespace RtShogi.Scripts.Lobby
 
         public void ResetBeforeLobby(SaveData saveData)
         {
+            customInputField.inputText.text = _oldPlayerName;
+            
             var saveDataPlayerName = saveData.PlayerName;
             if (saveDataPlayerName.IsNullOrWhitespace()) return;
             _oldPlayerName = saveDataPlayerName;

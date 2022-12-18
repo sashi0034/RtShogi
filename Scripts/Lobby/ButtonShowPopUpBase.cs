@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Michsky.MUIP;
@@ -32,29 +33,38 @@ namespace RtShogi.Scripts.Lobby
         public static async UniTask PerformPopUp(
             ButtonManager buttonManager,
             Image popUpBackGround,
-            IPopUp popUpBattleLog)
+            IPopUp popUp)
         {
             SeManager.Instance.PlaySe(SeManager.Instance.SePopUp);
 
-            popUpBattleLog.gameObject.SetActive(true);
-            popUpBattleLog.Setup();
-            popUpBattleLog.transform.localScale = Vector3.zero;
-            popUpBattleLog.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack);
+            popUp.gameObject.SetActive(true);
+            popUp.Setup();
+            popUp.transform.localScale = Vector3.zero;
+            popUp.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack);
 
             buttonManager.enabled = false;
             // transform.DOScale(0.9f, 0.3f).SetEase(Ease.InOutBack);
             
             popUpBackGround.gameObject.SetActive(true);
 
-            await popUpBattleLog.OnExit.Take(1);
-            SeManager.Instance.PlaySe(SeManager.Instance.SeOk);
+            var (hasExit, _) = await UniTask.WhenAny(
+                popUp.OnExit.Take(1).ToUniTask(),
+                // ポップアップ出ていてマッチングがしたとき抜けられるために
+                UniTask.WaitWhile(() => buttonManager.gameObject.activeInHierarchy));
             
             popUpBackGround.gameObject.SetActive(false);
-            
             buttonManager.enabled = true;
+
+            if (hasExit) await performExit(popUp);
             
-            await popUpBattleLog.transform.DOScale(0f, 0.3f).SetEase(Ease.InBack);
-            popUpBattleLog.gameObject.SetActive(false);
+            popUp.gameObject.SetActive(false);
+        }
+
+        private static async UniTask performExit(IPopUp popUp)
+        {
+            SeManager.Instance.PlaySe(SeManager.Instance.SeOk);
+
+            await popUp.transform.DOScale(0f, 0.3f).SetEase(Ease.InBack);
         }
     }
 }

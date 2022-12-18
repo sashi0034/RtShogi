@@ -87,17 +87,17 @@ namespace RtShogi.Scripts
             await lobbyCanvas.transform.DOScale(0f, 0.5f).SetEase(Ease.InBack);
             lobbyCanvas.SleepOutLobby();
 
-            // 敵と同期
-            var opponent = battleRoot.SetupRpcallerRef.Opponent;
-            await UniTask.WaitUntil(() => opponent.HasReceivedPlayerData || 
-                                          SetupRpcaller.IsInvalidOnlineRoomNow());
+            // 敵の情報を表示したり同期
+            await battleRoot.SyncEnemyInfoBeforeBattle();
             
             // バトル開始前のセーブ
+            var opponent = battleRoot.SetupRpcallerRef.Opponent;
             saveData.EnterBeforeBattle(new LastBattleOpponentCache(opponent.PlayerName, opponent.PlayerRating, DateTime.Now));
             writeSaveData();
             
             // バトル開始
             var (battleResult, battleLog) = await battleRoot.ProcessBattle(this);
+            saveData.MatchResultCount.IncAfterBattle(battleResult.WinLose);
             saveData.SetPlayerRating(battleResult.NewPlayerRating);
             saveData.PushBattleLog(battleLog);
             saveData.LeaveAfterBattle();
@@ -118,6 +118,7 @@ namespace RtShogi.Scripts
             if (saveData.IsEnteredBattle == false) return;
 
             var lastOpponent = saveData.LastOpponent;
+            saveData.MatchResultCount.IncAfterBattle(EWinLoseDisconnected.Disconnected);
             saveData.SetPlayerRating(new PlayerRating(saveData.PlayerRating)
                 .CalcNext(EWinLoseDisconnected.Disconnected, new PlayerRating(lastOpponent.OpponentRating), DateTime.Now));
             saveData.PushBattleLog(new BattleLogElement(
